@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 mFragmentManager.beginTransaction()
-                        .replace(R.id.frame_layout, newFrag)
+                        .replace(R.id.fragment_view, newFrag)
                         .commit();
                 return true;
             }

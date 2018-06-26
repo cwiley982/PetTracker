@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Pet Tracker</string>
+
+    <!-- Fragment names -->
+    <string name="calendar">Calendar</string>
+    <string name="shopping_list">Shopping List</string>
+    <string name="wish_list">Wish List</string>
+    <string name="schedule">Schedule</string>
+
+    <!-- Months -->
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
 </resources>
