@@ -9,7 +9,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wish List"
+        android:text="@string/wish_list"
         android:layout_centerInParent="true"
         android:textColor="@color/secondaryDarkColor"/>
 </android.widget.RelativeLayout>
