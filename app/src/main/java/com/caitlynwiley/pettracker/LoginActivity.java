@@ -21,15 +21,12 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -122,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         signInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn();
+                googleSignIn();
             }
         });
     }
@@ -136,7 +133,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         updateUI(account);
     }
 
-    private void signIn() {
+    private void googleSignIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -173,7 +170,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // show error? maybe do nothing
             return;
         }
-        //TODO: start next activity and pass in user credentials (name, email, maybe token)
+        // Start main activity and pass in user's name, email, and photo url to display in nav header
+        Intent startMain = new Intent(LoginActivity.this, MainActivity.class);
+        startMain.putExtra("NAME", account.getDisplayName());
+        startMain.putExtra("EMAIL", account.getEmail());
+        startMain.putExtra("PICTURE", account.getPhotoUrl());
+        startActivity(startMain);
     }
 
     /*private void populateAutoComplete() {
@@ -272,14 +274,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Check to see if email is registered with a google account
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
         // Check if it meets google password requirements
-        return password.length() > 8 && password.charAt(0) != ' '
-                && password.charAt(password.length() - 1) != ' ';
+        return password.length() > 4;
     }
 
     /**
