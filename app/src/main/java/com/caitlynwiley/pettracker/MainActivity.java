@@ -21,11 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         // add listener to navigation view to watch for menu items being selected
-        final NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 item.setChecked(true);
@@ -96,18 +93,18 @@ public class MainActivity extends AppCompatActivity {
 
         // set up header
         Intent intent = getIntent();
-        ((TextView) mNavHeader.findViewById(R.id.header_name_text_view)).setText(intent.getStringExtra("NAME"));
-        ((TextView) mNavHeader.findViewById(R.id.header_email_text_view)).setText(intent.getStringExtra("EMAIL"));
-        String imageUrl = intent.getStringExtra("PICTURE");
-        DownloadTask task = new DownloadTask();
-        try {
-            Bitmap bitmap = task.execute(imageUrl).get();
-            ((ImageView) mNavHeader.findViewById(R.id.header_image_view)).setImageBitmap(bitmap);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+            ((TextView) mNavHeader.findViewById(R.id.header_name_text_view)).setText(intent.getStringExtra("NAME"));
+            ((TextView) mNavHeader.findViewById(R.id.header_email_text_view)).setText(intent.getStringExtra("EMAIL"));
+            String imageUrl = intent.getStringExtra("PICTURE");
+            DownloadTask task = new DownloadTask();
+            try {
+                Bitmap bitmap = task.execute(imageUrl).get();
+                ((ImageView) mNavHeader.findViewById(R.id.header_image_view)).setImageBitmap(bitmap);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
     }
 
     @Override

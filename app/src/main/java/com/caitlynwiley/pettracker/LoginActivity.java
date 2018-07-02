@@ -168,6 +168,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void updateUI(GoogleSignInAccount account) {
         if (account == null) {
             // show error? maybe do nothing
+            Log.d("Sign in", "account was null in updateUi()");
             return;
         }
         // Start main activity and pass in user's name, email, and photo url to display in nav header

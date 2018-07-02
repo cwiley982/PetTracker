@@ -1,6 +1,5 @@
 package com.caitlynwiley.pettracker;
 
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -11,10 +10,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ShoppingListFragment extends ListFragment {
 
@@ -31,7 +30,7 @@ public class ShoppingListFragment extends ListFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mList = new ArrayList();
-        mAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_checked, mList);
+        mAdapter = new ArrayAdapter<String>(Objects.requireNonNull(getContext()), android.R.layout.simple_list_item_checked, mList);
         mAdapter.setNotifyOnChange(true);
         setListAdapter(mAdapter);
     }
