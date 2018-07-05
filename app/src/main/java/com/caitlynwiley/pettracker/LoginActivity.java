@@ -85,25 +85,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-
-
-
         // Set up the login form.
         mEmailView = findViewById(R.id.email);
         //populateAutoComplete();
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         mPasswordView = findViewById(R.id.password);
-        /*mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });*/
 
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -168,14 +155,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void updateUI(GoogleSignInAccount account) {
         if (account == null) {
             // show error? maybe do nothing
-            Log.d("Sign in", "account was null in updateUi()");
+            Log.d("Sign in", "account was null in updateUI()");
             return;
         }
         // Start main activity and pass in user's name, email, and photo url to display in nav header
         Intent startMain = new Intent(LoginActivity.this, MainActivity.class);
         startMain.putExtra("NAME", account.getDisplayName());
         startMain.putExtra("EMAIL", account.getEmail());
-        startMain.putExtra("PICTURE", account.getPhotoUrl());
+        startMain.putExtra("PICTURE", account.getPhotoUrl().toString());
         startActivity(startMain);
     }
 
@@ -434,4 +421,3 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 }
-
