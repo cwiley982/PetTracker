@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // set up header
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
             ((TextView) mNavHeader.findViewById(R.id.header_name_text_view)).setText(intent.getStringExtra("NAME"));
             ((TextView) mNavHeader.findViewById(R.id.header_email_text_view)).setText(intent.getStringExtra("EMAIL"));
             String imageUrl = intent.getStringExtra("PICTURE");
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
-            }
+            }*/
     }
 
     @Override
