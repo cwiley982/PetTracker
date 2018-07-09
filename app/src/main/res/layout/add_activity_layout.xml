@@ -13,7 +13,8 @@
         android:layout_marginBottom="24dp"
         android:textColor="@color/primaryDarkColor"
         android:textSize="25sp"
-        android:hint="Event name"/>
+        android:inputType="textCapWords"
+        android:hint="@string/event_name"/>
 
     <TextView
         android:id="@+id/startTimeText"
@@ -21,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/eventTitleText"
         android:layout_alignStart="@id/eventTitleText"
-        android:text="Start Time:"
+        android:text="@string/start_time"
         android:textColor="@color/primaryDarkColor"
         android:textSize="20sp"/>
 
@@ -32,30 +33,44 @@
         android:layout_alignStart="@id/eventTitleText"
         android:layout_below="@id/startTimeText"
         android:layout_marginTop="24dp"
-        android:layout_alignBaseline="@id/endTime"
-        android:text="End Time:"
+        android:text="@string/end_time"
         android:textColor="@color/primaryDarkColor"
         android:textSize="20sp"/>
 
-    <EditText
-        android:id="@+id/startTime"
-        android:layout_width="120dp"
+    <Spinner
+        android:id="@+id/startTimeMinutes"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignEnd="@id/eventTitleText"
         android:layout_alignBaseline="@id/startTimeText"
         android:ems="10"
-        android:inputType="time"
         android:textColor="@color/primaryDarkColor"/>
 
-    <EditText
-        android:id="@+id/endTime"
-        android:layout_width="120dp"
+    <Spinner
+        android:id="@+id/startTimeHour"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/startTimeMinutes"
+        android:layout_alignBaseline="@id/startTimeText"
+        android:ems="10"
+        android:textColor="@color/primaryDarkColor"/>
+
+    <Spinner
+        android:id="@+id/endTimeMinutes"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@id/eventTitleText"
-        android:layout_below="@id/startTime"
+        android:layout_alignBaseline="@id/endTimeText"
         android:ems="10"
-        android:inputType="time"
+        android:textColor="@color/primaryDarkColor"/>
+
+    <Spinner
+        android:id="@+id/endTimeHour"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/endTimeMinutes"
+        android:layout_alignBaseline="@id/endTimeText"
+        android:ems="10"
         android:textColor="@color/primaryDarkColor"/>
 
     <EditText
@@ -67,6 +82,6 @@
         android:layout_alignEnd="@id/eventTitleText"
         android:layout_marginTop="24dp"
         android:inputType="textMultiLine|textCapSentences"
-        android:hint="Note (optional)"/>
+        android:hint="@string/note_prompt"/>
 
 </android.widget.RelativeLayout>

@@ -10,17 +10,21 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScheduleFragment extends Fragment implements View.OnClickListener {
+public class ScheduleFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private View mFragView;
 
@@ -35,9 +39,16 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     private FloatingActionButton mSleepFab;
 
     private EditText mEventTitle;
-    private EditText mStartTime;
-    private EditText mEndTime;
+    private Spinner mStartHourSpinner;
+    private Spinner mStartMinutesSpinner;
+    private Spinner mEndHourSpinner;
+    private Spinner mEndMinutesSpinner;
     private EditText mNote;
+
+    private String mStartHour;
+    private String mStartMinute;
+    private String mEndHour;
+    private String mEndMinute;
 
     private boolean mIsFabOpen;
 
@@ -101,11 +112,29 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         mFeedFab.setOnClickListener(this);
         mSleepFab.setOnClickListener(this);
 
+        // TODO: this caused the layout to appear on the screen by default...
         View dialogView = inflater.inflate(R.layout.add_activity_layout, container);
         mEventTitle = dialogView.findViewById(R.id.eventTitleText);
-        mStartTime = dialogView.findViewById(R.id.startTime);
-        mEndTime = dialogView.findViewById(R.id.endTime);
         mNote = dialogView.findViewById(R.id.noteText);
+        mStartHourSpinner = dialogView.findViewById(R.id.startTimeHour);
+        mStartMinutesSpinner = dialogView.findViewById(R.id.startTimeMinutes);
+        mEndHourSpinner = dialogView.findViewById(R.id.endTimeHour);
+        mEndMinutesSpinner = dialogView.findViewById(R.id.endTimeMinutes);
+
+        ArrayAdapter<CharSequence> hourAdapter = ArrayAdapter.createFromResource(getContext(), R.array.hours, android.R.layout.simple_spinner_item);
+        hourAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> minutesAdapter = ArrayAdapter.createFromResource(getContext(), R.array.minutes, android.R.layout.simple_spinner_item);
+        minutesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        mStartHourSpinner.setAdapter(hourAdapter);
+        mStartMinutesSpinner.setAdapter(minutesAdapter);
+        mEndHourSpinner.setAdapter(hourAdapter);
+        mEndMinutesSpinner.setAdapter(minutesAdapter);
+
+        mStartHour = null;
+        mStartMinute = null;
+        mEndHour = null;
+        mEndMinute = null;
 
         mEvents = new ArrayList<>();
         return mFragView;
@@ -165,8 +194,10 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
                         Event.Type type = resId == R.drawable.ic_sleep_white_24dp ? Event.Type.SLEEP :
                                 resId == R.drawable.ic_food_white_24dp ? Event.Type.FEED : Event.Type.WALK;
                         // get title and stuff then set it
-                        mEvents.add(new Event(type, mEventTitle.getText().toString(), mStartTime.getText(), mEndTime.getText(), mNote.getText()));
-
+                        Event event = new Event(type, mEventTitle.getText().toString(), mNote.getText());
+                        event.setStartTime(mStartHourSpinner, mStartMinutesSpinner);
+                        event.setEndTime(mEndHourSpinner, mEndMinutesSpinner);
+                        mEvents.add(event);
                     }
                 })
                 .create();
@@ -200,6 +231,18 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         alertDialog.show();
 
         // TODO: need options for am/pm in custom layout
-        // TODO: use a spinner for times instead of allowing users to type it in (so many possible errors...)
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // TODO: Keep track of what they've chosen, don't know how to get it once dialog is closed
+        if (view.equals(mStartHourSpinner)) {
+            Log.d("Spinner", "Start hour spinner expected and is actual");
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // TODO: Set selection for corresponding spinner to null
     }
 }
