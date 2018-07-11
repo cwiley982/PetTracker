@@ -112,25 +112,6 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
         mFeedFab.setOnClickListener(this);
         mSleepFab.setOnClickListener(this);
 
-        // TODO: this caused the layout to appear on the screen by default...
-        View dialogView = inflater.inflate(R.layout.add_activity_layout, container);
-        mEventTitle = dialogView.findViewById(R.id.eventTitleText);
-        mNote = dialogView.findViewById(R.id.noteText);
-        mStartHourSpinner = dialogView.findViewById(R.id.startTimeHour);
-        mStartMinutesSpinner = dialogView.findViewById(R.id.startTimeMinutes);
-        mEndHourSpinner = dialogView.findViewById(R.id.endTimeHour);
-        mEndMinutesSpinner = dialogView.findViewById(R.id.endTimeMinutes);
-
-        ArrayAdapter<CharSequence> hourAdapter = ArrayAdapter.createFromResource(getContext(), R.array.hours, android.R.layout.simple_spinner_item);
-        hourAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ArrayAdapter<CharSequence> minutesAdapter = ArrayAdapter.createFromResource(getContext(), R.array.minutes, android.R.layout.simple_spinner_item);
-        minutesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        mStartHourSpinner.setAdapter(hourAdapter);
-        mStartMinutesSpinner.setAdapter(minutesAdapter);
-        mEndHourSpinner.setAdapter(hourAdapter);
-        mEndMinutesSpinner.setAdapter(minutesAdapter);
-
         mStartHour = null;
         mStartMinute = null;
         mEndHour = null;
@@ -183,8 +164,26 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void openAddWindow(final int resId) {
+        View v = View.inflate(getContext(), R.layout.add_activity_layout, null);
+        mEventTitle = v.findViewById(R.id.eventTitleText);
+        mNote = v.findViewById(R.id.noteText);
+        mStartHourSpinner = v.findViewById(R.id.startTimeHour);
+        mStartMinutesSpinner = v.findViewById(R.id.startTimeMinutes);
+        mEndHourSpinner = v.findViewById(R.id.endTimeHour);
+        mEndMinutesSpinner = v.findViewById(R.id.endTimeMinutes);
+
+        ArrayAdapter<CharSequence> hourAdapter = ArrayAdapter.createFromResource(getContext(), R.array.hours, R.layout.spinner_item);
+        hourAdapter.setDropDownViewResource(R.layout.dropdown_spinner_item);
+        ArrayAdapter<CharSequence> minutesAdapter = ArrayAdapter.createFromResource(getContext(), R.array.minutes, R.layout.spinner_item);
+        minutesAdapter.setDropDownViewResource(R.layout.dropdown_spinner_item);
+
+        mStartHourSpinner.setAdapter(hourAdapter);
+        mStartMinutesSpinner.setAdapter(minutesAdapter);
+        mEndHourSpinner.setAdapter(hourAdapter);
+        mEndMinutesSpinner.setAdapter(minutesAdapter);
+
         final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setView(R.layout.add_activity_layout)
+                .setView(v)
                 .setCancelable(true)
                 .setNegativeButton("Cancel", null) //just closes the window by default
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
@@ -235,7 +234,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        // TODO: Keep track of what they've chosen, don't know how to get it once dialog is closed
+        // TODO: Keep track of what they've chosen, because I don't know how to get it once dialog is closed
         if (view.equals(mStartHourSpinner)) {
             Log.d("Spinner", "Start hour spinner expected and is actual");
         }

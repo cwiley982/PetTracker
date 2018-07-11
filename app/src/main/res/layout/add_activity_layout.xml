@@ -43,8 +43,9 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@id/eventTitleText"
         android:layout_alignBaseline="@id/startTimeText"
+        android:theme="@style/mySpinnerItemStyle"
         android:ems="10"
-        android:textColor="@color/primaryDarkColor"/>
+        android:entries="@array/minutes"/>
 
     <Spinner
         android:id="@+id/startTimeHour"
@@ -52,8 +53,9 @@
         android:layout_height="wrap_content"
         android:layout_toStartOf="@id/startTimeMinutes"
         android:layout_alignBaseline="@id/startTimeText"
+        android:theme="@style/mySpinnerItemStyle"
         android:ems="10"
-        android:textColor="@color/primaryDarkColor"/>
+        android:entries="@array/hours"/>
 
     <Spinner
         android:id="@+id/endTimeMinutes"
@@ -61,8 +63,9 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@id/eventTitleText"
         android:layout_alignBaseline="@id/endTimeText"
+        android:theme="@style/mySpinnerItemStyle"
         android:ems="10"
-        android:textColor="@color/primaryDarkColor"/>
+        android:entries="@array/minutes"/>
 
     <Spinner
         android:id="@+id/endTimeHour"
@@ -70,8 +73,9 @@
         android:layout_height="wrap_content"
         android:layout_toStartOf="@id/endTimeMinutes"
         android:layout_alignBaseline="@id/endTimeText"
+        android:theme="@style/mySpinnerItemStyle"
         android:ems="10"
-        android:textColor="@color/primaryDarkColor"/>
+        android:entries="@array/hours"/>
 
     <EditText
         android:id="@+id/noteText"
