@@ -11,77 +11,135 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:textColor="@color/primaryDarkColor"
+        android:textColor="@android:color/black"
         android:textSize="25sp"
         android:inputType="textCapWords"
         android:hint="@string/event_name"/>
 
-    <TextView
-        android:id="@+id/startTimeText"
+    <LinearLayout
+        android:id="@+id/startTimeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/eventTitleText"
         android:layout_alignStart="@id/eventTitleText"
-        android:text="@string/start_time"
-        android:textColor="@color/primaryDarkColor"
-        android:textSize="20sp"/>
+        android:layout_alignEnd="@id/eventTitleText"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/endTimeText"
+        <TextView
+            android:id="@+id/startTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start_time"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"/>
+
+        <Spinner
+            android:id="@+id/startTimeHour"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:theme="@style/mySpinnerItemStyle"
+            android:ems="10"
+            android:entries="@array/hours"/>
+
+        <Spinner
+            android:id="@+id/startTimeMinutes"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:theme="@style/mySpinnerItemStyle"
+            android:ems="10"
+            android:entries="@array/minutes"/>
+
+        <RadioGroup
+            android:id="@+id/startAmPmButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/amStartBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="am"
+                android:textSize="17sp"
+                android:buttonTint="@color/secondaryColor"/>
+
+            <RadioButton
+                android:id="@+id/pmStartBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="pm"
+                android:textSize="17sp"
+                android:buttonTint="@color/secondaryColor"/>
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/endTimeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/startTimeLayout"
         android:layout_alignStart="@id/eventTitleText"
-        android:layout_below="@id/startTimeText"
+        android:layout_alignEnd="@id/eventTitleText"
         android:layout_marginTop="24dp"
-        android:text="@string/end_time"
-        android:textColor="@color/primaryDarkColor"
-        android:textSize="20sp"/>
+        android:orientation="horizontal">
 
-    <Spinner
-        android:id="@+id/startTimeMinutes"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/eventTitleText"
-        android:layout_alignBaseline="@id/startTimeText"
-        android:theme="@style/mySpinnerItemStyle"
-        android:ems="10"
-        android:entries="@array/minutes"/>
+        <TextView
+            android:id="@+id/endTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/end_time"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"/>
 
-    <Spinner
-        android:id="@+id/startTimeHour"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@id/startTimeMinutes"
-        android:layout_alignBaseline="@id/startTimeText"
-        android:theme="@style/mySpinnerItemStyle"
-        android:ems="10"
-        android:entries="@array/hours"/>
+        <Spinner
+            android:id="@+id/endTimeHour"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:theme="@style/mySpinnerItemStyle"
+            android:ems="10"
+            android:entries="@array/hours"/>
 
-    <Spinner
-        android:id="@+id/endTimeMinutes"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/eventTitleText"
-        android:layout_alignBaseline="@id/endTimeText"
-        android:theme="@style/mySpinnerItemStyle"
-        android:ems="10"
-        android:entries="@array/minutes"/>
+        <Spinner
+            android:id="@+id/endTimeMinutes"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:theme="@style/mySpinnerItemStyle"
+            android:ems="10"
+            android:entries="@array/minutes"/>
 
-    <Spinner
-        android:id="@+id/endTimeHour"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@id/endTimeMinutes"
-        android:layout_alignBaseline="@id/endTimeText"
-        android:theme="@style/mySpinnerItemStyle"
-        android:ems="10"
-        android:entries="@array/hours"/>
+        <RadioGroup
+            android:id="@+id/endAmPmButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/amEndBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="am"
+                android:textSize="17sp"
+                android:buttonTint="@color/secondaryColor" />
+
+            <RadioButton
+                android:id="@+id/pmEndBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="pm"
+                android:textSize="17sp"
+                android:buttonTint="@color/secondaryColor"/>
+        </RadioGroup>
+    </LinearLayout>
 
     <EditText
         android:id="@+id/noteText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/endTimeText"
+        android:layout_below="@id/endTimeLayout"
         android:layout_alignStart="@id/eventTitleText"
         android:layout_alignEnd="@id/eventTitleText"
         android:layout_marginTop="24dp"
