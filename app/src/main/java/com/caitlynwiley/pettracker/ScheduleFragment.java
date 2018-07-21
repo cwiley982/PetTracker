@@ -45,11 +45,6 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
     private Spinner mEndMinutesSpinner;
     private EditText mNote;
 
-    private String mStartHour;
-    private String mStartMinute;
-    private String mEndHour;
-    private String mEndMinute;
-
     private boolean mIsFabOpen;
 
     private List<Event> mEvents;
@@ -111,11 +106,6 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
         mWalkFab.setOnClickListener(this);
         mFeedFab.setOnClickListener(this);
         mSleepFab.setOnClickListener(this);
-
-        mStartHour = null;
-        mStartMinute = null;
-        mEndHour = null;
-        mEndMinute = null;
 
         mEvents = new ArrayList<>();
         return mFragView;
