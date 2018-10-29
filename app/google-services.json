@@ -1,1 +1,42 @@
-{"web":{"client_id":"435874035873-sj5v4mt9ne0i50l42pged8tt87c1oeib.apps.googleusercontent.com","project_id":"pet-tracker-1530373031875","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"cpv14O_nwIUnHQlUhhU3QO7r"}}
+{
+  "project_info": {
+    "project_number": "435874035873",
+    "firebase_url": "https://pet-tracker-1530373031875.firebaseio.com",
+    "project_id": "pet-tracker-1530373031875",
+    "storage_bucket": "pet-tracker-1530373031875.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435874035873:android:4fc73a148da4717f",
+        "android_client_info": {
+          "package_name": "com.caitlynwiley.pettracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "435874035873-2ukbo4dra63vodpn3imha1t7v1b0q1s6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzSp6RdrnlhhGYNho3FOHB2pT-noDJFDI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
