@@ -2,6 +2,8 @@
     <string name="app_name">Pet Tracker</string>
     <string name="server_client_id">435874035873-sj5v4mt9ne0i50l42pged8tt87c1oeib.apps.googleusercontent.com</string>
 
+    <string name="okay">Okay</string>
+
     <!-- Fragment names -->
     <string name="calendar">Calendar</string>
     <string name="shopping_list">Shopping List</string>
