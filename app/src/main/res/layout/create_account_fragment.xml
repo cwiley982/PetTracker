@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/username_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="Username"
+        android:textColor="@color/primaryDarkColor"/>
+
+    <EditText
+        android:id="@+id/username_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/username_label"/>
+
+    <TextView
+        android:id="@+id/password_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/username_field"
+        android:padding="4dp"
+        android:text="Enter your password"
+        android:textColor="@color/primaryDarkColor"/>
+
+    <EditText
+        android:id="@+id/password_field_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password_label"/>
+
+    <TextView
+        android:id="@+id/password_again_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password_field_one"
+        android:padding="4dp"
+        android:text="Enter your password again"
+        android:textColor="@color/primaryDarkColor"/>
+
+    <EditText
+        android:id="@+id/password_field_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password_again_label"/>
+
+    <Button
+        android:id="@+id/create_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password_field_two"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Create"
+        android:textColor="@android:color/black"/>
+
+</RelativeLayout>

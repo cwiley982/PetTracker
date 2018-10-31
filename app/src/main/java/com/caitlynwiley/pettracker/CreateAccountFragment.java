@@ -1,0 +1,35 @@
+package com.caitlynwiley.pettracker;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+public class CreateAccountFragment extends Fragment {
+
+    private EditText mUsername;
+    private EditText mPassword;
+    private EditText mPasswordRepeated;
+    private Button mCreateBtn;
+
+    private View mFragView;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        mFragView = inflater.inflate(R.layout.create_account_fragment, container, false);
+
+        mUsername = mFragView.findViewById(R.id.username_field);
+        mPassword = mFragView.findViewById(R.id.password_field_one);
+        mPasswordRepeated = mFragView.findViewById(R.id.password_field_two);
+        mCreateBtn = mFragView.findViewById(R.id.create_account_button);
+
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+}
