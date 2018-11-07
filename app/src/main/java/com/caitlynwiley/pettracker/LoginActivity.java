@@ -47,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference();
     private Map<String, Account> accounts;
-    private String pass;
     private AlertDialog alertDiag;
 
     /**
@@ -56,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private TextView mUsernameView;
+    private EditText mUsernameView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -308,7 +307,9 @@ public class LoginActivity extends AppCompatActivity {
             for (String id : accounts.keySet()) {
                 if (id.equals(mUsername)) {
                     // Account exists, return true if the password matches.
-                    return mPassword.equals(((accounts.get(id))).getPassword());
+                    // FIXME: java.lang.ClassCastException: java.util.HashMap cannot be cast to com.caitlynwiley.pettracker.Account
+                    Account a = accounts.get(id);
+                    return a != null && mPassword.equals(a.getPassword());
                 }
             }
 
@@ -336,6 +337,4 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
         }
     }
-
-
 }

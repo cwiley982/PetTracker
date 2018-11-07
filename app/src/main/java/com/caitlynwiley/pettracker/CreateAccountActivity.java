@@ -50,7 +50,6 @@ public class CreateAccountActivity extends AppCompatActivity {
                     found = false;
                 } else {
                     // search through usernames to see if that one is available
-                    // TODO
                     for (String id : accounts.keySet()) {
                         if (id.equals(newId)) {
                             found = true;
