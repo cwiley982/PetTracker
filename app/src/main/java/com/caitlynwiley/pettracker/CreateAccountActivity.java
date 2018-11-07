@@ -2,14 +2,8 @@ package com.caitlynwiley.pettracker;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -19,6 +13,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class CreateAccountActivity extends AppCompatActivity {
 
     private EditText mUsername;
@@ -27,8 +25,8 @@ public class CreateAccountActivity extends AppCompatActivity {
     private Button mCreateBtn;
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference ref = database.getReference("pettracker");
-    private String[] userIds;
+    private DatabaseReference ref = database.getReference();
+    private Map<String, Account> accounts;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,19 +42,33 @@ public class CreateAccountActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean found = false;
                 String newId = mUsername.getText().toString();
-                for (String id : userIds) {
-                    if (id.equalsIgnoreCase(newId)) {
-                        found = true;
-                        break;
+                if (accounts == null) {
+                    // no accounts to check against, just create one
+                    Account a = new Account(newId, null, mPassword.getText().toString());
+                    ref.child("accounts").child(newId).setValue(a);
+
+                    found = false;
+                } else {
+                    // search through usernames to see if that one is available
+                    // TODO
+                    for (String id : accounts.keySet()) {
+                        if (id.equals(newId)) {
+                            found = true;
+                            break;
+                        }
                     }
                 }
-                if (!found) {
+
+                if (!found) { // username is available
                     // check passwords
                     if (!mPassword.getText().toString().equals(mPasswordRepeated.getText().toString())) {
                         return;
                     }
+
                     // create account
-                    ref.child("accounts/" + newId).setValue(new Account(newId, null, mPassword.getText().toString()));
+                    Account a = new Account(newId, null, mPassword.getText().toString());
+                    ref.child("accounts").child(newId).setValue(a);
+
                     Intent i = new Intent(CreateAccountActivity.this, MainActivity.class);
                     i.putExtra("USERNAME", newId);
                     startActivity(i);
@@ -64,11 +76,11 @@ public class CreateAccountActivity extends AppCompatActivity {
             }
         });
 
-        // Attach a listener to read the data at our posts reference
-        ref.child("userIds").addValueEventListener(new ValueEventListener() {
+        // Attach a listener to read the data
+        ref.child("accounts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                userIds = dataSnapshot.getValue(String[].class);
+                accounts = (Map) dataSnapshot.getValue();
             }
 
             @Override
@@ -77,5 +89,4 @@ public class CreateAccountActivity extends AppCompatActivity {
             }
         });
     }
-
 }

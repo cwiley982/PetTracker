@@ -18,6 +18,10 @@
             android:id="@+id/shopping_list_item"
             android:title="@string/shopping_list"
             android:icon="@drawable/ic_list" />
+        <item
+            android:id="@+id/tracker_item"
+            android:title="Tracker"
+            android:icon="@drawable/ic_dog_walk"/>
     </group>
 
     <group android:checkableBehavior="single">

@@ -33,7 +33,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -41,11 +43,10 @@ import java.util.concurrent.ExecutionException;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private static final int RC_SIGN_IN = 001;
+    private static final int RC_SIGN_IN = 1;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference ref = database.getReference("pettracker");
-    private String[] userIds;
-    private List<Account> accounts;
+    private DatabaseReference ref = database.getReference();
+    private Map<String, Account> accounts;
     private String pass;
     private AlertDialog alertDiag;
 
@@ -67,23 +68,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Attach a listener to read the data at our posts reference
-        ref.child("userIds").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                userIds = dataSnapshot.getValue(String[].class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
-
         ref.child("accounts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                accounts = (List<Account>) dataSnapshot.getValue(List.class);
+                accounts = (Map) dataSnapshot.getValue();
             }
 
             @Override
@@ -194,9 +182,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         // Start main activity and pass in user's name, email, and photo url to display in nav header
         Intent startMain = new Intent(LoginActivity.this, MainActivity.class);
-        startMain.putExtra("NAME", account.getDisplayName());
-        startMain.putExtra("EMAIL", account.getEmail());
-        startMain.putExtra("PICTURE", account.getPhotoUrl().toString());
         startActivity(startMain);
     }
 
@@ -215,7 +200,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mUsernameView.getText().toString();
+        String username = mUsernameView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -232,12 +217,12 @@ public class LoginActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        // Check for a valid username address.
+        if (TextUtils.isEmpty(username)) {
             mUsernameView.setError(getString(R.string.error_field_required));
             focusView = mUsernameView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } else if (!isUsernameValid(username)) {
             mUsernameView.setError(getString(R.string.error_invalid_email));
             focusView = mUsernameView;
             cancel = true;
@@ -251,7 +236,7 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(username, password);
             try {
                 if (!mAuthTask.execute((Void) null).get()) {
                     //Toast.makeText(getApplicationContext(), "Login failed.", Toast.LENGTH_SHORT).show();
@@ -265,8 +250,8 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isEmailValid(String email) {
-        return email.contains("@");
+    private boolean isUsernameValid(String username) {
+        return username.length() >= 6;
     }
 
     private boolean isPasswordValid(String password) {
@@ -300,48 +285,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Represents an asynhronous login/registration task used to authenticate
+     * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
+        private final String mUsername;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
+        UserLoginTask(String username, String password) {
+            mUsername = username;
             mPassword = password;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+            if (accounts == null) {
+                Log.d("LOGIN", "users was null");
                 return false;
             }
 
-            if (userIds == null) {
-                return false;
-            }
-
-            for (String id : userIds) {
-                if (id.equals(mEmail)) {
-                    pass = "";
+            for (String id : accounts.keySet()) {
+                if (id.equals(mUsername)) {
                     // Account exists, return true if the password matches.
-                    ref.child("accounts/" + id + "/password").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            pass = dataSnapshot.getValue(String.class);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                    return pass.equals(mPassword);
+                    return mPassword.equals(((accounts.get(id))).getPassword());
                 }
             }
 
@@ -355,7 +322,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if (success) {
                 Intent main = new Intent(LoginActivity.this, MainActivity.class);
-                main.putExtra("USERNAME", mEmail);
+                main.putExtra("USERNAME", mUsername);
                 startActivity(main);
                 finish();
             } else {

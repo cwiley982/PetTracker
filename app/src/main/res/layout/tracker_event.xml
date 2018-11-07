@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="24dp"
+    android:layout_marginVertical="8dp">
+
+    <ImageView
+        android:id="@+id/event_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        tools:src="@drawable/ic_dog_walk_64dp"
+        android:tint="@color/primaryDarkColor"/>
+
+    <TextView
+        android:id="@+id/time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        tools:text="6:37 am"
+        android:textColor="@color/secondaryColor"
+        android:textSize="22sp"/>
+
+</RelativeLayout>

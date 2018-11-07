@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("name");
+        DatabaseReference ref = database.getReference();
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mFrameLayout = findViewById(R.id.frame_layout);
@@ -82,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.schedule_item:
                             newFrag = new ScheduleFragment();
                             break;
+                        case R.id.tracker_item:
+                            newFrag = new TrackerFragment();
+                            break;
                         default:
                             return false;
                     }
@@ -92,21 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        // set up header
-        /*Intent intent = getIntent();
-            ((TextView) mNavHeader.findViewById(R.id.header_name_text_view)).setText(intent.getStringExtra("NAME"));
-            ((TextView) mNavHeader.findViewById(R.id.header_email_text_view)).setText(intent.getStringExtra("EMAIL"));
-            String imageUrl = intent.getStringExtra("PICTURE");
-            DownloadTask task = new DownloadTask();
-            try {
-                Bitmap bitmap = task.execute(imageUrl).get();
-                ((ImageView) mNavHeader.findViewById(R.id.header_image_view)).setImageBitmap(bitmap);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }*/
     }
 
     @Override
@@ -118,24 +106,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private class DownloadTask extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            try {
-                URL url = new URL(urls[0]);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                Bitmap bitmap = (new BitmapFactory()).decodeStream(connection.getInputStream());
-                return bitmap;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
     }
 }
