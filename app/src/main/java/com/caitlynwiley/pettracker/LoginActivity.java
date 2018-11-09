@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference();
-    private Map<String, Account> accounts;
+    private ArrayList<Account> accounts;
     private AlertDialog alertDiag;
 
     /**
@@ -67,10 +68,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        accounts = new ArrayList<>();
         ref.child("accounts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                accounts = (Map) dataSnapshot.getValue();
+                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
+                for (DataSnapshot d : data) {
+                    accounts.add(d.getValue(Account.class));
+                }
             }
 
             @Override
@@ -304,12 +309,10 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
 
-            for (String id : accounts.keySet()) {
-                if (id.equals(mUsername)) {
+            for (Account a : accounts) {
+                if (a.getUsername().equals(mUsername)) {
                     // Account exists, return true if the password matches.
-                    // FIXME: java.lang.ClassCastException: java.util.HashMap cannot be cast to com.caitlynwiley.pettracker.Account
-                    Account a = accounts.get(id);
-                    return a != null && mPassword.equals(a.getPassword());
+                    return mPassword.equals(a.getPassword());
                 }
             }
 

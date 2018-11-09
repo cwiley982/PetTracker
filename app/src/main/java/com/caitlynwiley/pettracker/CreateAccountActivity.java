@@ -13,7 +13,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,13 +28,14 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference();
-    private Map<String, Account> accounts;
+    private ArrayList<Account> accounts;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_account);
 
+        accounts = new ArrayList<>();
         mUsername = findViewById(R.id.username_field);
         mPassword = findViewById(R.id.password_field_one);
         mPasswordRepeated = findViewById(R.id.password_field_two);
@@ -50,8 +53,8 @@ public class CreateAccountActivity extends AppCompatActivity {
                     found = false;
                 } else {
                     // search through usernames to see if that one is available
-                    for (String id : accounts.keySet()) {
-                        if (id.equals(newId)) {
+                    for (Account a : accounts) {
+                        if (a.getUsername().equals(newId)) {
                             found = true;
                             break;
                         }
@@ -66,7 +69,7 @@ public class CreateAccountActivity extends AppCompatActivity {
 
                     // create account
                     Account a = new Account(newId, null, mPassword.getText().toString());
-                    ref.child("accounts").child(newId).setValue(a);
+                    ref.child("accounts").push().setValue(a);
 
                     Intent i = new Intent(CreateAccountActivity.this, MainActivity.class);
                     i.putExtra("USERNAME", newId);
@@ -79,7 +82,10 @@ public class CreateAccountActivity extends AppCompatActivity {
         ref.child("accounts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                accounts = (Map) dataSnapshot.getValue();
+                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
+                for (DataSnapshot d : data) {
+                    accounts.add(d.getValue(Account.class));
+                }
             }
 
             @Override
