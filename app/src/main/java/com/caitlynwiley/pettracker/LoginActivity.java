@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
@@ -27,6 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseReference ref = database.getReference();
     private ArrayList<Account> accounts;
     private AlertDialog alertDiag;
+    private Map<String, Account> accountMap;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -72,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         ref.child("accounts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                accountMap = (Map) dataSnapshot.getValue();
                 Iterable<DataSnapshot> data = dataSnapshot.getChildren();
                 for (DataSnapshot d : data) {
                     accounts.add(d.getValue(Account.class));

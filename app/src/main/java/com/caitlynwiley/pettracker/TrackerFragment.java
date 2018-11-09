@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -41,8 +42,9 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private ListView mListView;
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    private Map<String, Event> events;
+    private ArrayList<Event> events;
     private String mUsername;
+    private String key;
 
     private boolean mIsFabOpen;
 
@@ -64,6 +66,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onAnimationEnd(Animation animation) {
                 mPoopFab.show();
+                mFeedFab.show();
+                mLetOutFab.show();
             }
 
             @Override
@@ -82,6 +86,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onAnimationEnd(Animation animation) {
                 mPoopFab.hide();
+                mLetOutFab.hide();
+                mFeedFab.hide();
             }
 
             @Override
@@ -91,10 +97,10 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         });
 
         mIsFabOpen = false;
-        mTrackerFab = mFragView.findViewById(R.id.schedule_fab);
-        mPoopFab = mFragView.findViewById(R.id.add_walk_fab);
-        mFeedFab = mFragView.findViewById(R.id.add_feed_fab);
-        mLetOutFab = mFragView.findViewById(R.id.add_sleep_fab);
+        mTrackerFab = mFragView.findViewById(R.id.tracker_fab);
+        mPoopFab = mFragView.findViewById(R.id.track_poop_fab);
+        mFeedFab = mFragView.findViewById(R.id.track_fed_fab);
+        mLetOutFab = mFragView.findViewById(R.id.track_let_out_fab);
         mTrackerFab.setOnClickListener(this);
         mPoopFab.setOnClickListener(this);
         mFeedFab.setOnClickListener(this);
@@ -104,11 +110,15 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         final EventAdapter adapter = new EventAdapter();
         mListView.setAdapter(adapter);
         mUsername = getActivity().getIntent().getStringExtra("USERNAME");
-        mDatabase.child("users").child(mUsername).child("events").addValueEventListener(new ValueEventListener() {
+
+        // They path doesn't include username anymore, it's a random key
+        mDatabase.child("accounts").child(mUsername).child("events").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                events = (Map) dataSnapshot.getValue();
-                adapter.notifyDataSetChanged();
+                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
+                for (DataSnapshot d : data) {
+                    events.add(d.getValue(Event.class));
+                }
             }
 
             @Override
@@ -147,7 +157,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private void addEvent(TrackerEvent.EventType type) {
         TrackerEvent e = new TrackerEvent(Calendar.getInstance(), type);
-        mDatabase.child("users").child(mUsername).child("events").push().setValue(e);
+        mDatabase.child("accounts").child(mUsername).child("events").push().setValue(e);
     }
 
     private void openFab() {
@@ -173,12 +183,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public int getCount() {
-            return events.keySet().size();
+            return events == null ? 0 : events.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return events.get((String) events.keySet().toArray()[i]);
+            return events == null ? null : events.get(i);
         }
 
         @Override
