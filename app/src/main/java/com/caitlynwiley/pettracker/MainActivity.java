@@ -19,6 +19,16 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
+    // TODO: add logout option
+    /*
+    AuthUI.getInstance()
+        .signOut(this)
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            public void onComplete(@NonNull Task<Void> task) {
+                // ...
+            }
+        });
+     */
     DrawerLayout mDrawerLayout;
     FrameLayout mFrameLayout;
     FragmentManager mFragmentManager;

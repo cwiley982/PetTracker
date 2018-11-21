@@ -2,95 +2,69 @@ package com.caitlynwiley.pettracker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class CreateAccountActivity extends AppCompatActivity {
 
-    private EditText mUsername;
+    private EditText mEmail;
     private EditText mPassword;
     private EditText mPasswordRepeated;
-    private Button mCreateBtn;
 
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference ref = database.getReference();
-    private ArrayList<Account> accounts;
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_account);
 
-        accounts = new ArrayList<>();
-        mUsername = findViewById(R.id.username_field);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseDatabase.getInstance();
+
+        mEmail = findViewById(R.id.username_field);
         mPassword = findViewById(R.id.password_field_one);
         mPasswordRepeated = findViewById(R.id.password_field_two);
-        mCreateBtn = findViewById(R.id.create_btn);
+        Button mCreateBtn = findViewById(R.id.create_btn);
         mCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean found = false;
-                String newId = mUsername.getText().toString();
-                if (accounts == null) {
-                    // no accounts to check against, just create one
-                    Account a = new Account(newId, null, mPassword.getText().toString());
-                    ref.child("accounts").child(newId).setValue(a);
-
-                    found = false;
-                } else {
-                    // search through usernames to see if that one is available
-                    for (Account a : accounts) {
-                        if (a.getUsername().equals(newId)) {
-                            found = true;
-                            break;
-                        }
-                    }
+                final String email = mEmail.getText().toString();
+                final String password = mPassword.getText().toString();
+                final String passwordRepeat = mPasswordRepeated.getText().toString();
+                if (TextUtils.isEmpty(password) || TextUtils.isEmpty(passwordRepeat) ||
+                        !password.equals(passwordRepeat) || TextUtils.isEmpty(email)) {
+                    return;
                 }
 
-                if (!found) { // username is available
-                    // check passwords
-                    if (!mPassword.getText().toString().equals(mPasswordRepeated.getText().toString())) {
-                        return;
-                    }
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(CreateAccountActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    db.getReference("accounts").child(mAuth.getUid()).setValue(email);
+                                    startActivity(new Intent(CreateAccountActivity.this, MainActivity.class));
+                                } else {
+                                    FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                                    Toast.makeText(CreateAccountActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
 
-                    // create account
-                    Account a = new Account(newId, null, mPassword.getText().toString());
-                    ref.child("accounts").push().setValue(a);
-
-                    Intent i = new Intent(CreateAccountActivity.this, MainActivity.class);
-                    i.putExtra("USERNAME", newId);
-                    startActivity(i);
-                }
-            }
-        });
-
-        // Attach a listener to read the data
-        ref.child("accounts").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
-                for (DataSnapshot d : data) {
-                    accounts.add(d.getValue(Account.class));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
+                Intent i = new Intent(CreateAccountActivity.this, MainActivity.class);
+                startActivity(i);
             }
         });
     }

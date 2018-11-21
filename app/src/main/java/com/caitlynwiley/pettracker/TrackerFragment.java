@@ -109,8 +109,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mListView = mFragView.findViewById(R.id.tracker_items);
         final EventAdapter adapter = new EventAdapter();
         mListView.setAdapter(adapter);
-        mUsername = getActivity().getIntent().getStringExtra("USERNAME");
 
+        /*
         // They path doesn't include username anymore, it's a random key
         mDatabase.child("accounts").child(mUsername).child("events").addValueEventListener(new ValueEventListener() {
             @Override
@@ -126,7 +126,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 Log.e("TrackerFrag", "Error loading events");
             }
         });
-
+        */
 
         return mFragView;
     }
