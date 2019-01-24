@@ -54,7 +54,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                 String email = mEmail.getText().toString();
                 String password = mPassword.getText().toString();
                 if (password.equals(mPasswordRepeated.getText().toString())) {
-                    mAuth.createUserWithEmailAndPassword(email, password)
+                    mAuth.createUserWithEmailAndPassword(email, password);/*
                             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -71,7 +71,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                                         // go back to login activity
                                     }
                                 }
-                            });
+                            });*/
                 } else {
                     //passwords don't match, show toast
                     Toast.makeText(CreateAccountActivity.this, "Passwords don't match. Try again.", Toast.LENGTH_SHORT).show();
