@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/email_field"
+        android:inputType="textPassword"
         android:hint="@string/prompt_password"/>
 
     <Button
