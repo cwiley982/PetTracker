@@ -51,30 +51,15 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, EmailLoginActivity.class));
-            }
-        });
+        mEmailSignInButton.setOnClickListener(this);
 
         TextView mCreateAccountButton = findViewById(R.id.create_account_button);
-        mCreateAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
-            }
-        });
+        mCreateAccountButton.setOnClickListener(this);
 
         // Set the dimensions of the sign-in button.
-        SignInButton signInButton = findViewById(R.id.sign_in_button);
+        SignInButton signInButton = findViewById(R.id.google_sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleSignIn();
-            }
-        });
+        signInButton.setOnClickListener(this);
     }
 
     @Override
@@ -105,6 +90,17 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.email_sign_in_button:
+                // switch to that activity
+                startActivity(new Intent(LoginActivity.this, EmailLoginActivity.class));
+                // TODO: make this a fragment switch
+                break;
+            case R.id.google_sign_in_button:
+                googleSignIn();
+                break;
+            case R.id.create_account_button:
+                startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
+                // TODO: make this a fragment switch
+                break;
         }
     }
 }
