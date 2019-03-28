@@ -1,4 +1,4 @@
-{
+ {
   "project_info": {
     "project_number": "435874035873",
     "firebase_url": "https://pet-tracker-1530373031875.firebaseio.com",
@@ -20,6 +20,22 @@
           "android_info": {
             "package_name": "com.caitlynwiley.pettracker",
             "certificate_hash": "dbdb55d9db421e92e4402c3a5639d29675a6f8a3"
+          }
+        },
+        {
+          "client_id": "435874035873-3annhkdt06j0pkbl0lsbqim57qa61apr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.caitlynwiley.pettracker",
+            "certificate_hash": "e1333c96ec186d1075a206d0bc84b57605a7de2f"
+          }
+        },
+        {
+          "client_id": "435874035873-j5d4uklrvqjgpksuu1ocjlk1kd3acaju.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.caitlynwiley.pettracker",
+            "certificate_hash": "466e13707d2a7ef904bfe7edc709772c2e7f7319"
           }
         },
         {
