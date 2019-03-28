@@ -5,11 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -65,9 +65,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
     private void updateUI(FirebaseUser user, String errorMsg) {
         if (user == null) {
-            // show error? maybe do nothing
-            Log.d("Sign in", "account was null in updateUI()");
-            Log.d("error", errorMsg);
+            Toast.makeText(getApplicationContext(), "Error signing in. Error message: " + errorMsg, Toast.LENGTH_SHORT).show();
             return;
         }
         // Start main activity
