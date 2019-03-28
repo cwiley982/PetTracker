@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -17,46 +16,42 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements OnClickListener {
 
     private static final int RC_SIGN_IN = 1;
 
-    // UI references.
-    private EditText mUsernameView;
-    private EditText mPasswordView;
-
     private FirebaseAuth mAuth;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference ref = database.getReference();
+
+    private Button mEmailSignInButton;
+    private Button mCreateAccountButton;
+    private EditText mEmailField;
+    private EditText mPasswordField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // Set up the login form.
-        mUsernameView = findViewById(R.id.username);
-        mPasswordView = findViewById(R.id.password);
+        mEmailField = findViewById(R.id.email_field);
+        mPasswordField = findViewById(R.id.password_field);
 
-        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton.setOnClickListener(this);
 
-        Button mCreateAccountButton = findViewById(R.id.create_account_button);
-        mCreateAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
-            }
-        });
+        mCreateAccountButton = findViewById(R.id.create_account_button);
+        mCreateAccountButton.setOnClickListener(this);
     }
 
     @Override
@@ -67,41 +62,21 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Attempts to sign in to the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    private void attemptLogin() {
-        // Reset errors.
-        mUsernameView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
-        String email = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
-        boolean cancel = false;
-
-        // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.error_field_required));
-            cancel = true;
-        } else if (!isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            cancel = true;
+    private void updateUI(FirebaseUser user, String errorMsg) {
+        if (user == null) {
+            Toast.makeText(getApplicationContext(), "Error signing in. Error message: " + errorMsg, Toast.LENGTH_SHORT).show();
+            return;
         }
+        // Start main activity
+        Intent startMain = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(startMain);
+    }
 
-        // Check for a valid username address.
-        if (TextUtils.isEmpty(email)) {
-            mUsernameView.setError(getString(R.string.error_field_required));
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mUsernameView.setError(getString(R.string.error_invalid_email));
-            cancel = true;
-        }
+    private void signIn() {
+        // validate form
 
-        if (cancel) return;
+        String email = mEmailField.getText().toString();
+        String password = mPasswordField.getText().toString();
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -117,12 +92,41 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean isEmailValid(String email) {
-        return email.length() >= 6;
+    private void signUp() {
+        // validate
+
+        String email = mEmailField.getText().toString();
+        String password = mPasswordField.getText().toString();
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            onAuthSuccess(task.getResult().getUser());
+                        } else {
+                            updateUI(null, task.getException().getMessage());
+                        }
+                    }
+                });
     }
 
-    private boolean isPasswordValid(String password) {
-        // Check if it meets google password requirements
-        return password.length() > 4;
+    private void onAuthSuccess(FirebaseUser u) {
+        Account user = new Account(u.getUid(), u.getEmail());
+        ref.child("users").child(u.getUid()).setValue(user);
+
+        updateUI(u, "");
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.email_sign_in_button:
+                signIn();
+                break;
+            case R.id.create_account_button:
+                signUp();
+                break;
+        }
     }
 }
