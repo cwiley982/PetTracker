@@ -1,5 +1,6 @@
 package com.caitlynwiley.pettracker;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +48,10 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private ArrayList<Event> events;
     private String mUsername;
     private String key;
+    private FirebaseUser mUser;
+    private FirebaseAuth mAuth;
+
+    private Activity parentActivity;
 
     private boolean mIsFabOpen;
 
@@ -53,6 +60,10 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         mFragView = inflater.inflate(R.layout.tracker_fragment, container, false);
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        mUsername = mUser.getUid();
+        parentActivity = getActivity();
         mRotateForward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_forward);
         mRotateBackward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_backward);
 
@@ -97,10 +108,13 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         });
 
         mIsFabOpen = false;
+        // get views
         mTrackerFab = mFragView.findViewById(R.id.tracker_fab);
         mPoopFab = mFragView.findViewById(R.id.track_poop_fab);
         mFeedFab = mFragView.findViewById(R.id.track_fed_fab);
         mLetOutFab = mFragView.findViewById(R.id.track_let_out_fab);
+
+        // set on click listeners
         mTrackerFab.setOnClickListener(this);
         mPoopFab.setOnClickListener(this);
         mFeedFab.setOnClickListener(this);
@@ -111,7 +125,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mListView.setAdapter(adapter);
 
         /*
-        // They path doesn't include username anymore, it's a random key
+        // The path doesn't include username anymore, it's a random key
         mDatabase.child("accounts").child(mUsername).child("events").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -157,7 +171,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private void addEvent(TrackerEvent.EventType type) {
         TrackerEvent e = new TrackerEvent(Calendar.getInstance(), type);
-        mDatabase.child("accounts").child(mUsername).child("events").push().setValue(e);
+        mDatabase.child("pets").child(((MainActivity) parentActivity).getPetID()).child("events").push().setValue(e);
     }
 
     private void openFab() {

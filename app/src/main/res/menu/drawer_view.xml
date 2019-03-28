@@ -22,6 +22,10 @@
             android:id="@+id/tracker_item"
             android:title="Tracker"
             android:icon="@drawable/ic_dog_walk"/>
+        <item
+            android:id="@+id/manage_pets_item"
+            android:title="Manage Pets"
+            android:icon="@drawable/ic_manage" />
     </group>
 
     <group android:checkableBehavior="single">

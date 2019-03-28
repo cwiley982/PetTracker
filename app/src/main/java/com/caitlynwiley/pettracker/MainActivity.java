@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     View mNavHeader;
     FirebaseDatabase database;
 
+    private String petID = "0";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.tracker_item:
                             newFrag = new TrackerFragment();
                             break;
+                        case R.id.manage_pets_item:
+                            newFrag = new ManagePetsFragment();
+                            break;
                         default:
                             return false;
                     }
@@ -108,5 +113,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public String getPetID() {
+        return petID;
     }
 }
