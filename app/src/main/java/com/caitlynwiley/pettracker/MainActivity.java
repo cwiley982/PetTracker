@@ -14,8 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,13 +34,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
      */
-    DrawerLayout mDrawerLayout;
-    FrameLayout mFrameLayout;
-    FragmentManager mFragmentManager;
+    private DrawerLayout mDrawerLayout;
+    private FrameLayout mFrameLayout;
+    private FragmentManager mFragmentManager;
 
-    NavigationView mNavView;
-    View mNavHeader;
-    FirebaseDatabase database;
+    private NavigationView mNavView;
+    private View mNavHeader;
+    private FirebaseDatabase database;
+    private FirebaseUser mUser;
+    private FirebaseAuth mAuth;
+
+    private Account user;
 
     private String petID = "0";
 
@@ -45,6 +54,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+
+        ref.child("users").child(mUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(Account.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mFrameLayout = findViewById(R.id.frame_layout);

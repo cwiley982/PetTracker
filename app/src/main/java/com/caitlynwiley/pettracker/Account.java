@@ -8,6 +8,10 @@ public class Account {
     private ArrayList<String> pets;
     private String email;
 
+    public Account() {
+
+    }
+
     public Account(String userId, String email) {
         pets = new ArrayList<>();
         setEmail(email);

@@ -1,30 +1,42 @@
 <db>
-    <userIds>
-        <key>
-            <value/>
-        </key>
-        <key>
-            <value/>
-        </key>
-        <key>
-            <value/>
-        </key>
-    </userIds>
-    <accounts>
-        <key>
-            <tracker>
-                <day>
-                    <event>
-                        <time/>
-                        <type/>
-                    </event>
-                    <event/>
-                </day>
-                <day>
-                    <event/>
-                    <event/>
-                </day>
-            </tracker>
+    <pets>
+        <id>
+            <pet>
+                <name/>
+                <species/>
+                <breed/>
+                <weight/>
+                <gender/>
+                <age/>
+                <!-- possibly previous health records -->
+                <tracker>
+                    <day>
+                        <event>
+                            <time/>
+                            <type/>
+                        </event>
+                        <event/>
+                    </day>
+                    <day>
+                        <event/>
+                        <event/>
+                    </day>
+                </tracker>
+            </pet>
+        </id>
+        <id>
+            <pet/>
+        </id>
+    </pets>
+    <users>
+        <id>
+            <account>
+                <pets>
+                    <id/>
+                    <id/>
+                </pets>
+                <email/>
+            </account>
             <calendar>
                 <event>
                     <date/>
@@ -33,17 +45,6 @@
                     <petId/>
                 </event>
             </calendar>
-            <pets>
-                <pet>
-                    <name/>
-                    <species/>
-                    <breed/>
-                    <weight/>
-                    <age/>
-                    <!-- possibly previous health records -->
-                </pet>
-                <pet/>
-            </pets>
-        </key>
-    </accounts>
+        </id>
+    </users>
 </db>
