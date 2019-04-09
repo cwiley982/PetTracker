@@ -1,20 +1,16 @@
 package com.caitlynwiley.pettracker;
 
 import java.util.Calendar;
-
-import static com.caitlynwiley.pettracker.Pet.Gender.FEMALE;
-import static com.caitlynwiley.pettracker.Pet.Gender.MALE;
-import static com.caitlynwiley.pettracker.Pet.Species.CAT;
-import static com.caitlynwiley.pettracker.Pet.Species.DOG;
+import java.util.Locale;
 
 public class Pet {
 
-    private Species species;
+    private String species;
     private String breed;
     private String name;
-    private Age age;
-    private Calendar birthday;
-    private Gender gender;
+    private double age;
+    private String birthday;
+    private String gender;
     private String id;
 
     public Pet() {
@@ -33,16 +29,16 @@ public class Pet {
     }
 
     public String getSpecies() {
-        return species.name();
+        return species;
     }
 
     private void setSpecies(int species) {
         switch (species) {
             case R.id.dog_btn:
-                this.species = DOG;
+                this.species = "dog";
                 break;
             case R.id.cat_btn:
-                this.species = CAT;
+                this.species = "cat";
                 break;
         }
     }
@@ -63,55 +59,29 @@ public class Pet {
         this.name = name;
     }
 
-    public Age getAge() {
+    public double getAge() {
         return age;
     }
 
     private void setAge(String y, String m) {
-        int years = Integer.parseInt(y);
-        int months = Integer.parseInt(m);
-        age = new Age(years, months);
+        double years = Integer.parseInt(y);
+        double months = Integer.parseInt(m);
+        age = years + (months / 12.0);
     }
 
-    public Calendar getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Calendar birthday) {
-        this.birthday = birthday;
+    public void setBirthday(Calendar c) {
+        this.birthday = String.format(Locale.US, "%2d/%2d/%4d", c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.YEAR));
     }
 
     public String getGender() {
-        return gender.name();
+        return gender;
     }
 
     private void setGender(int gender) {
-        this.gender = gender == R.id.male_btn ? MALE : FEMALE;
-    }
-
-    enum Gender {
-        MALE, FEMALE
-    }
-
-    enum Species {
-        DOG, CAT
-    }
-
-    class Age {
-        int years;
-        int months;
-
-        public Age(int years, int months) {
-            this.years = years;
-            this.months = months;
-        }
-
-        public int getYears() {
-            return years;
-        }
-
-        public int getMonths() {
-            return months;
-        }
+        this.gender = gender == R.id.male_btn ? "male" : "female";
     }
 }

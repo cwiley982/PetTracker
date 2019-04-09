@@ -1,11 +1,12 @@
 package com.caitlynwiley.pettracker;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Account {
 
     private String userId;
-    private ArrayList<String> pets;
+    private Map<String, Boolean> pets;
     private String email;
 
     public Account() {
@@ -13,20 +14,20 @@ public class Account {
     }
 
     public Account(String userId, String email) {
-        pets = new ArrayList<>();
+        pets = new HashMap<>();
         setEmail(email);
         setUserId(this.userId);
     }
 
     public void addPet(String id) {
-        pets.add(id);
+        pets.put(id, true);
     }
 
     public void removePet(String id) {
         pets.remove(id);
     }
 
-    public ArrayList getPets() {
+    public Map<String, Boolean> getPets() {
         return pets;
     }
 
