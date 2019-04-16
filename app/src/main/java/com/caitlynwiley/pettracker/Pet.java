@@ -1,6 +1,8 @@
 package com.caitlynwiley.pettracker;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class Pet {
@@ -12,6 +14,7 @@ public class Pet {
     private String birthday;
     private String gender;
     private String id;
+    private List<Event> events;
 
     public Pet() {
 
@@ -22,6 +25,7 @@ public class Pet {
         setAge(years, months);
         setGender(gender);
         setSpecies(species);
+        events = new ArrayList<>();
     }
 
     public void setId(String id) {
@@ -83,5 +87,13 @@ public class Pet {
 
     private void setGender(int gender) {
         this.gender = gender == R.id.male_btn ? "male" : "female";
+    }
+
+    private List<Event> getEvents() {
+        return events;
+    }
+
+    public void addEvent(Event e) {
+        events.add(e);
     }
 }

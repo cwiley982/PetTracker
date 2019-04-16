@@ -46,7 +46,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
                         String months = ((EditText) d.findViewById(R.id.pet_age_months)).getText().toString();
                         Pet pet = new Pet(name, years, months, genderId, speciesId);
                         String petId = ref.child("pets").push().getKey();
-                        ref.child("pets").child(petId).setValue(pet); // doesn't like this, won't add to db
+                        ref.child("pets").child(petId).setValue(pet);
                         ref.child("users").child(mAuth.getCurrentUser().getUid()).child("pets").child(petId).setValue(true);
                     }
                 })

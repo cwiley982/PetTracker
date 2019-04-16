@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
@@ -46,7 +47,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private ArrayList<Event> events;
-    private String mUsername;
+    private ArrayList<String> pets;
+    private String mUID;
     private String key;
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
@@ -62,7 +64,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mFragView = inflater.inflate(R.layout.tracker_fragment, container, false);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-        mUsername = mUser.getUid();
+        mUID = mUser.getUid();
         parentActivity = getActivity();
         mRotateForward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_forward);
         mRotateBackward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_backward);
@@ -124,14 +126,31 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         final EventAdapter adapter = new EventAdapter();
         mListView.setAdapter(adapter);
 
-        /*
-        // The path doesn't include username anymore, it's a random key
-        mDatabase.child("accounts").child(mUsername).child("events").addValueEventListener(new ValueEventListener() {
+        // get pet ids
+        mDatabase.child("accounts").child(mUID).child("pets").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> data = dataSnapshot.getChildren();
                 for (DataSnapshot d : data) {
+                    pets.add(d.getKey());
+                    // all pet ids are the keys, values are just true so ignore those
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mDatabase.child("pets").child(pets.get(0)).child("events").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
+                for (DataSnapshot d : data) {
+                    // loads events for pet with id matching first id in user's list of pet ids
                     events.add(d.getValue(Event.class));
+                    adapter.notifyDataSetChanged();
                 }
             }
 
@@ -140,7 +159,6 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 Log.e("TrackerFrag", "Error loading events");
             }
         });
-        */
 
         return mFragView;
     }
@@ -220,5 +238,4 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             return event;
         }
     }
-
 }
