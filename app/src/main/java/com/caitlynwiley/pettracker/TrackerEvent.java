@@ -1,10 +1,5 @@
 package com.caitlynwiley.pettracker;
 
-import android.graphics.drawable.Drawable;
-
-import java.util.Calendar;
-import java.util.Locale;
-
 public class TrackerEvent {
 
     private EventType type;
@@ -13,21 +8,30 @@ public class TrackerEvent {
     private String title;
     private String note;
 
-    public TrackerEvent(Calendar c, EventType type, String title, String note) {
-        setTime(c);
+    @SuppressWarnings("unused")
+    public TrackerEvent() {
+
+    }
+
+    public TrackerEvent(String when, EventType type, String title, String note) {
+        // when has format mm/dd/yyyy hh:mm am/pm
+        setWhen(when);
         this.type = type;
-        setDate(c);
         setTitle(title);
         setNote(note);
     }
 
-    private void setTime(Calendar c) {
-        time = String.format(Locale.US, "%d:%d %s", c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR), c.get(Calendar.MINUTE),
-                c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
+    private void setWhen(String when) {
+        date = when.substring(0, 10);
+        time = when.substring(11);
     }
 
-    private void setDate(Calendar c) {
-        date = String.format(Locale.US, "%d/%d/%d", c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.YEAR));
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getTime() {
