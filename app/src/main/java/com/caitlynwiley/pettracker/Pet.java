@@ -14,7 +14,7 @@ public class Pet {
     private String birthday;
     private String gender;
     private String id;
-    private List<Event> events;
+    private List<ScheduleEvent> events;
 
     public Pet() {
 
@@ -89,11 +89,11 @@ public class Pet {
         this.gender = gender == R.id.male_btn ? "male" : "female";
     }
 
-    private List<Event> getEvents() {
+    private List<ScheduleEvent> getEvents() {
         return events;
     }
 
-    public void addEvent(Event e) {
+    public void addEvent(ScheduleEvent e) {
         events.add(e);
     }
 }

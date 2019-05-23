@@ -10,11 +10,15 @@ public class TrackerEvent {
     private EventType type;
     private String time;
     private String date;
+    private String title;
+    private String note;
 
-    public TrackerEvent(Calendar c, EventType type) {
+    public TrackerEvent(Calendar c, EventType type, String title, String note) {
         setTime(c);
         this.type = type;
         setDate(c);
+        setTitle(title);
+        setNote(note);
     }
 
     private void setTime(Calendar c) {
@@ -48,6 +52,22 @@ public class TrackerEvent {
 
     public EventType getType() {
         return type;
+    }
+
+    private void setTitle(String title) {
+        this.title = title == null ? "" : title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    private void setNote(String note) {
+        this.note = note == null ? "" : note;
+    }
+
+    public String getNote() {
+        return note;
     }
 
     public enum EventType {

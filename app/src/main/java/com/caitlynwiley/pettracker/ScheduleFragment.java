@@ -47,7 +47,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
 
     private boolean mIsFabOpen;
 
-    private List<Event> mEvents;
+    private List<ScheduleEvent> mEvents;
 
     @Nullable
     @Override
@@ -180,10 +180,10 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // add event to schedule
-                        Event.Type type = resId == R.drawable.ic_sleep_white_24dp ? Event.Type.SLEEP :
-                                resId == R.drawable.ic_food_white_24dp ? Event.Type.FEED : Event.Type.WALK;
+                        ScheduleEvent.Type type = resId == R.drawable.ic_sleep_white_24dp ? ScheduleEvent.Type.SLEEP :
+                                resId == R.drawable.ic_food_white_24dp ? ScheduleEvent.Type.FEED : ScheduleEvent.Type.WALK;
                         // get title and stuff then set it
-                        Event event = new Event(type, mEventTitle.getText().toString(), mNote.getText());
+                        ScheduleEvent event = new ScheduleEvent(type, mEventTitle.getText().toString(), mNote.getText());
                         event.setStartTime(mStartHourSpinner, mStartMinutesSpinner);
                         event.setEndTime(mEndHourSpinner, mEndMinutesSpinner);
                         mEvents.add(event);

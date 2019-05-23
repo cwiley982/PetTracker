@@ -1,6 +1,8 @@
 package com.caitlynwiley.pettracker;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,8 +15,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,8 +50,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private ListView mListView;
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    private ArrayList<Event> events;
-    private ArrayList<String> pets;
+    private ArrayList<TrackerEvent> events = new ArrayList<>();
+    private ArrayList<String> pets = new ArrayList<>();
     private String mUID;
     private String key;
     private FirebaseUser mUser;
@@ -126,8 +130,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         final EventAdapter adapter = new EventAdapter();
         mListView.setAdapter(adapter);
 
-        // get pet ids
-        mDatabase.child("accounts").child(mUID).child("pets").addValueEventListener(new ValueEventListener() {
+        // listens to changes made to user's pet list
+        mDatabase.child("users").child(mUID).child("pets").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> data = dataSnapshot.getChildren();
@@ -143,22 +147,25 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        mDatabase.child("pets").child(pets.get(0)).child("events").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
-                for (DataSnapshot d : data) {
-                    // loads events for pet with id matching first id in user's list of pet ids
-                    events.add(d.getValue(Event.class));
-                    adapter.notifyDataSetChanged();
+        if (pets != null && !pets.isEmpty()) {
+            // listens to events for user's pet
+            mDatabase.child("pets").child(pets.get(0)).child("events").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Iterable<DataSnapshot> data = dataSnapshot.getChildren();
+                    for (DataSnapshot d : data) {
+                        // loads events for pet with id matching first id in user's list of pet ids
+                        events.add(d.getValue(TrackerEvent.class));
+                        adapter.notifyDataSetChanged();
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("TrackerFrag", "Error loading events");
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e("TrackerFrag", "Error loading events");
+                }
+            });
+        }
 
         return mFragView;
     }
@@ -187,9 +194,33 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void addEvent(TrackerEvent.EventType type) {
-        TrackerEvent e = new TrackerEvent(Calendar.getInstance(), type);
-        mDatabase.child("pets").child(((MainActivity) parentActivity).getPetID()).child("events").push().setValue(e);
+    private void addEvent(final TrackerEvent.EventType type) {
+        new AlertDialog.Builder(getContext())
+            .setView(R.layout.add_event_dialog)
+            .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // save the event...
+                    AlertDialog d = (AlertDialog) dialog;
+                    String title = ((EditText) d.findViewById(R.id.event_title)).getText().toString();
+                    RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
+                    int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                    View radioButton = radioGroup.findViewById(radioButtonID);
+                    int petChosen = radioGroup.indexOfChild(radioButton);
+                    String petId = pets.get(petChosen);
+                    String note = ((EditText) d.findViewById(R.id.event_note)).getText().toString();
+                    TrackerEvent e = new TrackerEvent(Calendar.getInstance(), type, title, note);
+                    mDatabase.child("pets").child(petId).child("events").push().setValue(e);
+                }
+            })
+            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            })
+            .create()
+            .show();
     }
 
     private void openFab() {
