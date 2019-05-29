@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/event_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentStart="true"
         tools:src="@drawable/ic_dog_walk_64dp"
         android:tint="@color/primaryDarkColor"/>

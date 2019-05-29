@@ -53,13 +53,15 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private ArrayList<TrackerEvent> events = new ArrayList<>();
     private ArrayList<String> pets = new ArrayList<>();
     private String mUID;
-    private String key;
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
 
     private Activity parentActivity;
 
     private boolean mIsFabOpen;
+    private boolean mPetsListWasEmpty = true;
+
+    private ChildEventListener eventListener;
 
     @Nullable
     @Override
@@ -139,6 +141,11 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     pets.add(d.getKey());
                     // all pet ids are the keys, values are just true so ignore those
                 }
+                if (mPetsListWasEmpty) {
+                    mDatabase.child("pets").child(pets.get(0)).child("events").addChildEventListener(eventListener);
+                    Log.d("PET", pets.get(0));
+                    mPetsListWasEmpty = false;
+                }
             }
 
             @Override
@@ -147,40 +154,37 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        //if (pets != null && !pets.isEmpty()) {
-            // listens to events for user's pet
-            mDatabase.child("pets").child("-LfZ_sr84zC9CrSifMWX").child("events").addChildEventListener(new ChildEventListener() {
+        eventListener = new ChildEventListener() {
 
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    TrackerEvent e = dataSnapshot.getValue(TrackerEvent.class);
-                    events.add(e);
-                    Log.d("event type", e.getType().toString());
-                    adapter.notifyDataSetChanged();
-                }
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                TrackerEvent e = dataSnapshot.getValue(TrackerEvent.class);
+                events.add(e);
+                Log.d("event type", e.getType().toString());
+                adapter.notifyDataSetChanged();
+            }
 
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                }
+            }
 
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                    events.remove(dataSnapshot.getValue(TrackerEvent.class));
-                    adapter.notifyDataSetChanged();
-                }
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                events.remove(dataSnapshot.getValue(TrackerEvent.class));
+                adapter.notifyDataSetChanged();
+            }
 
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
-        //}
+            }
+        };
 
         return mFragView;
     }
