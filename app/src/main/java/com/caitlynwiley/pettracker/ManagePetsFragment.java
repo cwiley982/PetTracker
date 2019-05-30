@@ -10,12 +10,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class ManagePetsFragment extends Fragment implements View.OnClickListener {
 
@@ -26,11 +33,16 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
     private FirebaseDatabase db = FirebaseDatabase.getInstance();
     private DatabaseReference ref = db.getReference();
 
+    private String mUid;
+    private ArrayList<Pet> pets;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         mFragView = inflater.inflate(R.layout.manage_pets_fragment, container, false);
+
+        mUid = mAuth.getCurrentUser().getUid();
 
         mDiag = new AlertDialog.Builder(getContext())
                 .setView(R.layout.add_pet_dialog)
@@ -60,6 +72,41 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
 
         mFab = mFragView.findViewById(R.id.add_pet_fab);
         mFab.setOnClickListener(this);
+
+        pets = new ArrayList();
+        ListView mListView = mFragView.findViewById(R.id.tracker_items);
+        final PetAdapter adapter = new PetAdapter();
+        mListView.setAdapter(adapter);
+
+        ref.child("users").child(mUid).child("pets").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Pet p = dataSnapshot.getValue(Pet.class);
+                pets.add(p);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                pets.remove(dataSnapshot.getValue(Pet.class));
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         return mFragView;
     }
 
@@ -67,9 +114,32 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_pet_fab:
-                mDiag.show();
                 // open diag view to add new pet
-                // ask for name, age, gender, species (dog, cat, bird, etc), opt birthday, opt breed
+                mDiag.show();
+                break;
+        }
+    }
+
+    class PetAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return pets == null ? 0 : pets.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return pets == null ? null : pets.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            return null;
         }
     }
 }
