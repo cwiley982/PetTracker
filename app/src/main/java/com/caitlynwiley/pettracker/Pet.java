@@ -96,4 +96,14 @@ public class Pet {
     public void addEvent(ScheduleEvent e) {
         events.add(e);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Pet) {
+            Pet other = (Pet) obj;
+            return other.getId().equals(this.id);
+        } else {
+            return false;
+        }
+    }
 }

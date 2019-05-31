@@ -21,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
 
     private String mUid;
     private ArrayList<Pet> pets;
+    private ArrayList<String> petIds;
 
     @Nullable
     @Override
@@ -43,6 +45,11 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         mFragView = inflater.inflate(R.layout.manage_pets_fragment, container, false);
 
         mUid = mAuth.getCurrentUser().getUid();
+        pets = new ArrayList<>();
+        petIds = new ArrayList<>();
+        ListView mListView = mFragView.findViewById(R.id.pets_listview);
+        final PetAdapter adapter = new PetAdapter();
+        mListView.setAdapter(adapter);
 
         mDiag = new AlertDialog.Builder(getContext())
                 .setView(R.layout.add_pet_dialog)
@@ -60,6 +67,8 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
                         String petId = ref.child("pets").push().getKey();
                         ref.child("pets").child(petId).setValue(pet);
                         ref.child("users").child(mAuth.getCurrentUser().getUid()).child("pets").child(petId).setValue(true);
+                        pets.add(pet);
+                        adapter.notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -73,17 +82,24 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         mFab = mFragView.findViewById(R.id.add_pet_fab);
         mFab.setOnClickListener(this);
 
-        pets = new ArrayList();
-        ListView mListView = mFragView.findViewById(R.id.tracker_items);
-        final PetAdapter adapter = new PetAdapter();
-        mListView.setAdapter(adapter);
-
         ref.child("users").child(mUid).child("pets").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Pet p = dataSnapshot.getValue(Pet.class);
-                pets.add(p);
-                adapter.notifyDataSetChanged();
+                String id = dataSnapshot.getKey();
+                petIds.add(id);
+                ref.child("pets").child(id).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Pet p = dataSnapshot.getValue(Pet.class);
+                        pets.add(p);
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
