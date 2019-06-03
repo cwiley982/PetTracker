@@ -14,18 +14,21 @@ public class Pet {
     private String birthday;
     private String gender;
     private String id;
-    private List<ScheduleEvent> events;
+    //private List<ScheduleEvent> events;
 
     public Pet() {
-
     }
 
-    Pet(String name, String years, String months, int gender, int species) {
+    Pet(String name, String years, String months, String gender, String species) {
         this.name = name;
         setAge(years, months);
         setGender(gender);
         setSpecies(species);
-        events = new ArrayList<>();
+        //events = new ArrayList<>();
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void setId(String id) {
@@ -36,15 +39,8 @@ public class Pet {
         return species;
     }
 
-    private void setSpecies(int species) {
-        switch (species) {
-            case R.id.dog_btn:
-                this.species = "dog";
-                break;
-            case R.id.cat_btn:
-                this.species = "cat";
-                break;
-        }
+    private void setSpecies(String species) {
+        this.species = species;
     }
 
     public String getBreed() {
@@ -85,17 +81,18 @@ public class Pet {
         return gender;
     }
 
-    private void setGender(int gender) {
-        this.gender = gender == R.id.male_btn ? "male" : "female";
+    private void setGender(String gender) {
+        this.gender = gender;
     }
 
+    /*
     private List<ScheduleEvent> getEvents() {
         return events;
     }
 
     public void addEvent(ScheduleEvent e) {
         events.add(e);
-    }
+    }*/
 
     @Override
     public boolean equals(Object obj) {

@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 // if not create it
                 if (newFrag == null) {
                     switch (id) {
-                        case R.id.calendar_item:
+                        /*case R.id.calendar_item:
                             newFrag = new CalendarFragment();
                             break;
                         case R.id.shopping_list_item:
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.schedule_item:
                             newFrag = new ScheduleFragment();
-                            break;
+                            break;*/
                         case R.id.tracker_item:
                             newFrag = new TrackerFragment();
                             break;
