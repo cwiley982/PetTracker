@@ -10,6 +10,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -27,11 +29,17 @@ import java.util.ArrayList;
 
 public class ManagePetsFragment extends Fragment implements View.OnClickListener {
 
-    private String[] genders = {"male", "female"};
-    private String[] species = {"dog", "cat"};
+    private Animation mRotateForward;
+    private Animation mRotateBackward;
+    private Animation mMiniAppear;
+    private Animation mMiniDisappear;
+
     private View mFragView;
     private FloatingActionButton mFab;
-    private AlertDialog mDiag;
+    private FloatingActionButton mAddPetFab;
+    private FloatingActionButton mCreatePetFab;
+    private AlertDialog mCreatePetDiag;
+    private AlertDialog mAddPetDiag;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseDatabase db = FirebaseDatabase.getInstance();
     private DatabaseReference ref = db.getReference();
@@ -39,6 +47,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
     private String mUid;
     private ArrayList<Pet> pets;
     private ArrayList<String> petIds;
+    private boolean mIsFabMenuOpen;
 
     @Nullable
     @Override
@@ -53,8 +62,8 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         final PetAdapter adapter = new PetAdapter();
         mListView.setAdapter(adapter);
 
-        mDiag = new AlertDialog.Builder(getContext())
-                .setView(R.layout.add_pet_dialog)
+        mCreatePetDiag = new AlertDialog.Builder(getContext())
+                .setView(R.layout.create_pet_dialog)
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -76,13 +85,36 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mDiag.cancel();
+                        mCreatePetDiag.cancel();
                     }
                 })
                 .create();
 
-        mFab = mFragView.findViewById(R.id.add_pet_fab);
+        mAddPetDiag = new AlertDialog.Builder(getContext())
+                .setView(R.layout.add_pet_dialog)
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // save the new pet...
+                        AlertDialog d = (AlertDialog) dialog;
+                        String petId = ((EditText) d.findViewById(R.id.pet_id)).getText().toString();
+                        ref.child("users").child(mUid).child("pets").child(petId).setValue(true);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAddPetDiag.cancel();
+                    }
+                })
+                .create();
+
+        mFab = mFragView.findViewById(R.id.manage_pets_fab);
         mFab.setOnClickListener(this);
+        mAddPetFab = mFragView.findViewById(R.id.add_pet_fab);
+        mAddPetFab.setOnClickListener(this);
+        mCreatePetFab = mFragView.findViewById(R.id.create_pet_fab);
+        mCreatePetFab.setOnClickListener(this);
 
         ref.child("users").child(mUid).child("pets").addChildEventListener(new ChildEventListener() {
             @Override
@@ -150,16 +182,82 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
                 //no-op
             }
         });
+
+        mRotateForward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_forward);
+        mRotateBackward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_backward);
+
+        mMiniAppear = AnimationUtils.loadAnimation(getContext(), R.anim.mini_fab_appear);
+        mMiniAppear.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mCreatePetFab.show();
+                mAddPetFab.show();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        mMiniDisappear = AnimationUtils.loadAnimation(getContext(), R.anim.mini_fab_disappear);
+        mMiniDisappear.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mCreatePetFab.hide();
+                mAddPetFab.hide();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mIsFabMenuOpen = false;
+
         return mFragView;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.add_pet_fab:
-                // open diag view to add new pet
-                mDiag.show();
+            case R.id.manage_pets_fab:
+                // show/hide mini fabs
+                showHideMiniFabs();
+                mIsFabMenuOpen = !mIsFabMenuOpen;
                 break;
+            case R.id.add_pet_fab:
+                // open diag view to add new pet by id
+                mCreatePetDiag.show();
+                break;
+            case R.id.create_pet_fab:
+                // open dialog to create new pet
+                mAddPetDiag.show();
+                break;
+        }
+    }
+
+    private void showHideMiniFabs() {
+        if (mIsFabMenuOpen) {
+            // close
+            mFab.startAnimation(mRotateBackward);
+            mCreatePetFab.startAnimation(mMiniDisappear);
+            mAddPetFab.startAnimation(mMiniDisappear);
+        } else {
+            // open
+            mFab.startAnimation(mRotateForward);
+            mCreatePetFab.startAnimation(mMiniAppear);
+            mAddPetFab.startAnimation(mMiniAppear);
         }
     }
 

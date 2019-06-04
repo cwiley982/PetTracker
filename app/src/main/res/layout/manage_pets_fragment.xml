@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_pet_fab"
+        android:id="@+id/manage_pets_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -14,6 +14,28 @@
         android:layout_marginEnd="16dp"
         app:fabSize="normal"
         android:src="@drawable/ic_add_white_24dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_pet_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:layout_above="@id/manage_pets_fab"
+        app:fabSize="mini"
+        android:src="@drawable/ic_add_white_24dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/create_pet_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:layout_above="@id/add_pet_fab"
+        app:fabSize="mini"
+        android:src="@drawable/ic_edit_black_24dp" />
 
     <ListView
         android:id="@+id/pets_listview"
