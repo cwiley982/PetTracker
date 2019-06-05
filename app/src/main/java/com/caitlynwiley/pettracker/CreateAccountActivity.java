@@ -24,7 +24,6 @@ public class CreateAccountActivity extends AppCompatActivity {
     private EditText mUsername;
     private EditText mPassword;
     private EditText mPasswordRepeated;
-    private Button mCreateBtn;
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference();
@@ -39,22 +38,16 @@ public class CreateAccountActivity extends AppCompatActivity {
         mUsername = findViewById(R.id.username_field);
         mPassword = findViewById(R.id.password_field_one);
         mPasswordRepeated = findViewById(R.id.password_field_two);
-        mCreateBtn = findViewById(R.id.create_btn);
-        mCreateBtn.setOnClickListener(new View.OnClickListener() {
+        Button createBtn = findViewById(R.id.create_btn);
+        createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean found = false;
-                String newId = mUsername.getText().toString();
-                if (accounts == null) {
-                    // no accounts to check against, just create one
-                    Account a = new Account(newId, null, mPassword.getText().toString());
-                    ref.child("accounts").child(newId).setValue(a);
-
-                    found = false;
-                } else {
+                String username = mUsername.getText().toString();
+                if (accounts != null) {
                     // search through usernames to see if that one is available
                     for (Account a : accounts) {
-                        if (a.getUsername().equals(newId)) {
+                        if (a.getUsername().equals(username)) {
                             found = true;
                             break;
                         }
@@ -68,11 +61,10 @@ public class CreateAccountActivity extends AppCompatActivity {
                     }
 
                     // create account
-                    Account a = new Account(newId, null, mPassword.getText().toString());
+                    Account a = new Account(username, null, mPassword.getText().toString());
                     ref.child("accounts").push().setValue(a);
 
-                    Intent i = new Intent(CreateAccountActivity.this, MainActivity.class);
-                    i.putExtra("USERNAME", newId);
+                    Intent i = new Intent(CreateAccountActivity.this, AddPetActivity.class);
                     startActivity(i);
                 }
             }

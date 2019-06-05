@@ -118,8 +118,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mCreateAccountButton = findViewById(R.id.create_account_button);
-        mCreateAccountButton.setOnClickListener(new OnClickListener() {
+        TextView mCreateAccountLink = findViewById(R.id.create_account_button);
+        mCreateAccountLink.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
