@@ -24,7 +24,7 @@
             android:icon="@drawable/ic_dog_walk"/>
         <item
             android:id="@+id/manage_pets_item"
-            android:title="Manage Pets"
+            android:title="Manage Pet"
             android:icon="@drawable/ic_manage" />
     </group>
 

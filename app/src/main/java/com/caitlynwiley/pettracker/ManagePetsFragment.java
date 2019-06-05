@@ -1,21 +1,15 @@
 package com.caitlynwiley.pettracker;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,19 +21,19 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class ManagePetsFragment extends Fragment implements View.OnClickListener {
+public class ManagePetsFragment extends Fragment /*implements View.OnClickListener*/ {
 
-    private Animation mRotateForward;
-    private Animation mRotateBackward;
-    private Animation mMiniAppear;
-    private Animation mMiniDisappear;
+    //private Animation mRotateForward;
+    //private Animation mRotateBackward;
+    //private Animation mMiniAppear;
+    //private Animation mMiniDisappear;
 
     private View mFragView;
-    private FloatingActionButton mFab;
-    private FloatingActionButton mAddPetFab;
-    private FloatingActionButton mCreatePetFab;
-    private AlertDialog mCreatePetDiag;
-    private AlertDialog mAddPetDiag;
+    //private FloatingActionButton mFab;
+    //private FloatingActionButton mAddPetFab;
+    //private FloatingActionButton mCreatePetFab;
+    //private AlertDialog mCreatePetDiag;
+    //private AlertDialog mAddPetDiag;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseDatabase db = FirebaseDatabase.getInstance();
     private DatabaseReference ref = db.getReference();
@@ -47,7 +41,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
     private String mUid;
     private ArrayList<Pet> pets;
     private ArrayList<String> petIds;
-    private boolean mIsFabMenuOpen;
+    //private boolean mIsFabMenuOpen;
 
     @Nullable
     @Override
@@ -62,7 +56,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         final PetAdapter adapter = new PetAdapter();
         mListView.setAdapter(adapter);
 
-        mCreatePetDiag = new AlertDialog.Builder(getContext())
+        /*mCreatePetDiag = new AlertDialog.Builder(getContext())
                 .setView(R.layout.create_pet_dialog)
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
@@ -115,6 +109,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         mAddPetFab.setOnClickListener(this);
         mCreatePetFab = mFragView.findViewById(R.id.create_pet_fab);
         mCreatePetFab.setOnClickListener(this);
+        */
 
         ref.child("users").child(mUid).child("pets").addChildEventListener(new ChildEventListener() {
             @Override
@@ -183,6 +178,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
             }
         });
 
+        /*
         mRotateForward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_forward);
         mRotateBackward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_backward);
 
@@ -224,10 +220,12 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
             }
         });
         mIsFabMenuOpen = false;
+        */
 
         return mFragView;
     }
 
+    /*
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -261,6 +259,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         }
     }
 
+
     private String getGender(int id) {
         switch (id) {
             case R.id.male_btn:
@@ -278,6 +277,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
                 return "cat";
         }
     }
+    */
 
     class PetAdapter extends BaseAdapter {
 
