@@ -6,7 +6,7 @@ import android.widget.Spinner;
 
 import java.util.Calendar;
 
-public class Event {
+public class ScheduleEvent {
 
     private Type type;
     private String title;
@@ -15,7 +15,7 @@ public class Event {
     @Nullable
     private String note;
 
-    public Event(Type type, String title, Editable note) throws IllegalArgumentException {
+    public ScheduleEvent(Type type, String title, Editable note) throws IllegalArgumentException {
         this.type = type;
         this.title = title;
         this.note = note == null ? null : note.toString();

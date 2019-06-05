@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,17 +26,15 @@ import com.google.firebase.database.FirebaseDatabase;
 public class LoginActivity extends AppCompatActivity implements OnClickListener {
 
     private static final int RC_SIGN_IN = 1;
+
+    private FirebaseAuth mAuth;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference();
-    private FirebaseAuth mAuth;
 
     private Button mEmailSignInButton;
     private Button mCreateAccountButton;
     private EditText mEmailField;
     private EditText mPasswordField;
-
-    private String TAG = LoginActivity.class.getSimpleName();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +57,9 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     @Override
     protected void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser, "");
+        if (mAuth.getCurrentUser() != null) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
     }
 
     private void updateUI(FirebaseUser user, String errorMsg) {
@@ -84,9 +83,10 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            updateUI(mAuth.getCurrentUser(), "");
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         } else {
-                            updateUI(null, task.getException().getMessage());
+                            FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
