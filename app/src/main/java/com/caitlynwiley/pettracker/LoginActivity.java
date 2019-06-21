@@ -44,6 +44,13 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                mAuth = firebaseAuth;
+                updateUI(firebaseAuth.getCurrentUser(), "");
+            }
+        });
 
         mEmailField = findViewById(R.id.email_field);
         mPasswordField = findViewById(R.id.password_field);
@@ -60,7 +67,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     protected void onStart() {
         super.onStart();
         if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            updateUI(mAuth.getCurrentUser(), "");
         }
     }
 
@@ -85,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            updateUI(task.getResult().getUser(), "");
                         } else {
                             FirebaseAuthException e = (FirebaseAuthException) task.getException();
                             Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -95,6 +102,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     }
 
     private void signUp() {
+        startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
+        /*
         // validate
 
         String email = mEmailField.getText().toString();
@@ -105,19 +114,24 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    onAuthSuccess(task.getResult().getUser());
+                    onCreateSuccess(task.getResult().getUser());
                 } else {
                     updateUI(null, task.getException().getMessage());
                 }
             }
         });
+        */
     }
 
-    private void onAuthSuccess(FirebaseUser u) {
+    private void onCreateSuccess(FirebaseUser u) {
         Account user = new Account(u.getUid(), u.getEmail());
         ref.child("users").child(u.getUid()).setValue(user);
 
-        updateUI(u, "");
+        startActivity(new Intent(LoginActivity.this, AddPetActivity.class));
+    }
+
+    private void googleSignIn() {
+        // TODO: firebase stuff here to do google sign-in
     }
 
     @Override
@@ -128,6 +142,9 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                 break;
             case R.id.create_account_button:
                 signUp();
+                break;
+            case R.id.sign_in_button:
+                googleSignIn();
                 break;
         }
     }
