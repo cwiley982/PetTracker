@@ -2,7 +2,6 @@ package com.caitlynwiley.pettracker;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,14 +13,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class CreateAccountActivity extends AppCompatActivity {
 
-    private EditText mUsername;
+    private EditText mEmail;
     private EditText mPassword;
     private EditText mPasswordRepeated;
 
@@ -35,7 +32,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         setContentView(R.layout.create_account);
 
         accounts = new ArrayList<>();
-        mUsername = findViewById(R.id.username_field);
+        mEmail = findViewById(R.id.email_field);
         mPassword = findViewById(R.id.password_field_one);
         mPasswordRepeated = findViewById(R.id.password_field_two);
         Button createBtn = findViewById(R.id.create_btn);
@@ -43,11 +40,11 @@ public class CreateAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 boolean found = false;
-                String username = mUsername.getText().toString();
+                String email = mEmail.getText().toString();
                 if (accounts != null) {
                     // search through usernames to see if that one is available
                     for (Account a : accounts) {
-                        if (a.getUsername().equals(username)) {
+                        if (a.getEmail().equals(email)) {
                             found = true;
                             break;
                         }
@@ -61,7 +58,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                     }
 
                     // create account
-                    Account a = new Account(username, null, mPassword.getText().toString());
+                    Account a = new Account(email, mPassword.getText().toString());
                     ref.child("accounts").push().setValue(a);
 
                     Intent i = new Intent(CreateAccountActivity.this, AddPetActivity.class);

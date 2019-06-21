@@ -1,27 +1,42 @@
 package com.caitlynwiley.pettracker;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Account {
 
-    private String username;
+    private String userId;
+    private Map<String, Boolean> pets;
     private String email;
-    private String password;
 
     public Account() {
 
     }
 
-    public Account(String username, String email, String password) {
+    public Account(String userId, String email) {
+        pets = new HashMap<>();
         setEmail(email);
-        setPassword(password);
-        setUsername(username);
+        setUserId(this.userId);
     }
 
-    public String getUsername() {
-        return username;
+    public void addPet(String id) {
+        pets.put(id, true);
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void removePet(String id) {
+        pets.remove(id);
+    }
+
+    public Map<String, Boolean> getPets() {
+        return pets;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getEmail() {
@@ -32,12 +47,5 @@ public class Account {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
 
