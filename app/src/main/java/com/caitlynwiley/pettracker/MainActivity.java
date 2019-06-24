@@ -9,8 +9,12 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -23,7 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     // TODO: add logout option
     /*
@@ -144,5 +148,17 @@ public class MainActivity extends AppCompatActivity {
 
     public String getPetID() {
         return petID;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("dark_theme_enabled")) {
+            boolean enabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(key, false);
+            if (enabled) {
+                this.setTheme(R.style.DarkTheme);
+            } else {
+                this.setTheme(R.style.LightTheme);
+            }
+        }
     }
 }
