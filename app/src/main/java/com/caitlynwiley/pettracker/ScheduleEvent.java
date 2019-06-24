@@ -1,6 +1,6 @@
 package com.caitlynwiley.pettracker;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Editable;
 import android.widget.Spinner;
 

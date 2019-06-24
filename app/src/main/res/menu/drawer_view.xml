@@ -33,5 +33,9 @@
             android:id="@+id/remove_ads_item"
             android:title="Remove Ads"
             android:icon="@drawable/ic_credit_card"/>
+        <item
+            android:id="@+id/settings_item"
+            android:title="Settings"
+            android:icon="@drawable/ic_settings_black_24dp"/>
     </group>
 </menu>
