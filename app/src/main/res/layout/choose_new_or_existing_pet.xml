@@ -4,13 +4,8 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
-    <View
-        android:id="@+id/add_pet_frag_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
     <Button
-        android:id="@+id/create_pet_button"
+        android:id="@+id/create_new_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -28,7 +23,7 @@
         android:text="OR"/>
 
     <Button
-        android:id="@+id/enter_pet_id_button"
+        android:id="@+id/add_existing_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

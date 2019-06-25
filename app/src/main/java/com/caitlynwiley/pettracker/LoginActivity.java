@@ -14,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -49,7 +50,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
     private Button mEmailSignInButton;
     private Button mCreateAccountButton;
-    private Button mGoogleSignInButton;
+    private SignInButton mGoogleSignInButton;
     private EditText mEmailField;
     private EditText mPasswordField;
 
@@ -102,17 +103,19 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_GOOGLE_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account);
-            } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                Log.w("LoginActivity", "Google sign in failed", e);
-                // ...
-            }
+        switch (requestCode) {
+            case RC_GOOGLE_SIGN_IN:
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                try {
+                    // Google Sign In was successful, authenticate with Firebase
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    firebaseAuthWithGoogle(account);
+                } catch (ApiException e) {
+                    // Google Sign In failed, update UI appropriately
+                    Log.w("LoginActivity", "Google sign in failed", e);
+                    // ...
+                }
+                break;
         }
     }
 
@@ -155,7 +158,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         ref.child("users").child(mUser.getUid()).child("num_pets").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue().equals(0)) {
+                if (dataSnapshot.getValue() == null || dataSnapshot.getValue().equals(0)) {
                     startActivity(new Intent(LoginActivity.this, AddPetActivity.class));
                 } else {
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
@@ -192,31 +195,6 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
     private void signUp() {
         startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
-        /*
-        // validate
-
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
-
-        Task<AuthResult> t = mAuth.createUserWithEmailAndPassword(email, password);
-        t.addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    onCreateSuccess(task.getResult().getUser());
-                } else {
-                    updateUI(null, task.getException().getMessage());
-                }
-            }
-        });
-        */
-    }
-
-    private void onCreateSuccess(FirebaseUser u) {
-        Account user = new Account(u.getUid(), u.getEmail());
-        ref.child("users").child(u.getUid()).setValue(user);
-
-        startActivity(new Intent(LoginActivity.this, AddPetActivity.class));
     }
 
     @Override

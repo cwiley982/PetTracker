@@ -307,7 +307,7 @@ public class ManagePetsFragment extends Fragment /*implements View.OnClickListen
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View pet = getLayoutInflater().inflate(R.layout.pet_item, viewGroup, false);
-            nameTextView = pet.findViewById(R.id.pet_name);
+            nameTextView = pet.findViewById(R.id.new_pet_name);
             nameTextView.setText(((Pet) getItem(i)).getName());
             return pet;
         }
