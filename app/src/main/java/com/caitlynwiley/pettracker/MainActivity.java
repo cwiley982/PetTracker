@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.google.android.material.navigation.NavigationView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -46,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private Account user;
-
     private String petID = "0";
 
     @Override

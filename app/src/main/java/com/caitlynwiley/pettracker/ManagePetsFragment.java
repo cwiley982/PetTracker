@@ -1,6 +1,7 @@
 package com.caitlynwiley.pettracker;
 
 import android.os.Bundle;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,11 @@ public class ManagePetsFragment extends Fragment /*implements View.OnClickListen
         mListView.setAdapter(adapter);
 
         /*mCreatePetDiag = new AlertDialog.Builder(getContext())
+<<<<<<< HEAD
                 .setView(R.layout.create_pet_layout)
+=======
+                .setView(R.layout.create_pet_dialog)
+>>>>>>> develop
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
