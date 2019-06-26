@@ -1,13 +1,12 @@
 package com.caitlynwiley.pettracker;
 
+<<<<<<< HEAD
+=======
 import android.app.Activity;
 import android.app.AlertDialog;
+>>>>>>> develop
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +20,7 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -33,6 +33,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 public class TrackerFragment extends Fragment implements View.OnClickListener {
 
@@ -56,7 +61,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
 
-    private Activity parentActivity;
+    private AppCompatActivity parentActivity;
 
     private boolean mIsFabOpen;
     private boolean mPetsListWasEmpty = true;
@@ -71,7 +76,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         mUID = mUser.getUid();
-        parentActivity = getActivity();
+        //parentActivity = getActivity();
         mRotateForward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_forward);
         mRotateBackward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_backward);
 

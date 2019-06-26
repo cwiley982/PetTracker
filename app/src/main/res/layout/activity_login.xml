@@ -17,6 +17,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_email" />
+<<<<<<< HEAD
+
+        <EditText
+            android:id="@+id/password_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/email_field"
+            android:inputType="textPassword"
+            android:hint="@string/prompt_password"/>
+
+        <Button
+            android:id="@+id/email_sign_in_button"
+            style="?android:textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/action_sign_in"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/create_account_button"
+            style="?android:textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@null"
+            android:text="@string/action_create_account"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="@color/primaryDarkColor"/>
+
+=======
 
         <EditText
             android:id="@+id/password_field"
@@ -43,11 +76,19 @@
             android:layout_marginTop="8dp"/>
 
         <!--
+>>>>>>> develop
         <com.google.android.gms.common.SignInButton
             android:id="@+id/google_sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+<<<<<<< HEAD
+            android:layout_marginTop="16dp"/>
+
+
+    </LinearLayout>
+</LinearLayout>
+=======
             android:layout_marginTop="8dp"/>
             -->
 
@@ -63,3 +104,4 @@
 
     </LinearLayout>
 </LinearLayout>
+>>>>>>> develop

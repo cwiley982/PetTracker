@@ -1,10 +1,11 @@
 package com.caitlynwiley.pettracker;
 
-import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.widget.Spinner;
 
 import java.util.Calendar;
+
+import androidx.annotation.Nullable;
 
 public class ScheduleEvent {
 
