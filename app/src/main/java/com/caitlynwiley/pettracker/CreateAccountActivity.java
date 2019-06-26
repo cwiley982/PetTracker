@@ -51,7 +51,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = mEmail.getText().toString();
+                final String email = mEmail.getText().toString();
                     // check passwords
                     if (!mPassword.getText().toString().equals(mPasswordRepeated.getText().toString())) {
                         hideKeyboard();
@@ -59,15 +59,14 @@ public class CreateAccountActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // create account
-                    Account a = new Account(email, mPassword.getText().toString());
-                    ref.child("accounts").push().setValue(a);
-
                     Task<AuthResult> t = mAuth.createUserWithEmailAndPassword(email, mPassword.getText().toString());
                     t.addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                // create account
+                                Account a = new Account(mAuth.getUid(), email);
+                                ref.child("users").child(mAuth.getUid()).setValue(a);
                                 ref.child("users").child(mAuth.getCurrentUser().getUid()).child("num_pets").addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
