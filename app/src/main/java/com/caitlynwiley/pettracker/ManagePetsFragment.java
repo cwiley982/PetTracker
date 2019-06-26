@@ -1,9 +1,6 @@
 package com.caitlynwiley.pettracker;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +16,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 public class ManagePetsFragment extends Fragment /*implements View.OnClickListener*/ {
 
@@ -56,7 +57,11 @@ public class ManagePetsFragment extends Fragment /*implements View.OnClickListen
         mListView.setAdapter(adapter);
 
         /*mCreatePetDiag = new AlertDialog.Builder(getContext())
+<<<<<<< HEAD
+                .setView(R.layout.create_pet_layout)
+=======
                 .setView(R.layout.create_pet_dialog)
+>>>>>>> develop
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -306,7 +311,7 @@ public class ManagePetsFragment extends Fragment /*implements View.OnClickListen
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View pet = getLayoutInflater().inflate(R.layout.pet_item, viewGroup, false);
-            nameTextView = pet.findViewById(R.id.pet_name);
+            nameTextView = pet.findViewById(R.id.new_pet_name);
             nameTextView.setText(((Pet) getItem(i)).getName());
             return pet;
         }

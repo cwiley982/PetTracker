@@ -3,6 +3,6 @@
     android:id="@android:id/text1"
     style="?android:attr/spinnerDropDownItemStyle"
     android:layout_width="wrap_content"
-    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_height="?attr/listPreferredItemHeight"
     android:singleLine="true"
     android:textColor="@color/primaryDarkColor"/>
