@@ -7,7 +7,7 @@
     android:paddingStart="10dp"
     android:paddingEnd="10dp"
     android:paddingTop="35dp"
-    android:theme="@style/AppTheme">
+    android:theme="@style/LightTheme">
 
     <ImageView
         android:id="@+id/header_image_view"

@@ -9,13 +9,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.google.android.material.navigation.NavigationView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     // TODO: add logout option
     /*
@@ -116,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.manage_pets_item:
                             newFrag = new ManagePetsFragment();
                             break;
+                        case R.id.settings_item:
+                            // start a new activity here
+                            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         default:
                             return false;
                     }
@@ -141,5 +146,17 @@ public class MainActivity extends AppCompatActivity {
 
     public String getPetID() {
         return petID;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("dark_theme_enabled")) {
+            boolean enabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(key, false);
+            if (enabled) {
+                this.setTheme(R.style.DarkTheme);
+            } else {
+                this.setTheme(R.style.LightTheme);
+            }
+        }
     }
 }
