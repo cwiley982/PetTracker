@@ -33,7 +33,8 @@
         android:id="@+id/password_field_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/password_label"/>
+        android:layout_below="@id/password_label"
+        android:inputType="textPassword"/>
 
     <TextView
         android:id="@+id/password_again_label"
@@ -48,7 +49,8 @@
         android:id="@+id/password_field_two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/password_again_label"/>
+        android:layout_below="@id/password_again_label"
+        android:inputType="textPassword"/>
 
     <Button
         android:id="@+id/create_btn"
