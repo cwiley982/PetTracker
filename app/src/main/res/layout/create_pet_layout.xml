@@ -140,7 +140,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:background="@color/secondaryLightColor"
+        android:background="@color/secondaryColor"
         android:text="Create"/>
 
 </LinearLayout>

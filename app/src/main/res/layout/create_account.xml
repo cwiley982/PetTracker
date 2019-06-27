@@ -11,8 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="4dp"
-        android:text="@string/prompt_email"
-        android:textColor="@color/primaryDarkColor"/>
+        android:text="@string/prompt_email"/>
 
     <EditText
         android:id="@+id/email_field"
@@ -26,8 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/email_field"
         android:padding="4dp"
-        android:text="Enter your password"
-        android:textColor="@color/primaryDarkColor"/>
+        android:text="Enter your password"/>
 
     <EditText
         android:id="@+id/password_field_one"
@@ -42,8 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/password_field_one"
         android:padding="4dp"
-        android:text="Enter your password again"
-        android:textColor="@color/primaryDarkColor"/>
+        android:text="Enter your password again"/>
 
     <EditText
         android:id="@+id/password_field_two"
@@ -59,6 +56,7 @@
         android:layout_below="@id/password_field_two"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        android:background="@color/primaryColor"
         android:text="Create"
         android:textColor="@android:color/black"/>
 

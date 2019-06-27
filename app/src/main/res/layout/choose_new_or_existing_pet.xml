@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:padding="16dp"
-        android:background="@color/secondaryLightColor"
-        android:textSize="32sp"
+        android:background="@color/primaryColor"
+        android:textSize="24sp"
         android:text="Create new Pet"/>
 
     <TextView
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
-        android:textSize="32sp"
+        android:textSize="24sp"
         android:text="OR"/>
 
     <Button
@@ -29,7 +29,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
         android:padding="16dp"
-        android:background="@color/secondaryLightColor"
-        android:textSize="32sp"
+        android:background="@color/primaryColor"
+        android:textSize="24sp"
         android:text="Enter a Pet ID"/>
 </LinearLayout>
