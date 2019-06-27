@@ -30,11 +30,11 @@ public class CreatePetFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // save the new pet...
-                String name = ((EditText) v.findViewById(R.id.new_pet_name)).getText().toString();
-                int genderId = ((RadioGroup) v.findViewById(R.id.pet_gender)).getCheckedRadioButtonId();
-                int speciesId = ((RadioGroup) v.findViewById(R.id.pet_species)).getCheckedRadioButtonId();
-                String years = ((EditText) v.findViewById(R.id.pet_age_years)).getText().toString();
-                String months = ((EditText) v.findViewById(R.id.pet_age_months)).getText().toString();
+                String name = ((EditText) mFragView.findViewById(R.id.new_pet_name)).getText().toString();
+                int genderId = ((RadioGroup) mFragView.findViewById(R.id.pet_gender)).getCheckedRadioButtonId();
+                int speciesId = ((RadioGroup) mFragView.findViewById(R.id.pet_species)).getCheckedRadioButtonId();
+                String years = ((EditText) mFragView.findViewById(R.id.pet_age_years)).getText().toString();
+                String months = ((EditText) mFragView.findViewById(R.id.pet_age_months)).getText().toString();
                 Pet pet = new Pet(name, years, months, getGender(genderId), getSpecies(speciesId));
                 String petId = ref.child("pets").push().getKey();
                 pet.setId(petId);
