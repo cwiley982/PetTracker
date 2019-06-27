@@ -40,6 +40,7 @@ public class CreatePetFragment extends Fragment {
                 pet.setId(petId);
                 ref.child("pets").child(petId).setValue(pet);
                 ref.child("users").child(mUid).child("pets").child(petId).setValue(true);
+                ref.child("users").child(mUid).child("num_pets").setValue(1);
 
                 startActivity(new Intent(getActivity(), MainActivity.class));
             }
