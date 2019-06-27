@@ -1,31 +1,45 @@
 package com.caitlynwiley.pettracker;
 
-import android.graphics.drawable.Drawable;
-
-import java.util.Calendar;
-import java.util.Locale;
-
 public class TrackerEvent {
 
     private EventType type;
     private String time;
+    private String date;
+    private String title;
+    private String note;
 
+    @SuppressWarnings("unused")
     public TrackerEvent() {
 
     }
 
-    public TrackerEvent(Calendar c, EventType type) {
-        setTime(c);
+    public TrackerEvent(String when, EventType type, String title, String note) {
+        // when has format mm/dd/yyyy hh:mm am/pm
+        setWhen(when);
         this.type = type;
+        setTitle(title);
+        setNote(note);
     }
 
-    private void setTime(Calendar c) {
-        time = String.format(Locale.US, "%d:%d %s", c.get(Calendar.HOUR), c.get(Calendar.MINUTE),
-                c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
+    private void setWhen(String when) {
+        date = when.substring(0, 10);
+        time = when.substring(11);
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getTime() {
         return time;
+    }
+
+    public String getDate() {
+        return date;
     }
 
     public int getDrawableResId() {
@@ -40,7 +54,29 @@ public class TrackerEvent {
         return R.drawable.ic_clock; // default for now
     }
 
+    public EventType getType() {
+        return type;
+    }
+
+    private void setTitle(String title) {
+        this.title = title == null ? "" : title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    private void setNote(String note) {
+        this.note = note == null ? "" : note;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
     public enum EventType {
-        POOP, WALK, FEED
+        POOP,
+        WALK,
+        FEED
     }
 }
