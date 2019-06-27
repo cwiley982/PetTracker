@@ -1,6 +1,5 @@
 package com.caitlynwiley.pettracker;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +33,6 @@ public class ChooseAdditionTypeFragment extends Fragment {
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.add_pet_frag_view, new CreatePetFragment()).commit();
             }
         });
-
 
         return mFragView;
     }
