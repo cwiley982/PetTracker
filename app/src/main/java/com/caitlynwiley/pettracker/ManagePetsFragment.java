@@ -4,16 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -23,17 +18,7 @@ import androidx.fragment.app.Fragment;
 
 public class ManagePetsFragment extends Fragment implements View.OnClickListener {
 
-    //private Animation mRotateForward;
-    //private Animation mRotateBackward;
-    //private Animation mMiniAppear;
-    //private Animation mMiniDisappear;
-
     private View mFragView;
-    //private FloatingActionButton mFab;
-    //private FloatingActionButton mAddPetFab;
-    //private FloatingActionButton mCreatePetFab;
-    //private AlertDialog mCreatePetDiag;
-    //private AlertDialog mAddPetDiag;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseDatabase db = FirebaseDatabase.getInstance();
     private DatabaseReference ref = db.getReference();
@@ -48,7 +33,6 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
 
     private String mUid;
     private String petId;
-    //private boolean mIsFabMenuOpen;
 
     @Nullable
     @Override
@@ -70,8 +54,8 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         // fill fields with current values
         // TODO
 
-        mEditPetFab.show();
-        mSavePetFab.hide();
+        mEditPetFab.setVisibility(View.VISIBLE);
+        mSavePetFab.setVisibility(View.GONE);
 
         return mFragView;
     }
@@ -91,8 +75,8 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
 
     private void enableEdit() {
         // show save fab, hide edit fab
-        mEditPetFab.hide();
-        mSavePetFab.show();
+        mEditPetFab.setVisibility(View.GONE);
+        mSavePetFab.setVisibility(View.VISIBLE);
         mFragView.findViewById(R.id.edit_pet_view).setEnabled(true);
     }
 

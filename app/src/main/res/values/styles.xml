@@ -4,7 +4,6 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
         <item name="android:textColor">@android:color/primary_text_light</item>
-        <item name="android:background">@android:color/background_light</item>
     </style>
 
     <style name="DarkTheme" parent="ThemeOverlay.AppCompat.Dark">
