@@ -119,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                             newFrag = new ManagePetsFragment();
                             break;
                         case R.id.settings_item:
-                            // start a new activity here
-                            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                            newFrag = new SettingsFragment();
+                            break;
                         default:
                             return false;
                     }
