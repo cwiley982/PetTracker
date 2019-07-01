@@ -34,15 +34,14 @@ public class CreateAccountActivity extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference();
     private FirebaseAuth mAuth;
-    private ArrayList<Account> accounts;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.LightTheme);
         setContentView(R.layout.create_account);
 
         mAuth = FirebaseAuth.getInstance();
-        accounts = new ArrayList<>();
         mEmail = findViewById(R.id.email_field);
         mPassword = findViewById(R.id.password_field_one);
         mPasswordRepeated = findViewById(R.id.password_field_two);

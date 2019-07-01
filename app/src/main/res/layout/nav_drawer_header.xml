@@ -6,8 +6,7 @@
     android:background="@color/secondaryColor"
     android:paddingStart="10dp"
     android:paddingEnd="10dp"
-    android:paddingTop="35dp"
-    android:theme="@style/LightTheme">
+    android:paddingTop="35dp">
 
     <ImageView
         android:id="@+id/header_image_view"

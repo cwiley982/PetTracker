@@ -9,10 +9,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        boolean useDarkTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme_enabled", false);
+        setTheme(useDarkTheme ? R.style.DarkTheme : R.style.LightTheme);
+
+        View view = this.getWindow().getDecorView();
+        view.setBackgroundColor(getResources().getColor(useDarkTheme ? android.R.color.background_dark : android.R.color.background_light, null));
+
         setContentView(R.layout.activity_main);
         database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
@@ -152,10 +158,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals("dark_theme_enabled")) {
             boolean enabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(key, false);
-            if (enabled) {
+            View view = this.getWindow().getDecorView();if (enabled) {
                 this.setTheme(R.style.DarkTheme);
+                view.setBackgroundColor(getResources().getColor(android.R.color.background_dark, null));
+                Log.d("MainActivity", "dark mode enabled");
             } else {
                 this.setTheme(R.style.LightTheme);
+                view.setBackgroundColor(getResources().getColor(android.R.color.background_light, null));
             }
         }
     }

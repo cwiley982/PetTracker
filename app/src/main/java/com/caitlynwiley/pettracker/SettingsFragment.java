@@ -6,13 +6,14 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceFragmentCompat;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
 
     View mFragView;
 
@@ -23,6 +24,8 @@ public class SettingsFragment extends Fragment {
         mFragView = inflater.inflate(R.layout.settings_fragment, container, false);
 
         final CheckBox darkThemePref = mFragView.findViewById(R.id.dark_theme_setting);
+        darkThemePref.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext())
+                .getBoolean("dark_theme_enabled", false));
         darkThemePref.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -33,5 +36,21 @@ public class SettingsFragment extends Fragment {
         });
 
         return mFragView;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Set up a listener whenever a key changes
+        getPreferenceScreen().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Unregister the listener whenever a key changes
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 }

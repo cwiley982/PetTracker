@@ -29,6 +29,7 @@ public class EmailLoginActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.LightTheme);
         setContentView(R.layout.activity_email_login);
 
         mAuth = FirebaseAuth.getInstance();
