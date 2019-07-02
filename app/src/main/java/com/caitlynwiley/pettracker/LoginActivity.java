@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -56,7 +57,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.LightTheme);
+        boolean useDarkTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme_enabled", false);
+        setTheme(useDarkTheme ? R.style.DarkTheme : R.style.LightTheme);
         setContentView(R.layout.activity_login);
 
         // Initialize Firebase Auth

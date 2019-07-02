@@ -26,7 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity {
 
     // TODO: add logout option
     /*
@@ -56,9 +56,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onCreate(savedInstanceState);
         boolean useDarkTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme_enabled", false);
         setTheme(useDarkTheme ? R.style.DarkTheme : R.style.LightTheme);
-
-        View view = this.getWindow().getDecorView();
-        view.setBackgroundColor(getResources().getColor(useDarkTheme ? android.R.color.background_dark : android.R.color.background_light, null));
 
         setContentView(R.layout.activity_main);
         database = FirebaseDatabase.getInstance();
@@ -152,20 +149,5 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     public String getPetID() {
         return petID;
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("dark_theme_enabled")) {
-            boolean enabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(key, false);
-            View view = this.getWindow().getDecorView();if (enabled) {
-                this.setTheme(R.style.DarkTheme);
-                view.setBackgroundColor(getResources().getColor(android.R.color.background_dark, null));
-                Log.d("MainActivity", "dark mode enabled");
-            } else {
-                this.setTheme(R.style.LightTheme);
-                view.setBackgroundColor(getResources().getColor(android.R.color.background_light, null));
-            }
-        }
     }
 }
