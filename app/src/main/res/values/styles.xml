@@ -1,15 +1,15 @@
 <resources>
 
     <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="android:colorPrimary">@color/primaryColor</item>
+        <item name="android:colorAccent">@color/secondaryColor</item>
         <item name="android:textColor">@android:color/primary_text_dark</item>
         <item name="android:windowBackground">@android:color/background_light</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/secondaryDarkColor</item>
+        <item name="android:colorPrimary">@color/primaryDarkColor</item>
+        <item name="android:colorAccent">@color/secondaryDarkColor</item>
         <item name="android:textColor">@android:color/primary_text_dark</item>
         <item name="android:windowBackground">@android:color/background_dark</item>
     </style>

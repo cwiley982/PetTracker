@@ -20,7 +20,6 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity android:name=".EmailLoginActivity" />
         <activity android:name=".CreateAccountActivity"/>
         <activity android:name=".AddPetActivity" />
     </application>
