@@ -2,7 +2,6 @@ package com.caitlynwiley.pettracker;
 
 import android.content.Intent;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -37,7 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements OnClickListener {
+public class LoginActivity extends BaseActivity implements OnClickListener {
 
     private static final int RC_SIGN_IN = 1;
     private static final int RC_GOOGLE_SIGN_IN = 2;
@@ -57,8 +56,6 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boolean useDarkTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme_enabled", false);
-        setTheme(useDarkTheme ? R.style.DarkTheme : R.style.LightTheme);
         setContentView(R.layout.activity_login);
 
         // Initialize Firebase Auth
