@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginEnd="8dp"
-            android:text="Name"/>
+            android:text="@string/name"/>
 
         <EditText
             android:id="@+id/new_pet_name"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="18sp"
-            android:text="Age"/>
+            android:text="@string/age"/>
 
         <EditText
             android:id="@+id/pet_age_years"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:inputType="number"
-            android:hint="Years"/>
+            android:hint="@string/years"/>
 
         <EditText
             android:id="@+id/pet_age_months"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:inputType="number"
-            android:hint="Months"/>
+            android:hint="@string/months"/>
     </LinearLayout>
 
     <!-- optional -->
@@ -64,12 +64,13 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginEnd="8dp"
-            android:text="Birthday"/>
+            android:text="@string/birthday"/>
 
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:hint="@string/optional"
             android:inputType="date"/>
     </LinearLayout>
 
@@ -83,12 +84,13 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginEnd="8dp"
-            android:text="Breed"/>
+            android:text="@string/breed"/>
 
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:hint="@string/optional"
             android:inputType="textCapWords"/>
     </LinearLayout>
 
@@ -104,13 +106,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="Male"/>
+            android:text="@string/male"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="Female"/>
+            android:text="@string/female"/>
     </RadioGroup>
 
     <RadioGroup
@@ -125,14 +127,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="Dog"/>
+            android:text="@string/dog"/>
 
         <RadioButton
             android:id="@+id/cat_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="Cat"/>
+            android:text="@string/cat"/>
     </RadioGroup>
 
     <Button
@@ -141,6 +143,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:background="@color/secondaryColor"
-        android:text="Create"/>
+        android:text="@string/create"/>
 
 </LinearLayout>

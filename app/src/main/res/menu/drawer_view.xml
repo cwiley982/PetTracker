@@ -1,41 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
-        <!--<item
-            android:id="@+id/schedule_item"
-            android:title="@string/schedule"
-            android:icon="@drawable/ic_clock" />
-        <item
-            android:id="@+id/calendar_item"
-            android:title="@string/calendar"
-            android:icon="@drawable/ic_calendar" />
-        <item
-            android:id="@+id/wish_list_item"
-            android:title="@string/wish_list"
-            android:icon="@drawable/ic_heart" />
-        <item
-            android:id="@+id/shopping_list_item"
-            android:title="@string/shopping_list"
-            android:icon="@drawable/ic_list" />-->
-        <item
-            android:id="@+id/tracker_item"
-            android:title="Tracker"
-            android:icon="@drawable/ic_dog_walk"/>
-        <item
-            android:id="@+id/manage_pets_item"
-            android:title="Manage Pet"
-            android:icon="@drawable/ic_manage" />
-    </group>
+    <item android:title="@string/general">
+        <menu>
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/remove_ads_item"
-            android:title="Remove Ads"
-            android:icon="@drawable/ic_credit_card"/>
-        <item
-            android:id="@+id/settings_item"
-            android:title="Settings"
-            android:icon="@drawable/ic_settings_black_24dp"/>
-    </group>
+            <group android:checkableBehavior="single">
+            <!--<item
+                android:id="@+id/schedule_item"
+                android:title="@string/schedule"
+                android:icon="@drawable/ic_clock" />
+            <item
+                android:id="@+id/calendar_item"
+                android:title="@string/calendar"
+                android:icon="@drawable/ic_calendar" />
+            <item
+                android:id="@+id/wish_list_item"
+                android:title="@string/wish_list"
+                android:icon="@drawable/ic_heart" />
+            <item
+                android:id="@+id/shopping_list_item"
+                android:title="@string/shopping_list"
+                android:icon="@drawable/ic_list" />-->
+            <item
+                android:id="@+id/tracker_item"
+                android:title="@string/tracker"
+                android:icon="@drawable/ic_dog_walk"/>
+            <item
+                android:id="@+id/manage_pets_item"
+                android:title="@string/manage_pet"
+                android:icon="@drawable/ic_manage" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="@string/other">
+        <menu>
+            <item
+                android:id="@+id/remove_ads_item"
+                android:title="@string/remove_ads"
+                android:icon="@drawable/ic_credit_card"/>
+            <item
+                android:id="@+id/settings_item"
+                android:title="@string/settings"
+                android:icon="@drawable/ic_settings_black_24dp"/>
+        </menu>
+    </item>
 </menu>
