@@ -1,17 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/login_fragment_view">
 
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="128dp"/>
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/facebok_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="24dp" />
+
+    <View
+        android:id="@+id/breakline"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/google_sign_in_button"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginHorizontal="8dp"
+        android:background="#b0b0b0"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/google_sign_in_button"
+        android:layout_marginTop="32dp"
+        android:text="OR"
+        android:textColor="#b0b0b0"
+        android:textSize="24sp"
+        android:background="?android:attr/background"/>
+
     <LinearLayout
         android:id="@+id/login_chooser"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/breakline"
         android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="36dp">
+        android:layout_marginHorizontal="32dp"
+        android:gravity="center_vertical">
 
         <EditText
             android:id="@+id/email_field"
@@ -37,7 +74,7 @@
             android:text="@string/action_sign_in"
             android:textStyle="bold" />
 
-        <Button
+        <TextView
             android:id="@+id/create_account_button"
             style="?android:textAppearanceSmall"
             android:layout_width="wrap_content"
@@ -47,15 +84,8 @@
             android:text="@string/action_create_account"
             android:textAllCaps="false"
             android:textStyle="bold"
-            android:textColor="@color/secondaryDarkColor"/>
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/google_sign_in_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"/>
+            android:textColor="@color/primaryColor"/>
 
     </LinearLayout>
-</LinearLayout>
 
+</RelativeLayout>
