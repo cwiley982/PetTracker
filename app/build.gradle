@@ -36,6 +36,7 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-auth:18.0.0'
     implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

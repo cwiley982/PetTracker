@@ -1,91 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/login_fragment_view">
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/google_sign_in_button"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/email_field"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="128dp"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:inputType="textEmailAddress"
+        android:hint="@string/prompt_email" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/facebok_login_button"
+    <EditText
+        android:id="@+id/password_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/email_field"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:hint="@string/prompt_password"/>
+
+    <Button
+        android:id="@+id/email_sign_in_button"
+        style="?android:textAppearanceSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginTop="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/password_field"
+        android:backgroundTint="@color/primaryColor"
+        android:text="@string/action_sign_in"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/create_account_button"
+        style="?android:textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/email_sign_in_button"
+        android:layout_marginTop="8dp"
+        android:background="@null"
+        android:text="@string/action_create_account"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="@color/primaryColor"/>
 
     <View
         android:id="@+id/breakline"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_below="@id/google_sign_in_button"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"
         android:layout_marginHorizontal="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:background="#b0b0b0"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/google_sign_in_button"
-        android:layout_marginTop="32dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="8dp"
         android:text="OR"
         android:textColor="#b0b0b0"
         android:textSize="24sp"
-        android:background="?android:attr/background"/>
+        android:background="?android:attr/windowBackground"/>
 
-    <LinearLayout
-        android:id="@+id/login_chooser"
-        android:layout_width="match_parent"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_sign_in_button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/breakline"
-        android:orientation="vertical"
-        android:layout_marginHorizontal="32dp"
-        android:gravity="center_vertical">
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintRight_toLeftOf="@id/facebook_login_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        layout_constraintHorizontal_weight="1"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintVertical_bias=".75"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <EditText
-            android:id="@+id/email_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/prompt_email" />
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/facebook_login_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/google_sign_in_button"
+        app:layout_constraintRight_toRightOf="parent"
+        layout_constraintHorizontal_weight="1"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintVertical_bias=".75"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <EditText
-            android:id="@+id/password_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="@string/prompt_password"/>
-
-        <Button
-            android:id="@+id/email_sign_in_button"
-            style="?android:textAppearanceSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="center_horizontal"
-            android:backgroundTint="@color/primaryColor"
-            android:text="@string/action_sign_in"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/create_account_button"
-            style="?android:textAppearanceSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@null"
-            android:text="@string/action_create_account"
-            android:textAllCaps="false"
-            android:textStyle="bold"
-            android:textColor="@color/primaryColor"/>
-
-    </LinearLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
