@@ -1,5 +1,6 @@
 package com.caitlynwiley.pettracker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -11,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsFragment extends Fragment {
 
@@ -33,6 +37,15 @@ public class SettingsFragment extends Fragment {
                         .putBoolean("dark_theme_enabled", darkThemeSetting.isChecked()).apply();
                 getActivity().setTheme(darkThemeSetting.isChecked() ? R.style.DarkTheme : R.style.LightTheme);
                 getActivity().recreate();
+            }
+        });
+
+        TextView signOut = mFragView.findViewById(R.id.sign_out_button);
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getActivity(), LoginActivity.class));
             }
         });
 

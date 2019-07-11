@@ -16,6 +16,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -58,7 +59,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
     private Button mEmailSignInButton;
     private TextView mCreateAccountButton;
-    private SignInButton mGoogleSignInButton;
+    private Button mGoogleSignInButton;
     private EditText mEmailField;
     private EditText mPasswordField;
 
@@ -102,7 +103,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = findViewById(R.id.facebook_login_button);
+        FacebookSdk.sdkInitialize(this);
+        final LoginButton loginButton = new LoginButton(this);
         loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -121,6 +123,14 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             public void onError(FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
                 // ...
+            }
+        });
+
+        Button fbButton = findViewById(R.id.facebook_login_button);
+        fbButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginButton.callOnClick();
             }
         });
     }
