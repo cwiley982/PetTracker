@@ -4,20 +4,18 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -59,7 +57,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
     private CallbackManager mCallbackManager;
 
     private Button mEmailSignInButton;
-    private Button mCreateAccountButton;
+    private TextView mCreateAccountButton;
     private SignInButton mGoogleSignInButton;
     private EditText mEmailField;
     private EditText mPasswordField;
@@ -143,8 +141,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            mUser = mAuth.getCurrentUser();
+                            updateUI("");
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
