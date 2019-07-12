@@ -84,7 +84,9 @@ public class MainActivity extends BaseActivity {
         mNavHeader = mNavView.getHeaderView(R.layout.nav_drawer_header);
 
         // set the toolbar as the action bar
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white, null));
+        setSupportActionBar(toolbar);
         // add menu icon to action bar
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
@@ -136,6 +138,11 @@ public class MainActivity extends BaseActivity {
                 return true;
             }
         });
+
+        if(savedInstanceState == null) {
+            getSupportFragmentManager().
+                    beginTransaction().replace(R.id.fragment_view, new TrackerFragment()).commit();
+        }
     }
 
     @Override
