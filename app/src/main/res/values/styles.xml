@@ -2,6 +2,7 @@
 
     <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimary">@color/primaryColor</item>
+        <item name="android:colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="android:colorAccent">@color/secondaryColor</item>
         <item name="android:textColor">@android:color/primary_text_light</item>
         <item name="android:windowBackground">@android:color/background_light</item>
@@ -9,9 +10,10 @@
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:colorPrimary">@color/primaryDarkColor</item>
+        <item name="android:colorPrimaryDark">@android:color/background_dark</item>
         <item name="android:colorAccent">@color/secondaryDarkColor</item>
         <item name="android:textColor">@android:color/primary_text_dark</item>
-        <item name="android:windowBackground">@android:color/background_dark</item>
+        <item name="android:windowBackground">@color/darkBackground</item>
     </style>
 
     <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">

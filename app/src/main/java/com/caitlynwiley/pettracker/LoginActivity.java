@@ -2,8 +2,14 @@ package com.caitlynwiley.pettracker;
 
 import android.content.Intent;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,6 +47,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -67,6 +76,30 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        /*
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.caitlynwiley.pettracker",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+        */
+
+        // set the toolbar as the action bar
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        // add menu icon to action bar
+        ActionBar actionbar = getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -103,6 +136,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
+        FacebookSdk.setApplicationId(getResources().getString(R.string.facebook_app_id));
         FacebookSdk.sdkInitialize(this);
         final LoginButton loginButton = new LoginButton(this);
         loginButton.setReadPermissions("email", "public_profile");
@@ -158,7 +192,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
+                            mUser = null;
+                            updateUI(task.getException().getMessage());
                         }
                     }
                 });
