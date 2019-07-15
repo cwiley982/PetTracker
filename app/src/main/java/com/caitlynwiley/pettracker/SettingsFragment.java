@@ -1,54 +1,70 @@
 package com.caitlynwiley.pettracker;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceChangeListener {
 
-    View mFragView;
+    CheckBoxPreference mDarkThemePref;
+    Preference mSignOut;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        mFragView = inflater.inflate(R.layout.settings_fragment, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        final CheckBox darkThemePref = mFragView.findViewById(R.id.dark_theme_setting);
-        darkThemePref.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext())
-                .getBoolean("dark_theme_enabled", false));
-        darkThemePref.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CheckBox darkThemeSetting = (CheckBox) v;
-                PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
-                        .putBoolean("dark_theme_enabled", darkThemeSetting.isChecked()).apply();
-                getActivity().setTheme(darkThemeSetting.isChecked() ? R.style.DarkTheme : R.style.LightTheme);
-                getActivity().recreate();
-            }
+        addPreferencesFromResource(R.xml.settings);
+
+        mDarkThemePref = findPreference("dark_theme_enabled");
+        mSignOut = findPreference("sign_out");
+
+        mDarkThemePref.setOnPreferenceChangeListener(this);
+        mSignOut.setOnPreferenceClickListener(preference -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+            return true;
         });
+    }
 
-        TextView signOut = mFragView.findViewById(R.id.sign_out_button);
-        signOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getActivity(), LoginActivity.class));
-            }
-        });
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
-        return mFragView;
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.settings_fragment, container, false);
+        ViewGroup innerContainer = v.findViewById(R.id.settings_frame);
+        View innerView = super.onCreateView(inflater, innerContainer, savedInstanceState);
+        if (innerView != null) {
+            innerContainer.addView(innerView);
+        }
+        return v;
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        if (preference.getKey().equals("dark_theme_enabled")) {
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
+                    .putBoolean("dark_theme_enabled", (boolean) newValue).apply();
+            getActivity().setTheme((boolean) newValue ? R.style.DarkTheme : R.style.LightTheme);
+            getActivity().recreate();
+            return true;
+        }
+        return false;
     }
 }
