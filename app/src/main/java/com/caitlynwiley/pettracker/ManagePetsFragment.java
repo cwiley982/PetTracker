@@ -1,6 +1,7 @@
 package com.caitlynwiley.pettracker;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,13 @@ import android.widget.RadioGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,11 +34,13 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
     private EditText mMonthsET;
     private RadioGroup mGenderGroup;
     private RadioGroup mSpeciesGroup;
-    private FloatingActionButton mEditPetFab;
-    private FloatingActionButton mSavePetFab;
+    private FloatingActionButton mSaveEditFab;
+
+    private boolean mEditing;
 
     private String mUid;
     private String petId;
+    private Pet pet;
 
     @Nullable
     @Override
@@ -41,43 +49,84 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         mFragView = inflater.inflate(R.layout.manage_pets_fragment, container, false);
 
         mUid = mAuth.getCurrentUser().getUid();
-        petId = ""; //TODO
+        petId = "";
+        ref.child("users").child(mUid).child("pets").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
+                for (DataSnapshot d : data) {
+                    petId = d.getKey();
+                    setUpPetListener();
+                    return;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         mPetNameET = mFragView.findViewById(R.id.pet_name);
         mYearsET = mFragView.findViewById(R.id.pet_age_years);
         mMonthsET = mFragView.findViewById(R.id.pet_age_months);
         mGenderGroup = mFragView.findViewById(R.id.pet_gender);
         mSpeciesGroup = mFragView.findViewById(R.id.pet_species);
-        mEditPetFab = mFragView.findViewById(R.id.edit_pet_fab);
-        mSavePetFab = mFragView.findViewById(R.id.save_pet_fab);
+        mSaveEditFab = mFragView.findViewById(R.id.save_edit_fab);
 
-        // fill fields with current values
-        // TODO
+        mPetNameET.setEnabled(false);
+        mYearsET .setEnabled(false);
+        mMonthsET.setEnabled(false);
+        mGenderGroup.setEnabled(false);
+        mSpeciesGroup.setEnabled(false);
 
-        mEditPetFab.setVisibility(View.VISIBLE);
-        mSavePetFab.setVisibility(View.GONE);
+        mSaveEditFab.setImageResource(R.drawable.ic_edit_black_24dp);
+        mSaveEditFab.setOnClickListener(this);
 
         return mFragView;
     }
 
+    private void setUpPetListener() {
+        ref.child("pets").child(petId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                pet = dataSnapshot.getValue(Pet.class);
+                fillFields();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void fillFields() {
+        mPetNameET.setText(pet.getName());
+        mYearsET.setText(String.format(Locale.US, "%d", (int) pet.getAge()));
+        mMonthsET.setText(String.format(Locale.US, "%d", (int) (pet.getAge() % 1) * 12) );
+        mGenderGroup.findViewById(pet.getGender() == "male" ? R.id.male_btn : R.id.female_btn).setSelected(true);
+        mSpeciesGroup.findViewById(pet.getSpecies() == "dog" ? R.id.dog_btn : R.id.cat_btn).setSelected(true);
+    }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.edit_pet_fab:
-                enableEdit();
-                break;
-            case R.id.save_pet_fab:
-                savePet();
-                break;
+        if (mEditing) {
+            savePet();
+        } else {
+            enableEdit();
         }
     }
 
     private void enableEdit() {
         // show save fab, hide edit fab
-        mEditPetFab.setVisibility(View.GONE);
-        mSavePetFab.setVisibility(View.VISIBLE);
-        mFragView.findViewById(R.id.edit_pet_view).setEnabled(true);
+        mSaveEditFab.setImageResource(R.drawable.ic_check_black_24dp);
+        mPetNameET.setEnabled(true);
+        mYearsET .setEnabled(true);
+        mMonthsET.setEnabled(true);
+        mGenderGroup.setEnabled(true);
+        mSpeciesGroup.setEnabled(true);
+        mEditing = true;
     }
 
     private void savePet() {
@@ -90,10 +139,14 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         Pet pet = new Pet(name, years, months, getGender(genderId), getSpecies(speciesId));
         pet.setId(petId);
         ref.child("pets").child(petId).setValue(pet);
-        //show edit fab, hide save fab
-        mEditPetFab.show();
-        mSavePetFab.hide();
-        mFragView.findViewById(R.id.edit_pet_view).setEnabled(false);
+        // change icon on fab
+        mSaveEditFab.setImageResource(R.drawable.ic_edit_black_24dp);
+        mPetNameET.setEnabled(false);
+        mYearsET .setEnabled(false);
+        mMonthsET.setEnabled(false);
+        mGenderGroup.setEnabled(false);
+        mSpeciesGroup.setEnabled(false);
+        mEditing = false;
     }
 
     private String getGender(int id) {
