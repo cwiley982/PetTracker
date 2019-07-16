@@ -178,18 +178,15 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
                 .setView(v)
                 .setCancelable(true)
                 .setNegativeButton("Cancel", null) //just closes the window by default
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // add event to schedule
-                        ScheduleEvent.Type type = resId == R.drawable.ic_sleep_white_24dp ? ScheduleEvent.Type.SLEEP :
-                                resId == R.drawable.ic_food_white_24dp ? ScheduleEvent.Type.FEED : ScheduleEvent.Type.WALK;
-                        // get title and stuff then set it
-                        ScheduleEvent event = new ScheduleEvent(type, mEventTitle.getText().toString(), mNote.getText());
-                        event.setStartTime(mStartHourSpinner, mStartMinutesSpinner);
-                        event.setEndTime(mEndHourSpinner, mEndMinutesSpinner);
-                        mEvents.add(event);
-                    }
+                .setPositiveButton("Add", (dialog, which) -> {
+                    // add event to schedule
+                    ScheduleEvent.Type type = resId == R.drawable.ic_sleep_white_24dp ? ScheduleEvent.Type.SLEEP :
+                            resId == R.drawable.ic_food_white_24dp ? ScheduleEvent.Type.FEED : ScheduleEvent.Type.WALK;
+                    // get title and stuff then set it
+                    ScheduleEvent event = new ScheduleEvent(type, mEventTitle.getText().toString(), mNote.getText());
+                    event.setStartTime(mStartHourSpinner, mStartMinutesSpinner);
+                    event.setEndTime(mEndHourSpinner, mEndMinutesSpinner);
+                    mEvents.add(event);
                 })
                 .create();
 
@@ -211,12 +208,9 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
         icon.setTint(getResources().getColor(R.color.secondaryColor));
         alertDialog.setIcon(icon);
 
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.secondaryDarkColor));
-                alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.secondaryDarkColor));
-            }
+        alertDialog.setOnShowListener(dialog -> {
+            alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.secondaryDarkColor));
+            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.secondaryDarkColor));
         });
 
         alertDialog.show();

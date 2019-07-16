@@ -95,7 +95,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         */
 
         // set the toolbar as the action bar
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         // add menu icon to action bar
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
@@ -103,13 +103,10 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                mAuth = firebaseAuth;
-                mUser = firebaseAuth.getCurrentUser();
-                updateUI("");
-            }
+        mAuth.addAuthStateListener(firebaseAuth -> {
+            mAuth = firebaseAuth;
+            mUser = firebaseAuth.getCurrentUser();
+            updateUI("");
         });
 
         mUser = mAuth.getCurrentUser();
@@ -161,12 +158,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         });
 
         Button fbButton = findViewById(R.id.facebook_login_button);
-        fbButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginButton.callOnClick();
-            }
-        });
+        fbButton.setOnClickListener(v -> loginButton.callOnClick());
     }
 
     private void googleSignIn() {
@@ -179,22 +171,19 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            mUser = mAuth.getCurrentUser();
-                            updateUI("");
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            mUser = null;
-                            updateUI(task.getException().getMessage());
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithCredential:success");
+                        mUser = mAuth.getCurrentUser();
+                        updateUI("");
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                        mUser = null;
+                        updateUI(task.getException().getMessage());
                     }
                 });
     }
@@ -226,21 +215,18 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("LoginActivity", "signInWithCredential:success");
-                            mUser = mAuth.getCurrentUser();
-                            updateUI("");
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("LoginActivity", "signInWithCredential:failure", task.getException());
-                            Toast.makeText(getApplicationContext(), "Authentication Failed.", Toast.LENGTH_SHORT).show();
-                            mUser = null;
-                            updateUI("");
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d("LoginActivity", "signInWithCredential:success");
+                        mUser = mAuth.getCurrentUser();
+                        updateUI("");
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w("LoginActivity", "signInWithCredential:failure", task.getException());
+                        Toast.makeText(getApplicationContext(), "Authentication Failed.", Toast.LENGTH_SHORT).show();
+                        mUser = null;
+                        updateUI("");
                     }
                 });
     }
@@ -283,16 +269,13 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         String password = mPasswordField.getText().toString();
 
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            mUser = task.getResult().getUser();
-                            updateUI("");
-                        } else {
-                            FirebaseAuthException e = (FirebaseAuthException) task.getException();
-                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        mUser = task.getResult().getUser();
+                        updateUI("");
+                    } else {
+                        FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

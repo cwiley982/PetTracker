@@ -8,12 +8,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -27,21 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 public class MainActivity extends BaseActivity {
 
-    // TODO: add logout option
-    /*
-    AuthUI.getInstance()
-        .signOut(this)
-        .addOnCompleteListener(new OnCompleteListener<Void>() {
-            public void onComplete(@NonNull Task<Void> task) {
-                // ...
-            }
-        });
-     */
     private DrawerLayout mDrawerLayout;
     private FrameLayout mFrameLayout;
     private FragmentManager mFragmentManager;
@@ -93,50 +75,47 @@ public class MainActivity extends BaseActivity {
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         // add listener to navigation view to watch for menu items being selected
-        mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                item.setChecked(true);
-                mDrawerLayout.closeDrawers();
+        mNavView.setNavigationItemSelectedListener(item -> {
+            item.setChecked(true);
+            mDrawerLayout.closeDrawers();
 
-                // replace fragment with new fragment
-                Fragment newFrag;
-                int id = item.getItemId();
-                // get fragment that already exists if it exists
-                newFrag = mFragmentManager.findFragmentById(id);
-                // if not create it
-                if (newFrag == null) {
-                    switch (id) {
-                        /*case R.id.calendar_item:
-                            newFrag = new CalendarFragment();
-                            break;
-                        case R.id.shopping_list_item:
-                            newFrag = new ShoppingListFragment();
-                            break;
-                        case R.id.wish_list_item:
-                            newFrag = new WishListFragment();
-                            break;
-                        case R.id.schedule_item:
-                            newFrag = new ScheduleFragment();
-                            break;*/
-                        case R.id.tracker_item:
-                            newFrag = new TrackerFragment();
-                            break;
-                        case R.id.manage_pets_item:
-                            newFrag = new ManagePetsFragment();
-                            break;
-                        case R.id.settings_item:
-                            newFrag = new SettingsFragment();
-                            break;
-                        default:
-                            return false;
-                    }
+            // replace fragment with new fragment
+            Fragment newFrag;
+            int id = item.getItemId();
+            // get fragment that already exists if it exists
+            newFrag = mFragmentManager.findFragmentById(id);
+            // if not create it
+            if (newFrag == null) {
+                switch (id) {
+                    /*case R.id.calendar_item:
+                        newFrag = new CalendarFragment();
+                        break;
+                    case R.id.shopping_list_item:
+                        newFrag = new ShoppingListFragment();
+                        break;
+                    case R.id.wish_list_item:
+                        newFrag = new WishListFragment();
+                        break;
+                    case R.id.schedule_item:
+                        newFrag = new ScheduleFragment();
+                        break;*/
+                    case R.id.tracker_item:
+                        newFrag = new TrackerFragment();
+                        break;
+                    case R.id.manage_pets_item:
+                        newFrag = new ManagePetsFragment();
+                        break;
+                    case R.id.settings_item:
+                        newFrag = new SettingsFragment();
+                        break;
+                    default:
+                        return false;
                 }
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_view, newFrag)
-                        .commit();
-                return true;
             }
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_view, newFrag)
+                    .commit();
+            return true;
         });
 
         if(savedInstanceState == null) {

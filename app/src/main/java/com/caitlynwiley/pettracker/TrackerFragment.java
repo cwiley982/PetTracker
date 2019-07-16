@@ -1,6 +1,5 @@
 package com.caitlynwiley.pettracker;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +31,6 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 public class TrackerFragment extends Fragment implements View.OnClickListener {
@@ -56,8 +54,6 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private String mUID;
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
-
-    private AppCompatActivity parentActivity;
 
     private boolean mIsFabOpen;
     private boolean mPetsListWasEmpty = true;
@@ -217,33 +213,25 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private void addEvent(final TrackerEvent.EventType type) {
         new AlertDialog.Builder(getContext())
             .setView(R.layout.add_event_dialog)
-            .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // save the event...
-                    AlertDialog d = (AlertDialog) dialog;
-                    String title = ((EditText) d.findViewById(R.id.event_title)).getText().toString();
-                    RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
-                    int radioButtonID = radioGroup.getCheckedRadioButtonId();
-                    View radioButton = radioGroup.findViewById(radioButtonID);
-                    int petChosen = radioGroup.indexOfChild(radioButton);
-                    String petId = pets.get(petChosen);
-                    String note = ((EditText) d.findViewById(R.id.event_note)).getText().toString();
-                    Calendar c = Calendar.getInstance();
-                    String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%2d %s",
-                            c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
-                            c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
-                            c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
-                    TrackerEvent e = new TrackerEvent(when, type, title, note);
-                    mDatabase.child("pets").child(petId).child("events").push().setValue(e);
-                }
+            .setPositiveButton(R.string.save, (dialog, which) -> {
+                // save the event...
+                AlertDialog d = (AlertDialog) dialog;
+                String title = ((EditText) d.findViewById(R.id.event_title)).getText().toString();
+                RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
+                int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                View radioButton = radioGroup.findViewById(radioButtonID);
+                int petChosen = radioGroup.indexOfChild(radioButton);
+                String petId = pets.get(petChosen);
+                String note = ((EditText) d.findViewById(R.id.event_note)).getText().toString();
+                Calendar c = Calendar.getInstance();
+                String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%2d %s",
+                        c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
+                        c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
+                        c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
+                TrackerEvent e = new TrackerEvent(when, type, title, note);
+                mDatabase.child("pets").child(petId).child("events").push().setValue(e);
             })
-            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            })
+            .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
             .create()
             .show();
     }

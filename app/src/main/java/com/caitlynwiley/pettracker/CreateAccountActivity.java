@@ -43,47 +43,41 @@ public class CreateAccountActivity extends BaseActivity {
         mPasswordRepeated = findViewById(R.id.password_field_two);
         mErrorText = findViewById(R.id.error_msg);
         Button createBtn = findViewById(R.id.create_btn);
-        createBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String email = mEmail.getText().toString();
-                    // check passwords
-                    if (!mPassword.getText().toString().equals(mPasswordRepeated.getText().toString())) {
-                        hideKeyboard();
-                        showError("Passwords do not match. Please try again.");
-                        return;
-                    }
+        createBtn.setOnClickListener(v -> {
+            final String email = mEmail.getText().toString();
+            // check passwords
+            if (!mPassword.getText().toString().equals(mPasswordRepeated.getText().toString())) {
+                hideKeyboard();
+                showError("Passwords do not match. Please try again.");
+                return;
+            }
 
-                    Task<AuthResult> t = mAuth.createUserWithEmailAndPassword(email, mPassword.getText().toString());
-                    t.addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            Task<AuthResult> t = mAuth.createUserWithEmailAndPassword(email, mPassword.getText().toString());
+            t.addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    // create account
+                    Account a = new Account(mAuth.getUid(), email);
+                    ref.child("users").child(mAuth.getUid()).setValue(a);
+                    ref.child("users").child(mAuth.getCurrentUser().getUid()).child("num_pets").addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // create account
-                                Account a = new Account(mAuth.getUid(), email);
-                                ref.child("users").child(mAuth.getUid()).setValue(a);
-                                ref.child("users").child(mAuth.getCurrentUser().getUid()).child("num_pets").addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getValue() == null || dataSnapshot.getValue().equals(0)) {
-                                            startActivity(new Intent(CreateAccountActivity.this, AddPetActivity.class));
-                                        } else {
-                                            startActivity(new Intent(CreateAccountActivity.this, MainActivity.class));
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.getValue() == null || dataSnapshot.getValue().equals(0)) {
+                                startActivity(new Intent(CreateAccountActivity.this, AddPetActivity.class));
                             } else {
-                                showError("Account creation failed with message: " + task.getException().getMessage());
-                                hideKeyboard();
+                                startActivity(new Intent(CreateAccountActivity.this, MainActivity.class));
                             }
                         }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
                     });
+                } else {
+                    showError("Account creation failed with message: " + task.getException().getMessage());
+                    hideKeyboard();
                 }
+            });
         });
     }
 
