@@ -1,13 +1,18 @@
 <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-  <color name="primaryColor">#768fff</color>
-  <color name="statusBarColorLight">#566fdf</color>
-  <color name="primaryDarkColor">#0039cb</color>
-  <color name="startBarColorDark">#0019ab</color>
-  <color name="secondaryColor">#00bfa5</color>
-  <color name="secondaryDarkColor">#00796b</color>
-  <color name="primaryTextColor">#000000</color>
-  <color name="secondaryTextColor">#000000</color>
-  <color name="darkBackground">#303030</color>
-  <color name="secondaryTextColorDark">#0039cb</color>
+    <!-- Light Theme -->
+    <color name="primaryColor">#768fff</color>
+    <color name="statusBarColorLight">#566fdf</color>
+    <color name="secondaryColor">#00bfa5</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="tracker_item_light">#cccccc</color>
+
+    <!-- Dark Theme -->
+    <color name="primaryDarkColor">#0039cb</color>
+    <color name="startBarColorDark">#0019ab</color>
+    <color name="secondaryDarkColor">#00796b</color>
+    <color name="secondaryTextColor">#000000</color>
+    <color name="darkBackground">#303030</color>
+    <color name="secondaryTextColorDark">#0039cb</color>
+    <color name="tracker_item_dark">#505050</color>
 </resources>

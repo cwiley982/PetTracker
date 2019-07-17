@@ -6,6 +6,8 @@
         <item name="android:colorAccent">@color/secondaryColor</item>
         <item name="android:textColor">@android:color/primary_text_light</item>
         <item name="android:windowBackground">@android:color/background_light</item>
+        <item name="tracker_time_text_color">@android:color/primary_text_light</item>
+        <item name="tracker_item_background">@color/tracker_item_light</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -14,6 +16,8 @@
         <item name="android:colorAccent">@color/secondaryDarkColor</item>
         <item name="android:textColor">@android:color/primary_text_dark</item>
         <item name="android:windowBackground">@color/darkBackground</item>
+        <item name="tracker_time_text_color">@android:color/primary_text_dark</item>
+        <item name="tracker_item_background">@color/tracker_item_dark</item>
     </style>
 
     <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
@@ -27,4 +31,7 @@
         <item name="android:textColor">@color/com_facebook_button_text_color</item>
     </style>
 
+
+    <attr name="tracker_time_text_color" format="color"/>
+    <attr name="tracker_item_background" format="color"/>
 </resources>
