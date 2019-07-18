@@ -104,9 +104,9 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
     private void fillFields() {
         mPetNameET.setText(pet.getName());
         mYearsET.setText(String.format(Locale.US, "%d", (int) pet.getAge()));
-        mMonthsET.setText(String.format(Locale.US, "%d", (int) (pet.getAge() % 1) * 12) );
-        mGenderGroup.findViewById(pet.getGender() == "male" ? R.id.male_btn : R.id.female_btn).setSelected(true);
-        mSpeciesGroup.findViewById(pet.getSpecies() == "dog" ? R.id.dog_btn : R.id.cat_btn).setSelected(true);
+        mMonthsET.setText(String.format(Locale.US, "%d", (int) ((pet.getAge() % 1) * 12) ));
+        mGenderGroup.findViewById(pet.getGender().equals("male") ? R.id.male_btn : R.id.female_btn).setSelected(true);
+        mSpeciesGroup.findViewById(pet.getSpecies().equals("dog") ? R.id.dog_btn : R.id.cat_btn).setSelected(true);
     }
 
     @Override

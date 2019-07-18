@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -57,6 +58,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private boolean mIsFabOpen;
     private boolean mPetsListWasEmpty = true;
+    private Pet mPet;
 
     private ChildEventListener eventListener;
 
@@ -129,19 +131,31 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         final EventAdapter adapter = new EventAdapter();
         mListView.setAdapter(adapter);
 
-        // listens to changes made to user's pet list
+        // listens to changes made to user's mPet list
         mDatabase.child("users").child(mUID).child("pets").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> data = dataSnapshot.getChildren();
                 for (DataSnapshot d : data) {
                     pets.add(d.getKey());
-                    // all pet ids are the keys, values are just true so ignore those
+                    // all mPet ids are the keys, values are just true so ignore those
                 }
                 if (mPetsListWasEmpty) {
                     mDatabase.child("pets").child(pets.get(0)).child("events").addChildEventListener(eventListener);
                     Log.d("PET", pets.get(0));
                     mPetsListWasEmpty = false;
+
+                    mDatabase.child("pets").child(pets.get(0)).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            mPet = dataSnapshot.getValue(Pet.class);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
 
@@ -211,8 +225,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     }
 
     private void addEvent(final TrackerEvent.EventType type) {
+
+        View v = getLayoutInflater().inflate(R.layout.add_event_dialog, null);
+        ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
+
         new AlertDialog.Builder(getContext())
-            .setView(R.layout.add_event_dialog)
+            .setView(v)
             .setPositiveButton(R.string.save, (dialog, which) -> {
                 // save the event...
                 AlertDialog d = (AlertDialog) dialog;
@@ -274,12 +292,16 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            View event = getLayoutInflater().inflate(R.layout.tracker_event, viewGroup, false);
-            textView = event.findViewById(R.id.time_text);
+            // inflate the layout for each list row
+            if (view == null) {
+                view = LayoutInflater.from(getContext()).
+                        inflate(R.layout.tracker_event, viewGroup, false);
+            }
+            textView = view.findViewById(R.id.time_text);
             textView.setText(((TrackerEvent) getItem(i)).getTime());
-            imageView = event.findViewById(R.id.event_icon);
+            imageView = view.findViewById(R.id.event_icon);
             imageView.setImageResource(((TrackerEvent) getItem(i)).getDrawableResId());
-            return event;
+            return view;
         }
     }
 }
