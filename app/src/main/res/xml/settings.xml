@@ -5,7 +5,7 @@
         android:key="display"
         android:title="Display">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="dark_theme_enabled"
             android:title="@string/dark_theme_setting"
             android:defaultValue="false" />
