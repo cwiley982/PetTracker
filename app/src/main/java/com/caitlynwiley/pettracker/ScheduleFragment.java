@@ -205,12 +205,12 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
         alertDialog.setTitle(title);
 
         Drawable icon = getResources().getDrawable(resId);
-        icon.setTint(getResources().getColor(R.color.secondaryColor));
+        icon.setTint(getResources().getColor(R.color.accentColorLight));
         alertDialog.setIcon(icon);
 
         alertDialog.setOnShowListener(dialog -> {
-            alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.secondaryDarkColor));
-            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.secondaryDarkColor));
+            alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.accentColorLight));
+            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.accentColorLight));
         });
 
         alertDialog.show();

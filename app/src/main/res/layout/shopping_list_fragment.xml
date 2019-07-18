@@ -39,7 +39,7 @@
                 android:layout_gravity="center_vertical"
                 android:contentDescription="Add Item Button"
                 app:srcCompat="@drawable/ic_add_white_40dp"
-                android:tint="@color/secondaryColor"
+                android:tint="@color/accentColorLight"
                 android:background="@null" />
         </LinearLayout>
 

@@ -11,5 +11,5 @@
         android:layout_height="wrap_content"
         android:text="@string/wish_list"
         android:layout_centerInParent="true"
-        android:textColor="@color/secondaryDarkColor"/>
+        android:textColor="@color/accentColorLight"/>
 </android.widget.RelativeLayout>
