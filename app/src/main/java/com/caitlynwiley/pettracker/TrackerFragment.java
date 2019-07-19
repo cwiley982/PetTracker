@@ -242,7 +242,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 String petId = pets.get(petChosen);
                 String note = ((EditText) d.findViewById(R.id.event_note)).getText().toString();
                 Calendar c = Calendar.getInstance();
-                String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%2d %s",
+                String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%02d %s",
                         c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                         c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                         c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
@@ -272,7 +272,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     class EventAdapter extends BaseAdapter {
 
-        private TextView textView;
+        private TextView timeTextView;
+        private TextView titleTextView;
         private ImageView imageView;
 
         @Override
@@ -297,8 +298,10 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 view = LayoutInflater.from(getContext()).
                         inflate(R.layout.tracker_event, viewGroup, false);
             }
-            textView = view.findViewById(R.id.time_text);
-            textView.setText(((TrackerEvent) getItem(i)).getTime());
+            timeTextView = view.findViewById(R.id.time_text);
+            timeTextView.setText(((TrackerEvent) getItem(i)).getTime());
+            titleTextView = view.findViewById(R.id.event_name);
+            titleTextView.setText(((TrackerEvent) getItem(i)).getTitle());
             imageView = view.findViewById(R.id.event_icon);
             imageView.setImageResource(((TrackerEvent) getItem(i)).getDrawableResId());
             return view;

@@ -23,6 +23,17 @@
             android:tint="?android:attr/colorAccent"/>
 
         <TextView
+            android:id="@+id/event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/event_icon"
+            android:layout_marginStart="24dp"
+            tools:text="6:37 am"
+            android:textColor="?attr/tracker_time_text_color"
+            android:textSize="22sp"/>
+
+        <TextView
             android:id="@+id/time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
