@@ -61,11 +61,11 @@
         android:visibility="gone"
         tools:visibility="visible"/>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tracker_items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </ListView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </RelativeLayout>

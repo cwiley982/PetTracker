@@ -197,6 +197,31 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             }
         };
 
+        /*
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new
+                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                        events.remove(viewHolder.getAdapterPosition());
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
+                        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+                    }
+                };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(mListView);
+        */
+
         return mFragView;
     }
 
