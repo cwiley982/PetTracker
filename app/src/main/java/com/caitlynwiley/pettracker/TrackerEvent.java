@@ -7,6 +7,7 @@ public class TrackerEvent {
     private String date;
     private String title;
     private String note;
+    private String id;
 
     @SuppressWarnings("unused")
     public TrackerEvent() {
@@ -19,6 +20,14 @@ public class TrackerEvent {
         this.type = type;
         setTitle(title);
         setNote(note);
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     private void setWhen(String when) {

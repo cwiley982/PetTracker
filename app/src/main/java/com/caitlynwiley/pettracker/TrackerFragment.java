@@ -220,6 +220,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                        mDatabase.child("pets").child(mPet.getId()).child("events").child(events.get(viewHolder.getAdapterPosition()).getId()).setValue(null);
                         events.remove(viewHolder.getAdapterPosition());
                         adapter.notifyDataSetChanged();
                     }
@@ -283,7 +284,9 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                         c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                         c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
                 TrackerEvent e = new TrackerEvent(when, type, title, note);
-                mDatabase.child("pets").child(petId).child("events").push().setValue(e);
+                String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
+                e.setId(id);
+                mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
             })
             .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
             .create()
