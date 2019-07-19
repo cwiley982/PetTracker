@@ -10,7 +10,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -33,6 +32,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class TrackerFragment extends Fragment implements View.OnClickListener {
 
@@ -47,7 +49,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private FloatingActionButton mPoopFab;
     private FloatingActionButton mFeedFab;
     private FloatingActionButton mLetOutFab;
-    private ListView mListView;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private ArrayList<TrackerEvent> events = new ArrayList<>();
@@ -127,9 +130,19 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mFeedFab.setOnClickListener(this);
         mLetOutFab.setOnClickListener(this);
 
-        mListView = mFragView.findViewById(R.id.tracker_items);
-        final EventAdapter adapter = new EventAdapter();
-        mListView.setAdapter(adapter);
+        mRecyclerView = mFragView.findViewById(R.id.tracker_items);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(mFragView.getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        final EventAdapter adapter = new EventAdapter(events);
+        mRecyclerView.setAdapter(adapter);
 
         // listens to changes made to user's mPet list
         mDatabase.child("users").child(mUID).child("pets").addValueEventListener(new ValueEventListener() {
@@ -197,7 +210,6 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             }
         };
 
-        /*
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new
                 ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -219,8 +231,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(mListView);
-        */
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         return mFragView;
     }
@@ -293,43 +304,5 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mPoopFab.startAnimation(mMiniDisappear);
         mFeedFab.startAnimation(mMiniDisappear);
         // close and hide all small fabs
-    }
-
-    class EventAdapter extends BaseAdapter {
-
-        private TextView timeTextView;
-        private TextView titleTextView;
-        private ImageView imageView;
-
-        @Override
-        public int getCount() {
-            return events == null ? 0 : events.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return events == null ? null : events.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            // inflate the layout for each list row
-            if (view == null) {
-                view = LayoutInflater.from(getContext()).
-                        inflate(R.layout.tracker_event, viewGroup, false);
-            }
-            timeTextView = view.findViewById(R.id.time_text);
-            timeTextView.setText(((TrackerEvent) getItem(i)).getTime());
-            titleTextView = view.findViewById(R.id.event_name);
-            titleTextView.setText(((TrackerEvent) getItem(i)).getTitle());
-            imageView = view.findViewById(R.id.event_icon);
-            imageView.setImageResource(((TrackerEvent) getItem(i)).getDrawableResId());
-            return view;
-        }
     }
 }
