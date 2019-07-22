@@ -8,11 +8,11 @@
             <!--<item
                 android:id="@+id/schedule_item"
                 android:title="@string/schedule"
-                android:icon="@drawable/ic_clock" />
+                android:icon="@drawable/ic_clock_black_24dp" />
             <item
                 android:id="@+id/calendar_item"
                 android:title="@string/calendar"
-                android:icon="@drawable/ic_calendar" />
+                android:icon="@drawable/ic_calendar_black_24dp" />
             <item
                 android:id="@+id/wish_list_item"
                 android:title="@string/wish_list"
@@ -38,7 +38,7 @@
             <item
                 android:id="@+id/remove_ads_item"
                 android:title="@string/remove_ads"
-                android:icon="@drawable/ic_credit_card"/>
+                android:icon="@drawable/ic_credit_card_black_24dp"/>
             <item
                 android:id="@+id/settings_item"
                 android:title="@string/settings"

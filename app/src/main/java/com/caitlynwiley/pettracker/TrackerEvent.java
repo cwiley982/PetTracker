@@ -73,7 +73,7 @@ public class TrackerEvent {
             case WALK:
                 return R.drawable.ic_dog_walk_64dp;
         }
-        return R.drawable.ic_clock; // default for now
+        return R.drawable.ic_clock_black_24dp; // default for now
     }
 
     public EventType getType() {
