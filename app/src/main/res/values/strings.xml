@@ -110,4 +110,6 @@
     <!-- Add Existing Pet -->
     <string name="enter_pet_id">Enter Pet ID:</string>
     <string name="add">Add</string>
+    <string name="snack_bar_undo">UNDO</string>
+    <string name="snack_bar_text">Event removed</string>
 </resources>

@@ -7,12 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -141,7 +138,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        final EventAdapter adapter = new EventAdapter(events);
+        final EventAdapter adapter = new EventAdapter(mFragView);
         mRecyclerView.setAdapter(adapter);
 
         // listens to changes made to user's mPet list
@@ -183,7 +180,9 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 TrackerEvent e = dataSnapshot.getValue(TrackerEvent.class);
-                events.add(e);
+                if (!adapter.contains(e)) {
+                    adapter.addEvent(e);
+                }
                 Log.d("event type", e.getType().toString());
                 adapter.notifyDataSetChanged();
             }
@@ -195,7 +194,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                events.remove(dataSnapshot.getValue(TrackerEvent.class));
+                adapter.removeEvent(dataSnapshot.getValue(TrackerEvent.class));
                 adapter.notifyDataSetChanged();
             }
 
@@ -210,28 +209,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             }
         };
 
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new
-                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-
-                    @Override
-                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                        return false;
-                    }
-
-                    @Override
-                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                        mDatabase.child("pets").child(mPet.getId()).child("events").child(events.get(viewHolder.getAdapterPosition()).getId()).setValue(null);
-                        events.remove(viewHolder.getAdapterPosition());
-                        adapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
-                        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
-                    }
-                };
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteHelper(adapter, getContext()));
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         return mFragView;
@@ -286,6 +264,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 TrackerEvent e = new TrackerEvent(when, type, title, note);
                 String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
                 e.setId(id);
+                e.setPetId(petId);
                 mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
             })
             .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())

@@ -1,5 +1,9 @@
 package com.caitlynwiley.pettracker;
 
+import java.util.Objects;
+
+import androidx.annotation.Nullable;
+
 public class TrackerEvent {
 
     private EventType type;
@@ -8,6 +12,7 @@ public class TrackerEvent {
     private String title;
     private String note;
     private String id;
+    private String petId;
 
     @SuppressWarnings("unused")
     public TrackerEvent() {
@@ -28,6 +33,14 @@ public class TrackerEvent {
 
     public String getId() {
         return id;
+    }
+
+    public void setPetId(String petId) {
+        this.petId = petId;
+    }
+
+    public String getPetId() {
+        return petId;
     }
 
     private void setWhen(String when) {
@@ -87,5 +100,25 @@ public class TrackerEvent {
         POOP,
         WALK,
         FEED
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(type, time, date, title, note, id, petId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TrackerEvent that = (TrackerEvent) o;
+        return type == that.type &&
+                Objects.equals(time, that.time) &&
+                Objects.equals(date, that.date) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(note, that.note) &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(petId, that.petId);
     }
 }
