@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends BaseActivity {
 
     private DrawerLayout mDrawerLayout;
-    private FrameLayout mFrameLayout;
     private FragmentManager mFragmentManager;
 
     private NavigationView mNavView;
@@ -60,7 +58,6 @@ public class MainActivity extends BaseActivity {
         });
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
-        mFrameLayout = findViewById(R.id.frame_layout);
         mFragmentManager = getSupportFragmentManager();
         mNavView = findViewById(R.id.nav_view);
         mNavHeader = mNavView.getHeaderView(R.layout.nav_drawer_header);
@@ -87,18 +84,6 @@ public class MainActivity extends BaseActivity {
             // if not create it
             if (newFrag == null) {
                 switch (id) {
-                    /*case R.id.calendar_item:
-                        newFrag = new CalendarFragment();
-                        break;
-                    case R.id.shopping_list_item:
-                        newFrag = new ShoppingListFragment();
-                        break;
-                    case R.id.wish_list_item:
-                        newFrag = new WishListFragment();
-                        break;
-                    case R.id.schedule_item:
-                        newFrag = new ScheduleFragment();
-                        break;*/
                     case R.id.tracker_item:
                         newFrag = new TrackerFragment();
                         break;

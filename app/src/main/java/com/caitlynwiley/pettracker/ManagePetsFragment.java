@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -105,8 +106,8 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         mPetNameET.setText(pet.getName());
         mYearsET.setText(String.format(Locale.US, "%d", (int) pet.getAge()));
         mMonthsET.setText(String.format(Locale.US, "%d", (int) ((pet.getAge() % 1) * 12) ));
-        mGenderGroup.findViewById(pet.getGender().equals("male") ? R.id.male_btn : R.id.female_btn).setSelected(true);
-        mSpeciesGroup.findViewById(pet.getSpecies().equals("dog") ? R.id.dog_btn : R.id.cat_btn).setSelected(true);
+        ((RadioButton) mFragView.findViewById(pet.getGender().equals("male") ? R.id.male_btn : R.id.female_btn)).toggle();
+        ((RadioButton) mFragView.findViewById(pet.getSpecies().equals("dog") ? R.id.dog_btn : R.id.cat_btn)).toggle();
     }
 
     @Override

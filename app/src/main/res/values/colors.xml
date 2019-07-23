@@ -5,7 +5,7 @@
     <color name="statusBarColorLight">#566fdf</color>
     <color name="accentColorLight">#00bfa5</color>
     <color name="primaryTextColor">#000000</color>
-    <color name="tracker_item_light">#cccccc</color>
+    <color name="tracker_item_light">#eeeeee</color>
 
     <!-- Dark Theme -->
     <color name="primaryDarkColor">#385dff</color>
