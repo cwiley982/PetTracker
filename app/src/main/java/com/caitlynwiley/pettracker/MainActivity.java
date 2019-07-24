@@ -97,6 +97,13 @@ public class MainActivity extends BaseActivity {
                         return false;
                 }
             }
+
+            if (newFrag instanceof SettingsFragment) {
+                actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            } else {
+                actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+            }
+
             mFragmentManager.beginTransaction()
                     .replace(R.id.fragment_view, newFrag)
                     .commit();

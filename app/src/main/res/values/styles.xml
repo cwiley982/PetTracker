@@ -5,6 +5,7 @@
         <item name="android:colorPrimaryDark">@color/statusBarColorLight</item>
         <item name="android:colorAccent">@color/accentColorLight</item>
         <item name="android:textColor">@android:color/primary_text_light</item>
+        <item name="navigationTextSelectedColor">@android:color/primary_text_light</item>
         <item name="android:windowBackground">@android:color/background_light</item>
         <item name="tracker_time_text_color">@android:color/primary_text_light</item>
         <item name="tracker_item_background">@color/tracker_item_light</item>
@@ -34,4 +35,5 @@
 
     <attr name="tracker_time_text_color" format="color"/>
     <attr name="tracker_item_background" format="color"/>
+    <attr name="navigationTextSelectedColor" format="color"/>
 </resources>

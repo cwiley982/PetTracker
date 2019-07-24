@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item android:title="@string/general">
         <menu>
-
             <group android:checkableBehavior="single">
             <!--<item
                 android:id="@+id/schedule_item"
@@ -35,14 +33,16 @@
 
     <item android:title="@string/other">
         <menu>
-            <item
+            <group android:checkableBehavior="single">
+            <!--<item
                 android:id="@+id/remove_ads_item"
                 android:title="@string/remove_ads"
-                android:icon="@drawable/ic_credit_card_black_24dp"/>
+                android:icon="@drawable/ic_credit_card_black_24dp"/>-->
             <item
                 android:id="@+id/settings_item"
                 android:title="@string/settings"
                 android:icon="@drawable/ic_settings_black_24dp"/>
+            </group>
         </menu>
     </item>
 </menu>
