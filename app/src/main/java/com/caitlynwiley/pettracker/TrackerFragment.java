@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +43,9 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private Animation mMiniAppear;
     private Animation mMiniDisappear;
 
+    private TextView mPoopFabLabel;
+    private TextView mFeedFabLabel;
+    private TextView mLetOutFabLabel;
     private FloatingActionButton mTrackerFab;
     private FloatingActionButton mPoopFab;
     private FloatingActionButton mFeedFab;
@@ -83,9 +87,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                mPoopFab.show();
-                mFeedFab.show();
-                mLetOutFab.show();
+                mPoopFab.setVisibility(View.VISIBLE);
+                mLetOutFab.setVisibility(View.VISIBLE);
+                mFeedFab.setVisibility(View.VISIBLE);
+                mPoopFabLabel.setVisibility(View.VISIBLE);
+                mLetOutFabLabel.setVisibility(View.VISIBLE);
+                mFeedFabLabel.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -103,9 +110,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                mPoopFab.hide();
-                mLetOutFab.hide();
-                mFeedFab.hide();
+                mPoopFab.setVisibility(View.GONE);
+                mLetOutFab.setVisibility(View.GONE);
+                mFeedFab.setVisibility(View.GONE);
+                mPoopFabLabel.setVisibility(View.GONE);
+                mLetOutFabLabel.setVisibility(View.GONE);
+                mFeedFabLabel.setVisibility(View.GONE);
             }
 
             @Override
@@ -120,12 +130,18 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mPoopFab = mFragView.findViewById(R.id.track_poop_fab);
         mFeedFab = mFragView.findViewById(R.id.track_fed_fab);
         mLetOutFab = mFragView.findViewById(R.id.track_let_out_fab);
+        mPoopFabLabel = mFragView.findViewById(R.id.poop_fab_label);
+        mFeedFabLabel = mFragView.findViewById(R.id.fed_fab_label);
+        mLetOutFabLabel = mFragView.findViewById(R.id.let_out_fab_label);
 
         // set on click listeners
         mTrackerFab.setOnClickListener(this);
         mPoopFab.setOnClickListener(this);
         mFeedFab.setOnClickListener(this);
         mLetOutFab.setOnClickListener(this);
+        mPoopFabLabel.setOnClickListener(this);
+        mFeedFabLabel.setOnClickListener(this);
+        mLetOutFabLabel.setOnClickListener(this);
 
         mRecyclerView = mFragView.findViewById(R.id.tracker_items);
 
