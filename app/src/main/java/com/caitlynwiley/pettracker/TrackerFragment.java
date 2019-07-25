@@ -299,10 +299,14 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
-                    TrackerEvent e = new PottyEvent(when, num1, num2, petId);
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                    e.setId(id);
-                    e.setPetId(petId);
+                    TrackerEvent e = new TrackerEvent.Builder()
+                            .setWhen(when)
+                            .setNumber1(num1)
+                            .setNumber2(num2)
+                            .setPetId(petId)
+                            .setId(id)
+                            .build();
                     mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
@@ -335,10 +339,14 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
-                    TrackerEvent e = new WalkEvent(when, hours, mins, petId);
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                    e.setId(id);
-                    e.setPetId(petId);
+                    TrackerEvent e = new TrackerEvent.Builder()
+                            .setWhen(when)
+                            .setHours(hours)
+                            .setMinutes(mins)
+                            .setPetId(petId)
+                            .setId(id)
+                            .build();
                     mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
@@ -369,10 +377,13 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
-                    TrackerEvent e = new MealEvent(when, cupsFood, petId);
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                    e.setId(id);
-                    e.setPetId(petId);
+                    TrackerEvent e = new TrackerEvent.Builder()
+                            .setWhen(when)
+                            .setCupsFood(cupsFood)
+                            .setPetId(petId)
+                            .setId(id)
+                            .build();
                     mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())

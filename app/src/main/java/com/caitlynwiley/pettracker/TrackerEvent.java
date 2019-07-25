@@ -7,22 +7,24 @@ public class TrackerEvent {
     private EventType type;
     private String time;
     private String date;
-    private String title;
-    private String note;
     private String id;
     private String petId;
+    private int hours;
+    private int minutes;
+    private double cupsFood;
+    private boolean number1;
+    private boolean number2;
+
 
     @SuppressWarnings("unused")
     public TrackerEvent() {
 
     }
 
-    public TrackerEvent(String when, EventType type, String title, String note) {
+    public TrackerEvent(String when, EventType type) {
         // when has format mm/dd/yyyy hh:mm am/pm
         setWhen(when);
         this.type = type;
-        setTitle(title);
-        setNote(note);
     }
 
     public void setId(String id) {
@@ -41,7 +43,7 @@ public class TrackerEvent {
         return petId;
     }
 
-    private void setWhen(String when) {
+    protected void setWhen(String when) {
         date = when.substring(0, 10);
         time = when.substring(11);
     }
@@ -78,20 +80,54 @@ public class TrackerEvent {
         return type;
     }
 
-    private void setTitle(String title) {
-        this.title = title == null ? "" : title;
+    public TrackerEvent setType(EventType type) {
+        this.type = type;
+        return this;
     }
 
-    public String getTitle() {
-        return title;
+    public int getHours() {
+        return hours;
     }
 
-    private void setNote(String note) {
-        this.note = note == null ? "" : note;
+    public TrackerEvent setHours(int hours) {
+        this.hours = hours;
+        return this;
     }
 
-    public String getNote() {
-        return note;
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public TrackerEvent setMinutes(int minutes) {
+        this.minutes = minutes;
+        return this;
+    }
+
+    public double getCupsFood() {
+        return cupsFood;
+    }
+
+    public TrackerEvent setCupsFood(double cupsFood) {
+        this.cupsFood = cupsFood;
+        return this;
+    }
+
+    public boolean isNumber1() {
+        return number1;
+    }
+
+    public TrackerEvent setNumber1(boolean number1) {
+        this.number1 = number1;
+        return this;
+    }
+
+    public boolean isNumber2() {
+        return number2;
+    }
+
+    public TrackerEvent setNumber2(boolean number2) {
+        this.number2 = number2;
+        return this;
     }
 
     public enum EventType {
@@ -103,7 +139,7 @@ public class TrackerEvent {
     @Override
     public int hashCode() {
 
-        return Objects.hash(type, time, date, title, note, id, petId);
+        return Objects.hash(type, time, date, id, petId);
     }
 
     @Override
@@ -114,9 +150,61 @@ public class TrackerEvent {
         return type == that.type &&
                 Objects.equals(time, that.time) &&
                 Objects.equals(date, that.date) &&
-                Objects.equals(title, that.title) &&
-                Objects.equals(note, that.note) &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(petId, that.petId);
+    }
+
+    public static class Builder {
+
+        private TrackerEvent event;
+
+        Builder() {
+            event = new TrackerEvent();
+        }
+
+        // ... (setters)
+        public Builder setWhen(String when) {
+            event.setWhen(when);
+            return this;
+        }
+
+        public Builder setId(String id) {
+            event.setId(id);
+            return this;
+        }
+
+        public Builder setPetId(String id) {
+            event.setPetId(id);
+            return this;
+        }
+
+        public Builder setHours(int hours) {
+            event.setHours(hours);
+            return this;
+        }
+
+        public Builder setMinutes(int mins) {
+            event.setMinutes(mins);
+            return this;
+        }
+
+        public Builder setCupsFood(double cups) {
+            event.setCupsFood(cups);
+            return this;
+        }
+
+        public Builder setNumber1(boolean went) {
+            event.setNumber1(went);
+            return this;
+        }
+
+        public Builder setNumber2(boolean went) {
+            event.setNumber2(went);
+            return this;
+        }
+
+        public TrackerEvent build() {
+            return event;
+        }
     }
 }
