@@ -42,6 +42,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private Animation mRotateBackward;
     private Animation mMiniAppear;
     private Animation mMiniDisappear;
+    private Animation mLabelAppear;
+    private Animation mLabelDisappear;
 
     private TextView mPoopFabLabel;
     private TextView mFeedFabLabel;
@@ -123,6 +125,9 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             }
         });
+
+        mLabelAppear = AnimationUtils.loadAnimation(getContext(), R.anim.fab_label_appear);
+        mLabelDisappear = AnimationUtils.loadAnimation(getContext(), R.anim.fab_label_disappear);
 
         mIsFabOpen = false;
         // get views
@@ -293,7 +298,10 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mLetOutFab.startAnimation(mMiniAppear);
         mPoopFab.startAnimation(mMiniAppear);
         mFeedFab.startAnimation(mMiniAppear);
-        // open and show all small fabs
+        mPoopFabLabel.startAnimation(mLabelAppear);
+        mFeedFabLabel.startAnimation(mLabelAppear);
+        mLetOutFabLabel.startAnimation(mLabelAppear);
+
     }
 
     private void closeFab() {
@@ -301,6 +309,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mLetOutFab.startAnimation(mMiniDisappear);
         mPoopFab.startAnimation(mMiniDisappear);
         mFeedFab.startAnimation(mMiniDisappear);
-        // close and hide all small fabs
+        mPoopFabLabel.startAnimation(mLabelDisappear);
+        mFeedFabLabel.startAnimation(mLabelDisappear);
+        mLetOutFabLabel.startAnimation(mLabelDisappear);
     }
 }
