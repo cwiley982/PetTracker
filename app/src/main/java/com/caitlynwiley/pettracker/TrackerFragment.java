@@ -268,15 +268,17 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         new AlertDialog.Builder(getContext())
             .setView(v)
             .setPositiveButton(R.string.save, (dialog, which) -> {
-                // save the event...
                 AlertDialog d = (AlertDialog) dialog;
                 String title = ((EditText) d.findViewById(R.id.event_title)).getText().toString();
+                // pet
                 RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
                 int radioButtonID = radioGroup.getCheckedRadioButtonId();
                 View radioButton = radioGroup.findViewById(radioButtonID);
                 int petChosen = radioGroup.indexOfChild(radioButton);
                 String petId = pets.get(petChosen);
+                //note
                 String note = ((EditText) d.findViewById(R.id.event_note)).getText().toString();
+                //date
                 Calendar c = Calendar.getInstance();
                 String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%02d %s",
                         c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
