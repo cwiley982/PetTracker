@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -262,37 +263,121 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private void addEvent(final TrackerEvent.EventType type) {
 
-        View v = getLayoutInflater().inflate(R.layout.add_event_dialog, null);
+        switch (type) {
+            case FEED:
+                trackFeed();
+                break;
+            case WALK:
+                trackWalk();
+                break;
+            case POTTY:
+                trackPotty();
+                break;
+        }
+    }
+
+    private void trackPotty() {
+        View v = getLayoutInflater().inflate(R.layout.track_potty_dialog, null);
         ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
 
         new AlertDialog.Builder(getContext())
-            .setView(v)
-            .setPositiveButton(R.string.save, (dialog, which) -> {
-                AlertDialog d = (AlertDialog) dialog;
-                String title = ((EditText) d.findViewById(R.id.event_title)).getText().toString();
-                // pet
-                RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
-                int radioButtonID = radioGroup.getCheckedRadioButtonId();
-                View radioButton = radioGroup.findViewById(radioButtonID);
-                int petChosen = radioGroup.indexOfChild(radioButton);
-                String petId = pets.get(petChosen);
-                //note
-                String note = ((EditText) d.findViewById(R.id.event_note)).getText().toString();
-                //date
-                Calendar c = Calendar.getInstance();
-                String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%02d %s",
-                        c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
-                        c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
-                        c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
-                TrackerEvent e = new TrackerEvent(when, type, title, note);
-                String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                e.setId(id);
-                e.setPetId(petId);
-                mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
-            })
-            .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
-            .create()
-            .show();
+                .setView(v)
+                .setPositiveButton(R.string.save, (dialog, which) -> {
+                    AlertDialog d = (AlertDialog) dialog;
+                    // pet
+                    RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
+                    int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                    View radioButton = radioGroup.findViewById(radioButtonID);
+                    int petChosen = radioGroup.indexOfChild(radioButton);
+                    String petId = pets.get(petChosen);
+                    // type
+                    boolean num1 = ((CheckBox) d.findViewById(R.id.number1)).isChecked();
+                    boolean num2 = ((CheckBox) d.findViewById(R.id.number2)).isChecked();
+                    //date
+                    Calendar c = Calendar.getInstance();
+                    String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%02d %s",
+                            c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
+                            c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
+                            c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
+                    TrackerEvent e = new PottyEvent(when, num1, num2, petId);
+                    String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
+                    e.setId(id);
+                    e.setPetId(petId);
+                    mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
+                .create()
+                .show();
+    }
+
+    private void trackWalk() {
+        View v = getLayoutInflater().inflate(R.layout.track_walk_dialog, null);
+        ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
+
+        new AlertDialog.Builder(getContext())
+                .setView(v)
+                .setPositiveButton(R.string.save, (dialog, which) -> {
+                    AlertDialog d = (AlertDialog) dialog;
+                    // pet
+                    RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
+                    int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                    View radioButton = radioGroup.findViewById(radioButtonID);
+                    int petChosen = radioGroup.indexOfChild(radioButton);
+                    String petId = pets.get(petChosen);
+                    // duration
+                    int hours = Integer.parseInt(((EditText) d.findViewById(R.id.walk_duration_hours))
+                            .getText().toString());
+                    int mins = Integer.parseInt(((EditText) d.findViewById(R.id.walk_duration_mins))
+                            .getText().toString());
+                    //date
+                    Calendar c = Calendar.getInstance();
+                    String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%02d %s",
+                            c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
+                            c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
+                            c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
+                    TrackerEvent e = new WalkEvent(when, hours, mins, petId);
+                    String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
+                    e.setId(id);
+                    e.setPetId(petId);
+                    mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
+                .create()
+                .show();
+    }
+
+    private void trackFeed() {
+        View v = getLayoutInflater().inflate(R.layout.track_meal_dialog, null);
+        ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
+
+        new AlertDialog.Builder(getContext())
+                .setView(v)
+                .setPositiveButton(R.string.save, (dialog, which) -> {
+                    AlertDialog d = (AlertDialog) dialog;
+                    // pet
+                    RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
+                    int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                    View radioButton = radioGroup.findViewById(radioButtonID);
+                    int petChosen = radioGroup.indexOfChild(radioButton);
+                    String petId = pets.get(petChosen);
+                    // amount
+                    double cupsFood = Double.parseDouble(((EditText) d.findViewById(R.id.num_cups))
+                            .getText().toString());
+                    //date
+                    Calendar c = Calendar.getInstance();
+                    String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%02d %s",
+                            c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
+                            c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
+                            c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
+                    TrackerEvent e = new MealEvent(when, cupsFood, petId);
+                    String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
+                    e.setId(id);
+                    e.setPetId(petId);
+                    mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
+                .create()
+                .show();
     }
 
     private void openFab() {
