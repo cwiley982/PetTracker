@@ -45,11 +45,11 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private Animation mLabelAppear;
     private Animation mLabelDisappear;
 
-    private TextView mPoopFabLabel;
+    private TextView mPottyFabLabel;
     private TextView mFeedFabLabel;
     private TextView mLetOutFabLabel;
     private FloatingActionButton mTrackerFab;
-    private FloatingActionButton mPoopFab;
+    private FloatingActionButton mPottyFab;
     private FloatingActionButton mFeedFab;
     private FloatingActionButton mLetOutFab;
     private RecyclerView mRecyclerView;
@@ -89,10 +89,10 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                mPoopFab.setVisibility(View.VISIBLE);
+                mPottyFab.setVisibility(View.VISIBLE);
                 mLetOutFab.setVisibility(View.VISIBLE);
                 mFeedFab.setVisibility(View.VISIBLE);
-                mPoopFabLabel.setVisibility(View.VISIBLE);
+                mPottyFabLabel.setVisibility(View.VISIBLE);
                 mLetOutFabLabel.setVisibility(View.VISIBLE);
                 mFeedFabLabel.setVisibility(View.VISIBLE);
             }
@@ -112,10 +112,10 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                mPoopFab.setVisibility(View.GONE);
+                mPottyFab.setVisibility(View.GONE);
                 mLetOutFab.setVisibility(View.GONE);
                 mFeedFab.setVisibility(View.GONE);
-                mPoopFabLabel.setVisibility(View.GONE);
+                mPottyFabLabel.setVisibility(View.GONE);
                 mLetOutFabLabel.setVisibility(View.GONE);
                 mFeedFabLabel.setVisibility(View.GONE);
             }
@@ -132,19 +132,19 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mIsFabOpen = false;
         // get views
         mTrackerFab = mFragView.findViewById(R.id.tracker_fab);
-        mPoopFab = mFragView.findViewById(R.id.track_poop_fab);
+        mPottyFab = mFragView.findViewById(R.id.track_potty_fab);
         mFeedFab = mFragView.findViewById(R.id.track_fed_fab);
         mLetOutFab = mFragView.findViewById(R.id.track_let_out_fab);
-        mPoopFabLabel = mFragView.findViewById(R.id.poop_fab_label);
+        mPottyFabLabel = mFragView.findViewById(R.id.potty_fab_label);
         mFeedFabLabel = mFragView.findViewById(R.id.fed_fab_label);
         mLetOutFabLabel = mFragView.findViewById(R.id.let_out_fab_label);
 
         // set on click listeners
         mTrackerFab.setOnClickListener(this);
-        mPoopFab.setOnClickListener(this);
+        mPottyFab.setOnClickListener(this);
         mFeedFab.setOnClickListener(this);
         mLetOutFab.setOnClickListener(this);
-        mPoopFabLabel.setOnClickListener(this);
+        mPottyFabLabel.setOnClickListener(this);
         mFeedFabLabel.setOnClickListener(this);
         mLetOutFabLabel.setOnClickListener(this);
 
@@ -251,8 +251,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             case R.id.track_fed_fab:
                 addEvent(TrackerEvent.EventType.FEED);
                 break;
-            case R.id.track_poop_fab:
-                addEvent(TrackerEvent.EventType.POOP);
+            case R.id.track_potty_fab:
+                addEvent(TrackerEvent.EventType.POTTY);
                 break;
             case R.id.track_let_out_fab:
                 addEvent(TrackerEvent.EventType.WALK);
@@ -296,9 +296,9 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private void openFab() {
         mTrackerFab.startAnimation(mRotateForward);
         mLetOutFab.startAnimation(mMiniAppear);
-        mPoopFab.startAnimation(mMiniAppear);
+        mPottyFab.startAnimation(mMiniAppear);
         mFeedFab.startAnimation(mMiniAppear);
-        mPoopFabLabel.startAnimation(mLabelAppear);
+        mPottyFabLabel.startAnimation(mLabelAppear);
         mFeedFabLabel.startAnimation(mLabelAppear);
         mLetOutFabLabel.startAnimation(mLabelAppear);
 
@@ -307,9 +307,9 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private void closeFab() {
         mTrackerFab.startAnimation(mRotateBackward);
         mLetOutFab.startAnimation(mMiniDisappear);
-        mPoopFab.startAnimation(mMiniDisappear);
+        mPottyFab.startAnimation(mMiniDisappear);
         mFeedFab.startAnimation(mMiniDisappear);
-        mPoopFabLabel.startAnimation(mLabelDisappear);
+        mPottyFabLabel.startAnimation(mLabelDisappear);
         mFeedFabLabel.startAnimation(mLabelDisappear);
         mLetOutFabLabel.startAnimation(mLabelDisappear);
     }

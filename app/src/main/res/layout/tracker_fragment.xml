@@ -49,21 +49,21 @@
         tools:visibility="visible"/>
 
     <TextView
-        android:id="@+id/poop_fab_label"
+        android:id="@+id/potty_fab_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@id/track_poop_fab"
-        app:layout_constraintTop_toTopOf="@id/track_poop_fab"
-        app:layout_constraintBottom_toBottomOf="@id/track_poop_fab"
+        app:layout_constraintEnd_toStartOf="@id/track_potty_fab"
+        app:layout_constraintTop_toTopOf="@id/track_potty_fab"
+        app:layout_constraintBottom_toBottomOf="@id/track_potty_fab"
         android:layout_marginEnd="8dp"
-        android:text="Poop"
+        android:text="@string/potty"
         android:textSize="16sp"
-        android:labelFor="@id/track_poop_fab"
+        android:labelFor="@id/track_potty_fab"
         android:visibility="gone"
         tools:visibility="visible"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/track_poop_fab"
+        android:id="@+id/track_potty_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/track_fed_fab"
@@ -94,7 +94,7 @@
         android:id="@+id/track_let_out_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/track_poop_fab"
+        app:layout_constraintBottom_toTopOf="@id/track_potty_fab"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="24dp"

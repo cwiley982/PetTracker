@@ -2,8 +2,6 @@ package com.caitlynwiley.pettracker;
 
 import java.util.Objects;
 
-import androidx.annotation.Nullable;
-
 public class TrackerEvent {
 
     private EventType type;
@@ -66,7 +64,7 @@ public class TrackerEvent {
 
     public int getDrawableResId() {
         switch (type) {
-            case POOP:
+            case POTTY:
                 return R.drawable.ic_dog_poop_64dp;
             case FEED:
                 return R.drawable.ic_dog_bowl_64dp;
@@ -97,7 +95,7 @@ public class TrackerEvent {
     }
 
     public enum EventType {
-        POOP,
+        POTTY,
         WALK,
         FEED
     }
