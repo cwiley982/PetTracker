@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.models;
 
 import android.text.Editable;
 import android.widget.Spinner;

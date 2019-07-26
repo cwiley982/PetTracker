@@ -1,8 +1,6 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.models;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 public class Pet {
@@ -19,7 +17,7 @@ public class Pet {
     public Pet() {
     }
 
-    Pet(String name, String years, String months, String gender, String species) {
+    public Pet(String name, String years, String months, String gender, String species) {
         this.name = name;
         setAge(years, months);
         setGender(gender);

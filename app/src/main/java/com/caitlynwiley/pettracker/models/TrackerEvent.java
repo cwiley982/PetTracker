@@ -1,4 +1,6 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.models;
+
+import com.caitlynwiley.pettracker.R;
 
 import java.util.Objects;
 
@@ -158,7 +160,7 @@ public class TrackerEvent {
 
         private TrackerEvent event;
 
-        Builder(EventType type) {
+        public Builder(EventType type) {
             event = new TrackerEvent();
             event.setType(type);
         }

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.caitlynwiley.pettracker.models.TrackerEvent;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,7 +30,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         private TextView timeTextView;
-        
+
         private ImageView imageView;
 
         public MyViewHolder(CardView v) {

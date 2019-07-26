@@ -13,6 +13,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.caitlynwiley.pettracker.models.Day;
+import com.caitlynwiley.pettracker.models.Pet;
+import com.caitlynwiley.pettracker.models.TrackerEvent;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

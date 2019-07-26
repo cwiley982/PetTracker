@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.models;
 
 import java.util.HashMap;
 import java.util.Map;
