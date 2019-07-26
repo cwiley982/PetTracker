@@ -29,13 +29,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         private TextView timeTextView;
-        private TextView titleTextView;
+        
         private ImageView imageView;
 
         public MyViewHolder(CardView v) {
             super(v);
             timeTextView = v.findViewById(R.id.time_text);
-            titleTextView = v.findViewById(R.id.event_name);
             imageView = v.findViewById(R.id.event_icon);
         }
     }
@@ -63,7 +62,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.timeTextView.setText(((TrackerEvent) getItem(position)).getTime());
-        holder.titleTextView.setText(((TrackerEvent) getItem(position)).getTitle());
         holder.imageView.setImageResource(((TrackerEvent) getItem(position)).getDrawableResId());
     }
 

@@ -300,7 +300,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                    TrackerEvent e = new TrackerEvent.Builder()
+                    TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.POTTY)
                             .setWhen(when)
                             .setNumber1(num1)
                             .setNumber2(num2)
@@ -340,7 +340,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                    TrackerEvent e = new TrackerEvent.Builder()
+                    TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.WALK)
                             .setWhen(when)
                             .setHours(hours)
                             .setMinutes(mins)
@@ -378,7 +378,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                    TrackerEvent e = new TrackerEvent.Builder()
+                    TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.FEED)
                             .setWhen(when)
                             .setCupsFood(cupsFood)
                             .setPetId(petId)

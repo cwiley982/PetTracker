@@ -158,8 +158,9 @@ public class TrackerEvent {
 
         private TrackerEvent event;
 
-        Builder() {
+        Builder(EventType type) {
             event = new TrackerEvent();
+            event.setType(type);
         }
 
         // ... (setters)
