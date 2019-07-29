@@ -7,14 +7,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.caitlynwiley.pettracker.models.TrackerEvent;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static com.google.android.material.snackbar.Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE;
+import static com.google.android.material.snackbar.Snackbar.Callback.DISMISS_EVENT_SWIPE;
+import static com.google.android.material.snackbar.Snackbar.Callback.DISMISS_EVENT_TIMEOUT;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
 
@@ -23,6 +30,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     private TrackerEvent mRecentlyDeletedItem;
     private int mRecentlyDeletedItemPosition;
     private View mFragView;
+    private List<Integer> forceDeleteEventVals = new ArrayList<>();
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -43,6 +51,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     public EventAdapter(View fragView) {
         mDataset = new ArrayList<>();
         mFragView = fragView;
+        forceDeleteEventVals.add(DISMISS_EVENT_SWIPE);
+        forceDeleteEventVals.add(DISMISS_EVENT_TIMEOUT);
+        forceDeleteEventVals.add(DISMISS_EVENT_CONSECUTIVE);
     }
 
     // Create new views (invoked by the layout manager)
@@ -86,7 +97,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         mRecentlyDeletedItemPosition = position;
         mDataset.remove(position);
         notifyItemRemoved(position);
-        mRef.child("pets").child(mRecentlyDeletedItem.getPetId()).child("events").child(mRecentlyDeletedItem.getId()).setValue(null);
         showUndoSnackbar();
     }
 
@@ -95,6 +105,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_text,
                 Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.snack_bar_undo, v -> undoDelete());
+        snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                super.onDismissed(transientBottomBar, event);
+                if (forceDeleteEventVals.contains(event)) {
+                    mRef.child("pets").child(mRecentlyDeletedItem.getPetId()).child("events").child(mRecentlyDeletedItem.getId()).setValue(null);
+                }
+            }
+        });
         snackbar.show();
     }
 
