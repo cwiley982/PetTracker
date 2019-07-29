@@ -12,7 +12,6 @@ public class Pet {
     private String birthday;
     private String gender;
     private String id;
-    //private List<ScheduleEvent> events;
 
     public Pet() {
     }
@@ -22,7 +21,6 @@ public class Pet {
         setAge(years, months);
         setGender(gender);
         setSpecies(species);
-        //events = new ArrayList<>();
     }
 
     public String getId() {
@@ -82,15 +80,6 @@ public class Pet {
     private void setGender(String gender) {
         this.gender = gender;
     }
-
-    /*
-    private List<ScheduleEvent> getEvents() {
-        return events;
-    }
-
-    public void addEvent(ScheduleEvent e) {
-        events.add(e);
-    }*/
 
     @Override
     public boolean equals(Object obj) {

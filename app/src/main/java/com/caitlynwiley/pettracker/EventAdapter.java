@@ -6,14 +6,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.caitlynwiley.pettracker.models.Day;
 import com.caitlynwiley.pettracker.models.TrackerEvent;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import androidx.cardview.widget.CardView;
@@ -25,7 +27,7 @@ import static com.google.android.material.snackbar.Snackbar.Callback.DISMISS_EVE
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
 
-    private ArrayList<TrackerEvent> mDataset;
+    private ArrayList<Object> mDataset;
     private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
     private TrackerEvent mRecentlyDeletedItem;
     private int mRecentlyDeletedItemPosition;
@@ -38,13 +40,20 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         private TextView timeTextView;
-
         private ImageView imageView;
+        private TextView dateTextView;
+        private boolean isDate;
 
-        public MyViewHolder(CardView v) {
+        public MyViewHolder(View v) {
             super(v);
-            timeTextView = v.findViewById(R.id.time_text);
-            imageView = v.findViewById(R.id.event_icon);
+            if (v instanceof CardView) {
+                timeTextView = v.findViewById(R.id.time_text);
+                imageView = v.findViewById(R.id.event_icon);
+                isDate = false;
+            } else {
+                dateTextView = v.findViewById(R.id.date_textview);
+                isDate = true;
+            }
         }
     }
 
@@ -61,8 +70,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     public EventAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                         int viewType) {
         // create a new view
-        CardView v = (CardView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.tracker_event, parent, false);
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(viewType, parent, false);
 
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
@@ -71,16 +80,23 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        holder.timeTextView.setText(((TrackerEvent) getItem(position)).getTime());
-        holder.imageView.setImageResource(((TrackerEvent) getItem(position)).getDrawableResId());
+        if (holder.isDate) {
+            holder.dateTextView.setText(((Day) getItem(position)).getPrettyDate());
+        } else {
+            holder.timeTextView.setText(((TrackerEvent) getItem(position)).getTime());
+            holder.imageView.setImageResource(((TrackerEvent) getItem(position)).getDrawableResId());
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mDataset.get(position) instanceof TrackerEvent ? R.layout.tracker_event : R.layout.date_header;
     }
 
     public Object getItem(int i) {
@@ -93,7 +109,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     }
 
     public void deleteItem(int position) {
-        mRecentlyDeletedItem = mDataset.get(position);
+        mRecentlyDeletedItem = (TrackerEvent) mDataset.get(position);
         mRecentlyDeletedItemPosition = position;
         mDataset.remove(position);
         notifyItemRemoved(position);
@@ -123,15 +139,25 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         notifyItemInserted(mRecentlyDeletedItemPosition);
     }
 
-    public void addEvent(TrackerEvent e) {
+    public void addItem(Object e) {
         mDataset.add(e);
     }
 
-    public void removeEvent(TrackerEvent e) {
+    public void removeEvent(Object e) {
         mDataset.remove(e);
     }
 
-    public boolean contains(TrackerEvent e) {
+    public boolean contains(Object e) {
         return mDataset.contains(e);
+    }
+
+    public String getMostRecentDate() {
+        if (mDataset.size() == 0) return "";
+        Object lastItem = mDataset.get(mDataset.size() - 1);
+        if (lastItem instanceof Day) {
+            return ((Day) lastItem).getDate();
+        } else {
+            return ((TrackerEvent) lastItem).getDate();
+        }
     }
 }

@@ -57,10 +57,10 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private FloatingActionButton mFeedFab;
     private FloatingActionButton mLetOutFab;
     private RecyclerView mRecyclerView;
+    private EventAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    private ArrayList<TrackerEvent> events = new ArrayList<>();
     private ArrayList<String> pets = new ArrayList<>();
     private String mUID;
     private FirebaseUser mUser;
@@ -163,8 +163,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        final EventAdapter adapter = new EventAdapter(mFragView);
-        mRecyclerView.setAdapter(adapter);
+        mAdapter = new EventAdapter(mFragView);
+        mRecyclerView.setAdapter(mAdapter);
 
         // listens to changes made to user's mPet list
         mDatabase.child("users").child(mUID).child("pets").addValueEventListener(new ValueEventListener() {
@@ -205,11 +205,10 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 TrackerEvent e = dataSnapshot.getValue(TrackerEvent.class);
-                if (!adapter.contains(e)) {
-                    adapter.addEvent(e);
+                if (!mAdapter.contains(e)) {
+                    mAdapter.addItem(e);
                 }
-                Log.d("event type", e.getType().toString());
-                adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -219,8 +218,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                adapter.removeEvent(dataSnapshot.getValue(TrackerEvent.class));
-                adapter.notifyDataSetChanged();
+                mAdapter.removeEvent(dataSnapshot.getValue(TrackerEvent.class));
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -234,7 +233,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             }
         };
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteHelper(adapter, getContext()));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteHelper(mAdapter, getContext()));
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         return mFragView;
@@ -310,6 +309,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             .setPetId(petId)
                             .setId(id)
                             .build();
+                    if (!mAdapter.getMostRecentDate().equals(e.getDate())) {
+                        Day day = new Day(getContext(), e.getDate());
+                        String dayId = mDatabase.child("pets").child(petId).child("events").push().getKey();
+                        day.setId(dayId);
+                        mDatabase.child("pets").child(petId).child("events").child(dayId).setValue(day);
+                    }
                     mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())

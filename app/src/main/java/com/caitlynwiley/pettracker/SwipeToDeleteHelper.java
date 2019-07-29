@@ -7,6 +7,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import com.caitlynwiley.pettracker.models.Day;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -35,6 +37,17 @@ public class SwipeToDeleteHelper extends ItemTouchHelper.SimpleCallback {
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         int position = viewHolder.getAdapterPosition();
         mAdapter.deleteItem(position);
+    }
+
+    @Override
+    public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        int position = viewHolder.getAdapterPosition();
+        Object o = mAdapter.getItem(position);
+        if (o instanceof Day) {
+            return 0;
+        } else {
+            return super.getSwipeDirs(recyclerView, viewHolder);
+        }
     }
 
     @Override
