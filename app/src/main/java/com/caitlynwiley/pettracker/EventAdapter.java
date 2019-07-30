@@ -1,5 +1,6 @@
 package com.caitlynwiley.pettracker;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,12 +9,11 @@ import android.widget.TextView;
 
 import com.caitlynwiley.pettracker.models.Day;
 import com.caitlynwiley.pettracker.models.TrackerEvent;
+import com.caitlynwiley.pettracker.models.TrackerItem;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import static com.google.android.material.snackbar.Snackbar.Callback.DISMISS_EVE
 import static com.google.android.material.snackbar.Snackbar.Callback.DISMISS_EVENT_SWIPE;
 import static com.google.android.material.snackbar.Snackbar.Callback.DISMISS_EVENT_TIMEOUT;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewHolder> {
 
     private ArrayList<Object> mDataset;
     private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
@@ -37,16 +37,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class TrackerViewHolder extends RecyclerView.ViewHolder {
 
         private TextView timeTextView;
         private ImageView imageView;
         private TextView dateTextView;
         private boolean isDate;
 
-        public MyViewHolder(View v) {
+        public TrackerViewHolder(View v) {
             super(v);
             if (v instanceof CardView) {
+                Log.d("adapter", "isCardView");
                 timeTextView = v.findViewById(R.id.time_text);
                 imageView = v.findViewById(R.id.event_icon);
                 isDate = false;
@@ -65,30 +66,34 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         forceDeleteEventVals.add(DISMISS_EVENT_CONSECUTIVE);
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
-    public EventAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                        int viewType) {
+    public TrackerViewHolder onCreateViewHolder(ViewGroup parent,
+                                                int viewType) {
         // create a new view
+        Log.d("adapter", "viewType: " + viewType);
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(viewType, parent, false);
 
-        MyViewHolder vh = new MyViewHolder(v);
-        return vh;
+        return new TrackerViewHolder(v);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(TrackerViewHolder holder, int position) {
+        Object o = mDataset.get(position);
         if (holder.isDate) {
-            holder.dateTextView.setText(((Day) getItem(position)).getPrettyDate());
+            holder.dateTextView.setText(((Day) o).getPrettyDate());
+        } else if (!holder.isDate) {
+            holder.timeTextView.setText(((TrackerEvent) o).getTime());
+            try {
+                holder.imageView.setImageResource(((TrackerEvent) o).getDrawableResId());
+            } catch (NullPointerException e) {
+                Log.d("adapter", "Position: " + position);
+            }
         } else {
-            holder.timeTextView.setText(((TrackerEvent) getItem(position)).getTime());
-            holder.imageView.setImageResource(((TrackerEvent) getItem(position)).getDrawableResId());
+            Log.d("adapter", "Object not instance of either subclass.");
         }
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.size();
@@ -135,19 +140,18 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
     private void undoDelete() {
         mDataset.add(mRecentlyDeletedItemPosition, mRecentlyDeletedItem);
-        mRef.child("pets").child(mRecentlyDeletedItem.getPetId()).child("events").child(mRecentlyDeletedItem.getId()).setValue(mRecentlyDeletedItem);
         notifyItemInserted(mRecentlyDeletedItemPosition);
     }
 
-    public void addItem(Object e) {
-        mDataset.add(e);
+    public void addItem(TrackerItem o) {
+        mDataset.add(o);
     }
 
-    public void removeEvent(Object e) {
-        mDataset.remove(e);
+    public void removeEvent(TrackerItem o) {
+        mDataset.remove(o);
     }
 
-    public boolean contains(Object e) {
+    public boolean contains(TrackerItem e) {
         return mDataset.contains(e);
     }
 

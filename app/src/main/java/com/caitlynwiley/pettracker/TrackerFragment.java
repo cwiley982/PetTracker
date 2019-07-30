@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.caitlynwiley.pettracker.models.Day;
 import com.caitlynwiley.pettracker.models.Pet;
 import com.caitlynwiley.pettracker.models.TrackerEvent;
+import com.caitlynwiley.pettracker.models.TrackerItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -204,9 +205,14 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                TrackerEvent e = dataSnapshot.getValue(TrackerEvent.class);
-                if (!mAdapter.contains(e)) {
-                    mAdapter.addItem(e);
+                TrackerItem o;
+                if (dataSnapshot.getValue() instanceof Day) {
+                    o = dataSnapshot.getValue(Day.class);
+                } else {
+                    o = dataSnapshot.getValue(TrackerEvent.class);
+                }
+                if (!mAdapter.contains(o)) {
+                    mAdapter.addItem(o);
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -218,7 +224,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                mAdapter.removeEvent(dataSnapshot.getValue(TrackerEvent.class));
+                mAdapter.removeEvent(dataSnapshot.getValue(TrackerItem.class));
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -301,6 +307,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
+                    //if (!mAdapter.getMostRecentDate().equals(when.substring(0, 10))) {
+                        Day day = new Day(getContext(), when.substring(0, 10));
+                        String dayId = mDatabase.child("pets").child(petId).child("events").push().getKey();
+                        day.setId(dayId);
+                        mDatabase.child("pets").child(petId).child("events").child(dayId).setValue(day);
+                    //}
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
                     TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.POTTY)
                             .setWhen(when)
@@ -309,12 +321,6 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             .setPetId(petId)
                             .setId(id)
                             .build();
-                    if (!mAdapter.getMostRecentDate().equals(e.getDate())) {
-                        Day day = new Day(getContext(), e.getDate());
-                        String dayId = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                        day.setId(dayId);
-                        mDatabase.child("pets").child(petId).child("events").child(dayId).setValue(day);
-                    }
                     mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
@@ -407,7 +413,6 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mPottyFabLabel.startAnimation(mLabelAppear);
         mFeedFabLabel.startAnimation(mLabelAppear);
         mLetOutFabLabel.startAnimation(mLabelAppear);
-
     }
 
     private void closeFab() {

@@ -8,12 +8,10 @@ import com.google.firebase.database.Exclude;
 import java.util.Locale;
 import java.util.Objects;
 
-public class Day {
-    private String date;
+public class Day extends TrackerItem {
     private int day;
     private int month;
     private int year;
-    private String id;
     @Exclude
     private Context mContext;
 
@@ -22,20 +20,16 @@ public class Day {
         mContext = context;
     }
 
-    public String getDate() {
-        return date;
+    public String getPrettyDate() {
+        return String.format(Locale.US, "%s %d", mContext.getResources().getStringArray(R.array.months)[month - 1], day);
     }
 
-    public Day setDate(String date) {
-        this.date = date;
+    @Override
+    public void setDate(String date) {
+        super.setDate(date);
         month = Integer.parseInt(date.substring(0, 2).trim());
         day = Integer.parseInt(date.substring(3, 5).trim());
         year = Integer.parseInt(date.substring(6));
-        return this;
-    }
-
-    public String getPrettyDate() {
-        return String.format(Locale.US, "%s %d", mContext.getResources().getStringArray(R.array.months)[month - 1], day);
     }
 
     public int getDay() {
@@ -62,15 +56,6 @@ public class Day {
 
     public Day setYear(int year) {
         this.year = year;
-        return this;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public Day setId(String id) {
-        this.id = id;
         return this;
     }
 

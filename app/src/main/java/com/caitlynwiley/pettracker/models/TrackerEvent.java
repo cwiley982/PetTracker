@@ -1,15 +1,14 @@
 package com.caitlynwiley.pettracker.models;
 
 import com.caitlynwiley.pettracker.R;
+import com.google.firebase.database.Exclude;
 
 import java.util.Objects;
 
-public class TrackerEvent {
+public class TrackerEvent extends TrackerItem {
 
     private EventType type;
     private String time;
-    private String date;
-    private String id;
     private String petId;
     private int hours;
     private int minutes;
@@ -29,14 +28,6 @@ public class TrackerEvent {
         this.type = type;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
-    }
-
     public void setPetId(String petId) {
         this.petId = petId;
     }
@@ -46,12 +37,8 @@ public class TrackerEvent {
     }
 
     protected void setWhen(String when) {
-        date = when.substring(0, 10);
+        super.setDate(when.substring(0, 10));
         time = when.substring(11);
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public void setTime(String time) {
@@ -60,10 +47,6 @@ public class TrackerEvent {
 
     public String getTime() {
         return time;
-    }
-
-    public String getDate() {
-        return date;
     }
 
     public int getDrawableResId() {
@@ -78,31 +61,42 @@ public class TrackerEvent {
         return R.drawable.ic_clock_black_24dp; // default for now
     }
 
-    public EventType getType() {
+    @Exclude
+    public EventType getTypeAsEnum(){
         return type;
     }
 
-    public TrackerEvent setType(EventType type) {
-        this.type = type;
-        return this;
+    // these methods are just a Firebase 9.0.0 hack to handle the enum
+    public String getType(){
+        if (type == null){
+            return null;
+        } else {
+            return type.name();
+        }
+    }
+
+    public void setType(String type){
+        if (type == null){
+            this.type = null;
+        } else {
+            this.type = EventType.valueOf(type);
+        }
     }
 
     public int getHours() {
         return hours;
     }
 
-    public TrackerEvent setHours(int hours) {
+    public void setHours(int hours) {
         this.hours = hours;
-        return this;
     }
 
     public int getMinutes() {
         return minutes;
     }
 
-    public TrackerEvent setMinutes(int minutes) {
+    public void setMinutes(int minutes) {
         this.minutes = minutes;
-        return this;
     }
 
     public double getCupsFood() {
@@ -118,18 +112,16 @@ public class TrackerEvent {
         return number1;
     }
 
-    public TrackerEvent setNumber1(boolean number1) {
+    public void setNumber1(boolean number1) {
         this.number1 = number1;
-        return this;
     }
 
     public boolean isNumber2() {
         return number2;
     }
 
-    public TrackerEvent setNumber2(boolean number2) {
+    public void setNumber2(boolean number2) {
         this.number2 = number2;
-        return this;
     }
 
     public enum EventType {
@@ -140,8 +132,7 @@ public class TrackerEvent {
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(type, time, date, id, petId);
+        return Objects.hash(type, time, getDate(), getId(), petId);
     }
 
     @Override
@@ -151,8 +142,8 @@ public class TrackerEvent {
         TrackerEvent that = (TrackerEvent) o;
         return type == that.type &&
                 Objects.equals(time, that.time) &&
-                Objects.equals(date, that.date) &&
-                Objects.equals(id, that.id) &&
+                Objects.equals(getDate(), that.getDate()) &&
+                Objects.equals(getId(), that.getId()) &&
                 Objects.equals(petId, that.petId);
     }
 
@@ -162,7 +153,7 @@ public class TrackerEvent {
 
         public Builder(EventType type) {
             event = new TrackerEvent();
-            event.setType(type);
+            event.setType(type.name());
         }
 
         // ... (setters)
