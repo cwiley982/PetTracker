@@ -27,7 +27,7 @@ import static com.google.android.material.snackbar.Snackbar.Callback.DISMISS_EVE
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewHolder> {
 
-    private ArrayList<Object> mDataset;
+    private ArrayList<TrackerItem> mDataset;
     private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
     private TrackerEvent mRecentlyDeletedItem;
     private int mRecentlyDeletedItemPosition;
@@ -47,7 +47,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
         public TrackerViewHolder(View v) {
             super(v);
             if (v instanceof CardView) {
-                Log.d("adapter", "isCardView");
                 timeTextView = v.findViewById(R.id.time_text);
                 imageView = v.findViewById(R.id.event_icon);
                 isDate = false;
@@ -82,15 +81,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
         Object o = mDataset.get(position);
         if (holder.isDate) {
             holder.dateTextView.setText(((Day) o).getPrettyDate());
-        } else if (!holder.isDate) {
-            holder.timeTextView.setText(((TrackerEvent) o).getTime());
-            try {
-                holder.imageView.setImageResource(((TrackerEvent) o).getDrawableResId());
-            } catch (NullPointerException e) {
-                Log.d("adapter", "Position: " + position);
-            }
         } else {
-            Log.d("adapter", "Object not instance of either subclass.");
+            holder.timeTextView.setText(((TrackerEvent) o).getTime());
+            holder.imageView.setImageResource(((TrackerEvent) o).getDrawableResId());
         }
     }
 
@@ -104,7 +97,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
         return mDataset.get(position) instanceof TrackerEvent ? R.layout.tracker_event : R.layout.date_header;
     }
 
-    public Object getItem(int i) {
+    public TrackerItem getItem(int i) {
         return mDataset == null ? null : mDataset.get(i);
     }
 
@@ -143,25 +136,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
         notifyItemInserted(mRecentlyDeletedItemPosition);
     }
 
-    public void addItem(TrackerItem o) {
-        mDataset.add(o);
+    public void addItem(TrackerItem item) {
+        mDataset.add(item);
     }
 
-    public void removeEvent(TrackerItem o) {
-        mDataset.remove(o);
+    public void removeEvent(TrackerItem item) {
+        mDataset.remove(item);
     }
 
-    public boolean contains(TrackerItem e) {
-        return mDataset.contains(e);
+    public boolean contains(TrackerItem item) {
+        return mDataset.contains(item);
     }
 
     public String getMostRecentDate() {
         if (mDataset.size() == 0) return "";
-        Object lastItem = mDataset.get(mDataset.size() - 1);
-        if (lastItem instanceof Day) {
-            return ((Day) lastItem).getDate();
-        } else {
-            return ((TrackerEvent) lastItem).getDate();
-        }
+        TrackerItem lastItem = mDataset.get(mDataset.size() - 1);
+        return lastItem.getDate();
     }
 }

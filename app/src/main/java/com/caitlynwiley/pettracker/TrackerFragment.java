@@ -57,9 +57,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private FloatingActionButton mPottyFab;
     private FloatingActionButton mFeedFab;
     private FloatingActionButton mLetOutFab;
-    private RecyclerView mRecyclerView;
     private EventAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private ArrayList<String> pets = new ArrayList<>();
@@ -153,32 +151,22 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mFeedFabLabel.setOnClickListener(this);
         mLetOutFabLabel.setOnClickListener(this);
 
-        mRecyclerView = mFragView.findViewById(R.id.tracker_items);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
+        RecyclerView recyclerView = mFragView.findViewById(R.id.tracker_items);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(mFragView.getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mFragView.getContext()));
 
-        // specify an adapter (see also next example)
+        // specify an adapter
         mAdapter = new EventAdapter(mFragView);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
         // listens to changes made to user's mPet list
-        mDatabase.child("users").child(mUID).child("pets").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("users").child(mUID).child("pets").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
-                for (DataSnapshot d : data) {
-                    pets.add(d.getKey());
-                    // all mPet ids are the keys, values are just true so ignore those
-                }
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                pets.add(dataSnapshot.getKey());
                 if (mPetsListWasEmpty) {
                     mDatabase.child("pets").child(pets.get(0)).child("events").addChildEventListener(eventListener);
-                    Log.d("PET", pets.get(0));
                     mPetsListWasEmpty = false;
 
                     mDatabase.child("pets").child(pets.get(0)).addValueEventListener(new ValueEventListener() {
@@ -196,6 +184,22 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             }
 
             @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                pets.remove(dataSnapshot.getKey());
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
@@ -205,14 +209,14 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                TrackerItem o;
-                if (dataSnapshot.getValue() instanceof Day) {
-                    o = dataSnapshot.getValue(Day.class);
+                TrackerItem item;
+                if (dataSnapshot.getValue() instanceof TrackerEvent) {
+                    item = dataSnapshot.getValue(TrackerEvent.class);
                 } else {
-                    o = dataSnapshot.getValue(TrackerEvent.class);
+                    item = dataSnapshot.getValue(Day.class);
                 }
-                if (!mAdapter.contains(o)) {
-                    mAdapter.addItem(o);
+                if (!mAdapter.contains(item)) {
+                    mAdapter.addItem(item);
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -240,7 +244,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteHelper(mAdapter, getContext()));
-        itemTouchHelper.attachToRecyclerView(mRecyclerView);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         return mFragView;
     }
@@ -308,7 +312,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
                     //if (!mAdapter.getMostRecentDate().equals(when.substring(0, 10))) {
-                        Day day = new Day(getContext(), when.substring(0, 10));
+                        Day day = new Day(mFragView.getContext(), when.substring(0, 10));
                         String dayId = mDatabase.child("pets").child(petId).child("events").push().getKey();
                         day.setId(dayId);
                         mDatabase.child("pets").child(petId).child("events").child(dayId).setValue(day);

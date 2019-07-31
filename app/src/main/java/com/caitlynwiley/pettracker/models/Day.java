@@ -15,6 +15,8 @@ public class Day extends TrackerItem {
     @Exclude
     private Context mContext;
 
+    public Day() {}
+
     public Day(Context context, String date) {
         setDate(date);
         mContext = context;
