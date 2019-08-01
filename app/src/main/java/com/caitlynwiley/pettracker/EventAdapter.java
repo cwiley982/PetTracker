@@ -138,6 +138,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
         mDataset.add(item);
     }
 
+    public void addItem(int index, TrackerItem item) {
+        mDataset.add(index, item);
+    }
+
     public void removeEvent(TrackerItem item) {
         mDataset.remove(item);
     }

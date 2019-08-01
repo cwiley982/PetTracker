@@ -219,6 +219,18 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     ((Day) item).setContext(getContext());
                     Log.d("fragment", "day");
                 }
+                if (mAdapter.getItemCount() == 0 && item instanceof TrackerEvent) {
+                    // need to insert a day item before the event
+                    TrackerEvent event = (TrackerEvent) item;
+                    Day d = new Day(getContext(), event.getDate());
+                    String id = mDatabase.child("pets").child(pets.get(0)).child("events").push().getKey();
+                    d.setId(id);
+                    Calendar c = Calendar.getInstance();
+                    c.set(event.getYear(), event.getMonth() - 1, event.getDay(), 0, 0, 0);
+                    c.set(Calendar.MILLISECOND, 0);
+                    d.setMillis(c.getTimeInMillis());
+                    mDatabase.child("pets").child(pets.get(0)).child("events").child(id).setValue(d);
+                }
                 mAdapter.addItem(item);
                 mAdapter.notifyDataSetChanged();
             }
@@ -310,19 +322,20 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     boolean num2 = ((CheckBox) d.findViewById(R.id.number2)).isChecked();
                     //date
                     Calendar c = Calendar.getInstance();
-                    String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%02d %s",
+                    String date = String.format(Locale.US, "%2d/%2d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
-                            c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
+                            c.get(Calendar.YEAR));
+                    String time = String.format(Locale.US, "%2d:%02d %s",
+                            c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
-                    //if (!mAdapter.getMostRecentDate().equals(when.substring(0, 10))) {
-                        Day day = new Day(context, when.substring(0, 10));
-                        String dayId = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                        day.setId(dayId);
-                        mDatabase.child("pets").child(petId).child("events").child(dayId).setValue(day);
-                    //}
+                    if (!mAdapter.getMostRecentDate().equals(date)) {
+                        addDayToList(context, c, petId, date);
+                    }
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
                     TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.POTTY)
-                            .setWhen(when)
+                            .setDate(date)
+                            .setTime(time)
+                            .setMillis(c.getTimeInMillis())
                             .setNumber1(num1)
                             .setNumber2(num2)
                             .setPetId(petId)
@@ -338,6 +351,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private void trackWalk() {
         View v = getLayoutInflater().inflate(R.layout.track_walk_dialog, null);
         ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
+        final Context context = this.getActivity().getApplicationContext();
 
         new AlertDialog.Builder(getContext())
                 .setView(v)
@@ -356,15 +370,21 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             .getText().toString());
                     //date
                     Calendar c = Calendar.getInstance();
-                    String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%02d %s",
+                    String date = String.format(Locale.US, "%2d/%2d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
-                            c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
+                            c.get(Calendar.YEAR));
+                    String time = String.format(Locale.US, "%2d:%02d %s",
+                            c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
+                    if (!mAdapter.getMostRecentDate().equals(date)) {
+                        addDayToList(context, c, petId, date);
+                    }
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
                     TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.WALK)
-                            .setWhen(when)
-                            .setHours(hours)
-                            .setMinutes(mins)
+                            .setDate(date)
+                            .setTime(time)
+                            .setMillis(c.getTimeInMillis())
+                            .setWalkLength(hours, mins)
                             .setPetId(petId)
                             .setId(id)
                             .build();
@@ -378,6 +398,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private void trackFeed() {
         View v = getLayoutInflater().inflate(R.layout.track_meal_dialog, null);
         ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
+        final Context context = this.getActivity().getApplicationContext();
 
         new AlertDialog.Builder(getContext())
                 .setView(v)
@@ -394,13 +415,20 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             .getText().toString());
                     //date
                     Calendar c = Calendar.getInstance();
-                    String when = String.format(Locale.US, "%2d/%2d/%4d %2d:%02d %s",
+                    String date = String.format(Locale.US, "%2d/%2d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
-                            c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
+                            c.get(Calendar.YEAR));
+                    String time = String.format(Locale.US, "%2d:%02d %s",
+                            c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
+                    if (!mAdapter.getMostRecentDate().equals(date)) {
+                        addDayToList(context, c, petId, date);
+                    }
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
                     TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.FEED)
-                            .setWhen(when)
+                            .setDate(date)
+                            .setTime(time)
+                            .setMillis(c.getTimeInMillis())
                             .setCupsFood(cupsFood)
                             .setPetId(petId)
                             .setId(id)
@@ -410,6 +438,18 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
                 .create()
                 .show();
+    }
+
+    private void addDayToList(Context context, Calendar c, String petId, String date) {
+        Day day = new Day(context, date);
+        String dayId = mDatabase.child("pets").child(petId).child("events").push().getKey();
+        day.setId(dayId);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        day.setMillis(c.getTimeInMillis());
+        mDatabase.child("pets").child(petId).child("events").child(dayId).setValue(day);
     }
 
     private void openFab() {

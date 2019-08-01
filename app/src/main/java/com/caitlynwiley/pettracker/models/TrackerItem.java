@@ -4,6 +4,7 @@ public class TrackerItem {
     private String date;
     private String id;
     private String itemType;
+    private long millis;
 
     public TrackerItem(){}
 
@@ -13,6 +14,14 @@ public class TrackerItem {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setMillis(long millis) {
+        this.millis = millis;
+    }
+
+    public long getMillis() {
+        return millis;
     }
 
     public String getId() {

@@ -8,10 +8,9 @@ import java.util.Objects;
 public class TrackerEvent extends TrackerItem {
 
     private EventType type;
+    private WalkLength walkLength;
     private String time;
     private String petId;
-    private int hours;
-    private int minutes;
     private double cupsFood;
     private boolean number1;
     private boolean number2;
@@ -22,9 +21,7 @@ public class TrackerEvent extends TrackerItem {
 
     }
 
-    public TrackerEvent(String when, EventType type) {
-        // when has format mm/dd/yyyy hh:mm am/pm
-        setWhen(when);
+    public TrackerEvent(EventType type) {
         this.type = type;
     }
 
@@ -36,17 +33,27 @@ public class TrackerEvent extends TrackerItem {
         return petId;
     }
 
-    protected void setWhen(String when) {
-        super.setDate(when.substring(0, 10));
-        time = when.substring(11);
-    }
-
-    public void setTime(String time) {
+    protected void setTime(String time) {
         this.time = time;
     }
 
     public String getTime() {
         return time;
+    }
+
+    // mm/dd/yyyy
+    // 0123456789
+
+    public int getYear() {
+        return Integer.parseInt(getDate().substring(6));
+    }
+
+    public int getMonth() {
+        return Integer.parseInt(getDate().substring(0, 2).trim());
+    }
+
+    public int getDay() {
+        return Integer.parseInt(getDate().substring(3, 5).trim());
     }
 
     public int getDrawableResId() {
@@ -83,22 +90,6 @@ public class TrackerEvent extends TrackerItem {
         }
     }
 
-    public int getHours() {
-        return hours;
-    }
-
-    public void setHours(int hours) {
-        this.hours = hours;
-    }
-
-    public int getMinutes() {
-        return minutes;
-    }
-
-    public void setMinutes(int minutes) {
-        this.minutes = minutes;
-    }
-
     public double getCupsFood() {
         return cupsFood;
     }
@@ -122,6 +113,10 @@ public class TrackerEvent extends TrackerItem {
 
     public void setNumber2(boolean number2) {
         this.number2 = number2;
+    }
+
+    public void setWalkLength(int hours, int minutes) {
+        this.walkLength = new WalkLength(hours, minutes);
     }
 
     public enum EventType {
@@ -158,8 +153,18 @@ public class TrackerEvent extends TrackerItem {
         }
 
         // ... (setters)
-        public Builder setWhen(String when) {
-            event.setWhen(when);
+        public Builder setDate(String date) {
+            event.setDate(date);
+            return this;
+        }
+
+        public Builder setTime(String time) {
+            event.setTime(time);
+            return this;
+        }
+
+        public Builder setMillis(long millis) {
+            event.setMillis(millis);
             return this;
         }
 
@@ -170,16 +175,6 @@ public class TrackerEvent extends TrackerItem {
 
         public Builder setPetId(String id) {
             event.setPetId(id);
-            return this;
-        }
-
-        public Builder setHours(int hours) {
-            event.setHours(hours);
-            return this;
-        }
-
-        public Builder setMinutes(int mins) {
-            event.setMinutes(mins);
             return this;
         }
 
@@ -195,6 +190,11 @@ public class TrackerEvent extends TrackerItem {
 
         public Builder setNumber2(boolean went) {
             event.setNumber2(went);
+            return this;
+        }
+
+        public Builder setWalkLength(int hours, int minutes) {
+            event.setWalkLength(hours, minutes);
             return this;
         }
 
