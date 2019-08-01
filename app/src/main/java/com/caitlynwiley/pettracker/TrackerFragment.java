@@ -1,5 +1,6 @@
 package com.caitlynwiley.pettracker;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -210,14 +211,15 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 TrackerItem item;
-                if (dataSnapshot.getValue() instanceof TrackerEvent) {
+                if (dataSnapshot.child("itemType").getValue(String.class).equals("event")) {
                     item = dataSnapshot.getValue(TrackerEvent.class);
+                    Log.d("fragment", "event");
                 } else {
                     item = dataSnapshot.getValue(Day.class);
+                    ((Day) item).setContext(getContext());
+                    Log.d("fragment", "day");
                 }
-                if (!mAdapter.contains(item)) {
-                    mAdapter.addItem(item);
-                }
+                mAdapter.addItem(item);
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -291,6 +293,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private void trackPotty() {
         View v = getLayoutInflater().inflate(R.layout.track_potty_dialog, null);
         ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
+        final Context context = this.getActivity().getApplicationContext();
 
         new AlertDialog.Builder(getContext())
                 .setView(v)
@@ -312,7 +315,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             c.get(Calendar.YEAR), c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
                             c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
                     //if (!mAdapter.getMostRecentDate().equals(when.substring(0, 10))) {
-                        Day day = new Day(mFragView.getContext(), when.substring(0, 10));
+                        Day day = new Day(context, when.substring(0, 10));
                         String dayId = mDatabase.child("pets").child(petId).child("events").push().getKey();
                         day.setId(dayId);
                         mDatabase.child("pets").child(petId).child("events").child(dayId).setValue(day);

@@ -138,7 +138,7 @@ public class TrackerEvent extends TrackerItem {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof TrackerEvent)) return false;
         TrackerEvent that = (TrackerEvent) o;
         return type == that.type &&
                 Objects.equals(time, that.time) &&
@@ -154,6 +154,7 @@ public class TrackerEvent extends TrackerItem {
         public Builder(EventType type) {
             event = new TrackerEvent();
             event.setType(type.name());
+            event.setItemType("event");
         }
 
         // ... (setters)

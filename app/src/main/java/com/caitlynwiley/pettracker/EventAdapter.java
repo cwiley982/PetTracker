@@ -69,17 +69,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
     public TrackerViewHolder onCreateViewHolder(ViewGroup parent,
                                                 int viewType) {
         // create a new view
-        Log.d("adapter", "viewType: " + viewType);
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(viewType, parent, false);
-
         return new TrackerViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(TrackerViewHolder holder, int position) {
         Object o = mDataset.get(position);
-        if (holder.isDate) {
+        if (o instanceof Day) {
             holder.dateTextView.setText(((Day) o).getPrettyDate());
         } else {
             holder.timeTextView.setText(((TrackerEvent) o).getTime());
@@ -94,7 +92,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
 
     @Override
     public int getItemViewType(int position) {
-        return mDataset.get(position) instanceof TrackerEvent ? R.layout.tracker_event : R.layout.date_header;
+        return mDataset.get(position) instanceof Day ? R.layout.date_header : R.layout.tracker_event;
     }
 
     public TrackerItem getItem(int i) {
@@ -142,10 +140,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
 
     public void removeEvent(TrackerItem item) {
         mDataset.remove(item);
-    }
-
-    public boolean contains(TrackerItem item) {
-        return mDataset.contains(item);
     }
 
     public String getMostRecentDate() {

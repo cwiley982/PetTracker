@@ -19,11 +19,16 @@ public class Day extends TrackerItem {
 
     public Day(Context context, String date) {
         setDate(date);
-        mContext = context;
+        setContext(context);
+        setItemType("day");
     }
 
     public String getPrettyDate() {
         return String.format(Locale.US, "%s %d", mContext.getResources().getStringArray(R.array.months)[month - 1], day);
+    }
+
+    public void setContext(Context context) {
+        mContext = context;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class Day extends TrackerItem {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Day)) return false;
         Day day1 = (Day) o;
         return getDay() == day1.getDay() &&
                 getMonth() == day1.getMonth() &&
@@ -73,7 +78,6 @@ public class Day extends TrackerItem {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(getDay(), getMonth(), getYear());
     }
 }
