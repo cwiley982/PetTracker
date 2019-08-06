@@ -5,8 +5,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:outlineSpotShadowColor="@color/primaryColor"
+    android:layout_margin="4dp"
     card_view:cardCornerRadius="4dp">
 
     <RelativeLayout

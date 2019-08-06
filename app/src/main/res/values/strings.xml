@@ -118,4 +118,6 @@
     <string name="open">open</string>
     <string name="close">close</string>
     <string name="potty">Potty</string>
+    <string name="walk">Walk</string>
+    <string name="meal">Meal</string>
 </resources>

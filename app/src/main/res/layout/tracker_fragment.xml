@@ -7,23 +7,6 @@
     android:layout_height="match_parent"
     android:paddingTop="16dp">
 
-    <TextView
-        android:id="@+id/date_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textSize="18sp"
-        tools:text="July 26"/>
-
-    <DatePicker
-        android:id="@+id/date_picker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:datePickerMode="calendar"
-        android:visibility="gone"/>
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/tracker_fab"
         android:layout_width="wrap_content"
@@ -45,7 +28,9 @@
         app:layout_constraintTop_toTopOf="@id/track_fed_fab"
         app:layout_constraintBottom_toBottomOf="@id/track_fed_fab"
         android:layout_marginEnd="8dp"
-        android:text="Meal"
+        android:background="@drawable/white_oval"
+        android:elevation="100pt"
+        android:text="@string/meal"
         android:textSize="16sp"
         android:labelFor="@id/track_fed_fab"
         android:visibility="gone"
@@ -73,6 +58,8 @@
         app:layout_constraintTop_toTopOf="@id/track_potty_fab"
         app:layout_constraintBottom_toBottomOf="@id/track_potty_fab"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/white_oval"
+        android:elevation="100pt"
         android:text="@string/potty"
         android:textSize="16sp"
         android:labelFor="@id/track_potty_fab"
@@ -101,7 +88,9 @@
         app:layout_constraintTop_toTopOf="@id/track_let_out_fab"
         app:layout_constraintBottom_toBottomOf="@id/track_let_out_fab"
         android:layout_marginEnd="8dp"
-        android:text="Walk"
+        android:background="@drawable/white_oval"
+        android:elevation="100pt"
+        android:text="@string/walk"
         android:textSize="16sp"
         android:labelFor="@id/track_let_out_fab"
         android:visibility="gone"
@@ -124,6 +113,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tracker_items"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
