@@ -228,7 +228,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     Calendar c = Calendar.getInstance();
                     c.set(event.getYear(), event.getMonth() - 1, event.getDay(), 0, 0, 0);
                     c.set(Calendar.MILLISECOND, 0);
-                    d.setMillis(c.getTimeInMillis());
+                    d.setUtcMillis(c.getTimeInMillis());
                     mDatabase.child("pets").child(pets.get(0)).child("events").child(id).setValue(d);
                 }
                 mAdapter.addItem(item);
@@ -325,16 +325,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     String date = String.format(Locale.US, "%2d/%2d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR));
-                    String time = String.format(Locale.US, "%2d:%02d %s",
-                            c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
-                            c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
                     if (!mAdapter.getMostRecentDate().equals(date)) {
                         addDayToList(context, c, petId, date);
                     }
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
                     TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.POTTY)
                             .setDate(date)
-                            .setTime(time)
                             .setMillis(c.getTimeInMillis())
                             .setNumber1(num1)
                             .setNumber2(num2)
@@ -373,16 +369,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     String date = String.format(Locale.US, "%2d/%2d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR));
-                    String time = String.format(Locale.US, "%2d:%02d %s",
-                            c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
-                            c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
                     if (!mAdapter.getMostRecentDate().equals(date)) {
                         addDayToList(context, c, petId, date);
                     }
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
                     TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.WALK)
                             .setDate(date)
-                            .setTime(time)
                             .setMillis(c.getTimeInMillis())
                             .setWalkLength(hours, mins)
                             .setPetId(petId)
@@ -418,16 +410,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     String date = String.format(Locale.US, "%2d/%2d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR));
-                    String time = String.format(Locale.US, "%2d:%02d %s",
-                            c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR),
-                            c.get(Calendar.MINUTE), c.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm");
                     if (!mAdapter.getMostRecentDate().equals(date)) {
                         addDayToList(context, c, petId, date);
                     }
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
                     TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.FEED)
                             .setDate(date)
-                            .setTime(time)
                             .setMillis(c.getTimeInMillis())
                             .setCupsFood(cupsFood)
                             .setPetId(petId)
@@ -448,7 +436,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-        day.setMillis(c.getTimeInMillis());
+        day.setUtcMillis(c.getTimeInMillis());
         mDatabase.child("pets").child(petId).child("events").child(dayId).setValue(day);
     }
 

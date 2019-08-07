@@ -4,7 +4,7 @@ public class TrackerItem {
     private String date;
     private String id;
     private String itemType;
-    private long millis;
+    private long utcMillis;
 
     public TrackerItem(){}
 
@@ -16,12 +16,12 @@ public class TrackerItem {
         this.date = date;
     }
 
-    public void setMillis(long millis) {
-        this.millis = millis;
+    public void setUtcMillis(long utcMillis) {
+        this.utcMillis = utcMillis;
     }
 
-    public long getMillis() {
-        return millis;
+    public long getUtcMillis() {
+        return utcMillis;
     }
 
     public String getId() {

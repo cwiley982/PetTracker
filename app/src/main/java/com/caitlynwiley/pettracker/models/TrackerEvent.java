@@ -1,15 +1,22 @@
 package com.caitlynwiley.pettracker.models;
 
+import android.annotation.TargetApi;
+import android.icu.util.TimeZone;
+import android.util.Log;
+
 import com.caitlynwiley.pettracker.R;
 import com.google.firebase.database.Exclude;
 
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Objects;
 
 public class TrackerEvent extends TrackerItem {
 
     private EventType type;
     private WalkLength walkLength;
-    private String time;
+    @Exclude
+    private String localTime;
     private String petId;
     private double cupsFood;
     private boolean number1;
@@ -33,12 +40,26 @@ public class TrackerEvent extends TrackerItem {
         return petId;
     }
 
-    protected void setTime(String time) {
-        this.time = time;
+    @Override
+    @TargetApi(24)
+    public void setUtcMillis(long utcMillis) {
+        super.setUtcMillis(utcMillis);
+        Calendar calendar = Calendar.getInstance();
+        TimeZone tz = TimeZone.getDefault();
+        int offset = tz.getOffset(utcMillis);
+        calendar.setTimeInMillis(utcMillis + offset);
+        Log.d("offset", "" + offset);
+        setLocalTime(calendar);
     }
 
-    public String getTime() {
-        return time;
+    @Exclude
+    private void setLocalTime(Calendar c) {
+        localTime = String.format(Locale.US, "%2d:%02d %s", c.get(Calendar.HOUR), c.get(Calendar.MINUTE),
+                c.get(Calendar.AM_PM) == Calendar.AM? "am" : "pm");
+    }
+
+    public String getLocalTime() {
+        return localTime;
     }
 
     // mm/dd/yyyy
@@ -127,7 +148,7 @@ public class TrackerEvent extends TrackerItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, time, getDate(), getId(), petId);
+        return Objects.hash(type, localTime, getDate(), getId(), petId);
     }
 
     @Override
@@ -136,7 +157,7 @@ public class TrackerEvent extends TrackerItem {
         if (!(o instanceof TrackerEvent)) return false;
         TrackerEvent that = (TrackerEvent) o;
         return type == that.type &&
-                Objects.equals(time, that.time) &&
+                Objects.equals(localTime, that.localTime) &&
                 Objects.equals(getDate(), that.getDate()) &&
                 Objects.equals(getId(), that.getId()) &&
                 Objects.equals(petId, that.petId);
@@ -158,13 +179,8 @@ public class TrackerEvent extends TrackerItem {
             return this;
         }
 
-        public Builder setTime(String time) {
-            event.setTime(time);
-            return this;
-        }
-
         public Builder setMillis(long millis) {
-            event.setMillis(millis);
+            event.setUtcMillis(millis);
             return this;
         }
 

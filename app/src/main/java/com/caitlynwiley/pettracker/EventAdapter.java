@@ -1,6 +1,5 @@
 package com.caitlynwiley.pettracker;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +79,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
         if (o instanceof Day) {
             holder.dateTextView.setText(((Day) o).getPrettyDate());
         } else {
-            holder.timeTextView.setText(((TrackerEvent) o).getTime());
+            holder.timeTextView.setText(((TrackerEvent) o).getLocalTime());
             holder.imageView.setImageResource(((TrackerEvent) o).getDrawableResId());
         }
     }
