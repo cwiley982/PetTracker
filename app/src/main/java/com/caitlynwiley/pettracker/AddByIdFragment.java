@@ -23,17 +23,14 @@ public class AddByIdFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         mFragView = inflater.inflate(R.layout.enter_pet_id_layout, container, false);
 
-        mFragView.findViewById(R.id.add_pet_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String id = ((EditText) mFragView.findViewById(R.id.new_pet_id)).getText().toString();
-                FirebaseDatabase.getInstance().getReference().child("accounts")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child("pets")
-                        .child(id)
-                        .setValue(true);
-                startActivity(new Intent(getActivity(), MainActivity.class));
-            }
+        mFragView.findViewById(R.id.add_pet_button).setOnClickListener(v -> {
+            String id = ((EditText) mFragView.findViewById(R.id.new_pet_id)).getText().toString();
+            FirebaseDatabase.getInstance().getReference().child("users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child("pets")
+                    .child(id)
+                    .setValue(true);
+            startActivity(new Intent(getActivity(), MainActivity.class));
         });
 
         return mFragView;
