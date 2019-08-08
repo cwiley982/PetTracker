@@ -54,7 +54,7 @@ public class TrackerEvent extends TrackerItem {
 
     @Exclude
     private void setLocalTime(Calendar c) {
-        localTime = String.format(Locale.US, "%2d:%02d %s", c.get(Calendar.HOUR), c.get(Calendar.MINUTE),
+        localTime = String.format(Locale.US, "%2d:%02d %s", c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR), c.get(Calendar.MINUTE),
                 c.get(Calendar.AM_PM) == Calendar.AM? "am" : "pm");
     }
 
