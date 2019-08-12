@@ -41,40 +41,22 @@ public class TrackerEvent extends TrackerItem {
     }
 
     @Override
-    @TargetApi(24)
     public void setUtcMillis(long utcMillis) {
         super.setUtcMillis(utcMillis);
-        Calendar calendar = Calendar.getInstance();
-        TimeZone tz = TimeZone.getDefault();
-        int offset = tz.getOffset(utcMillis);
-        calendar.setTimeInMillis(utcMillis + offset);
-        Log.d("offset", "" + offset);
-        setLocalTime(calendar);
+        setLocalTime(utcMillis);
     }
 
     @Exclude
-    private void setLocalTime(Calendar c) {
-        localTime = String.format(Locale.US, "%2d:%02d %s", c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR), c.get(Calendar.MINUTE),
+    @TargetApi(24)
+    private void setLocalTime(long utcMillis) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(utcMillis);
+        localTime = String.format(Locale.US, "%d:%02d %s", c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR), c.get(Calendar.MINUTE),
                 c.get(Calendar.AM_PM) == Calendar.AM? "am" : "pm");
     }
 
     public String getLocalTime() {
         return localTime;
-    }
-
-    // mm/dd/yyyy
-    // 0123456789
-
-    public int getYear() {
-        return Integer.parseInt(getDate().substring(6));
-    }
-
-    public int getMonth() {
-        return Integer.parseInt(getDate().substring(0, 2).trim());
-    }
-
-    public int getDay() {
-        return Integer.parseInt(getDate().substring(3, 5).trim());
     }
 
     public int getDrawableResId() {
@@ -94,7 +76,7 @@ public class TrackerEvent extends TrackerItem {
         return type;
     }
 
-    // these methods are just a Firebase 9.0.0 hack to handle the enum
+    // these methods are a Firebase 9.0.0 hack to handle the enum
     public String getType(){
         if (type == null){
             return null;
