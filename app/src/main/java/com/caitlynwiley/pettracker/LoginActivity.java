@@ -19,6 +19,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -40,6 +41,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Arrays;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -59,6 +62,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
     private Button mEmailSignInButton;
     private TextView mCreateAccountButton;
     private Button mGoogleSignInButton;
+    private Button mFacebookSignInButton;
     private EditText mEmailField;
     private EditText mPasswordField;
 
@@ -116,6 +120,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         mGoogleSignInButton = findViewById(R.id.google_sign_in_button);
         mGoogleSignInButton.setOnClickListener(this);
 
+        mFacebookSignInButton = findViewById(R.id.facebook_login_button);
+        mFacebookSignInButton.setOnClickListener(this);
+
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -125,60 +132,40 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // Initialize Facebook Login button
-        mCallbackManager = CallbackManager.Factory.create();
         FacebookSdk.setApplicationId(getResources().getString(R.string.facebook_app_id));
-        FacebookSdk.sdkInitialize(this);
-        final LoginButton loginButton = new LoginButton(this);
-        loginButton.setReadPermissions("email", "public_profile");
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
 
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-                // ...
-            }
+        mCallbackManager = CallbackManager.Factory.create();
 
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-                // ...
-            }
-        });
+        LoginManager.getInstance().registerCallback(mCallbackManager,
+            new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    Log.d("Success", "Login");
+                    handleFacebookAccessToken(loginResult.getAccessToken());
+                }
 
-        Button fbButton = findViewById(R.id.facebook_login_button);
-        fbButton.setOnClickListener(v -> loginButton.callOnClick());
+                @Override
+                public void onCancel() {
+                    Toast.makeText(LoginActivity.this, "Login Cancel", Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onError(FacebookException exception) {
+                    Toast.makeText(LoginActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        mFacebookSignInButton.setOnClickListener(this);
     }
 
-    private void googleSignIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
-    }
-
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithCredential:success");
-                        mUser = mAuth.getCurrentUser();
-                        updateUI("");
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.getException());
-                        Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
-                        mUser = null;
-                        updateUI(task.getException().getMessage());
-                    }
-                });
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mAuth.getCurrentUser() != null) {
+            mUser = mAuth.getCurrentUser();
+            updateUI("");
+        }
     }
 
     @Override
@@ -199,6 +186,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                     // ...
                 }
                 break;
+            case RC_SIGN_IN:
+
         }
 
         // Pass the activity result back to the Facebook SDK
@@ -224,13 +213,26 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                 });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mAuth.getCurrentUser() != null) {
-            mUser = mAuth.getCurrentUser();
-            updateUI("");
-        }
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithCredential:success");
+                        mUser = mAuth.getCurrentUser();
+                        updateUI("");
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                        mUser = null;
+                        updateUI(task.getException().getMessage());
+                    }
+                });
     }
 
     private void updateUI(String errorMsg) {
@@ -255,7 +257,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         });
     }
 
-    private void signIn() {
+    private void emailSignIn() {
         // validate form
 
         String email = mEmailField.getText().toString();
@@ -277,17 +279,31 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
     }
 
+    private void googleSignIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
+    }
+
+    private void facebookSignIn() {
+        LoginManager.getInstance()
+                .logInWithReadPermissions(LoginActivity.this,
+                        Arrays.asList("public_profile", "user_friends"));
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.email_sign_in_button:
-                signIn();
+                emailSignIn();
                 break;
             case R.id.create_account_button:
                 signUp();
                 break;
             case R.id.google_sign_in_button:
                 googleSignIn();
+                break;
+            case R.id.facebook_login_button:
+                facebookSignIn();
                 break;
         }
     }
