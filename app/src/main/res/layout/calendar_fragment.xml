@@ -12,5 +12,5 @@
         android:text="@string/calendar"
         android:textSize="20sp"
         android:layout_centerInParent="true"
-        android:textColor="@color/secondaryDarkColor"/>
+        android:textColor="@color/accentColorLight"/>
 </android.widget.RelativeLayout>

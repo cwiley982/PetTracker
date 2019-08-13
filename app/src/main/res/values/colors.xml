@@ -1,8 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-    <color name="primaryColor">#5FBFF9</color>
-    <color name="primaryDarkColor">#2F97C1</color>
-    <color name="secondaryColor">#15E6CD</color>
-    <color name="secondaryDarkColor">#1CCAD8</color>
-    <color name="textColor">#000000</color>
+    <!-- Light Theme -->
+    <color name="primaryColor">#768fff</color>
+    <color name="statusBarColorLight">#566fdf</color>
+    <color name="accentColorLight">#00bfa5</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="backgroundLight">#fafafa</color>
+    <color name="tracker_item_light">#ffffff</color>
+
+    <!-- Dark Theme -->
+    <color name="primaryDarkColor">#385dff</color>
+    <color name="startBarColorDark">#283dff</color>
+    <color name="secondaryTextColor">#000000</color>
+    <color name="darkBackground">#303030</color>
+    <color name="secondaryTextColorDark">#0039cb</color>
+    <color name="tracker_item_dark">#606060</color>
 </resources>

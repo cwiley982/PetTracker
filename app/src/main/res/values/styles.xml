@@ -1,17 +1,24 @@
 <resources>
 
     <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="android:colorPrimary">@color/primaryColor</item>
+        <item name="android:colorPrimaryDark">@color/statusBarColorLight</item>
+        <item name="android:colorAccent">@color/accentColorLight</item>
         <item name="android:textColor">@android:color/primary_text_light</item>
-        <item name="android:background">@android:color/background_light</item>
+        <item name="navigationTextSelectedColor">@android:color/primary_text_light</item>
+        <item name="android:windowBackground">@color/backgroundLight</item>
+        <item name="tracker_time_text_color">@android:color/primary_text_light</item>
+        <item name="tracker_item_background">@color/tracker_item_light</item>
     </style>
 
-    <style name="DarkTheme" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorPrimary">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/secondaryDarkColor</item>
+    <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:colorPrimary">@color/primaryDarkColor</item>
+        <item name="android:colorPrimaryDark">@color/startBarColorDark</item>
+        <item name="android:colorAccent">@color/accentColorLight</item>
         <item name="android:textColor">@android:color/primary_text_dark</item>
-        <item name="android:background">@android:color/background_dark</item>
+        <item name="android:windowBackground">@color/darkBackground</item>
+        <item name="tracker_time_text_color">@android:color/primary_text_dark</item>
+        <item name="tracker_item_background">@color/tracker_item_dark</item>
     </style>
 
     <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
@@ -19,4 +26,14 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="facebookButton" parent="Widget.AppCompat.Button">
+        <item name="android:backgroundTint">@color/com_facebook_button_background_color</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/com_facebook_button_text_color</item>
+    </style>
+
+
+    <attr name="tracker_time_text_color" format="color"/>
+    <attr name="tracker_item_background" format="color"/>
+    <attr name="navigationTextSelectedColor" format="color"/>
 </resources>

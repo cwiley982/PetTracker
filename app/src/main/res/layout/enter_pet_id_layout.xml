@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="32sp"
-        android:text="Enter Pet ID:"/>
+        android:text="@string/enter_pet_id"/>
 
     <EditText
         android:id="@+id/new_pet_id"
@@ -23,5 +23,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:background="@color/primaryColor"
-        android:text="Add"/>
+        android:text="@string/add"/>
 </LinearLayout>

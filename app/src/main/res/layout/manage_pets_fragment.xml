@@ -4,10 +4,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <View
+    <LinearLayout
         android:id="@+id/edit_pet_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,10 +21,10 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:layout_marginEnd="8dp"
-                android:text="Name"/>
+                android:text="@string/name"/>
 
             <EditText
-                android:id="@+id/new_pet_name"
+                android:id="@+id/pet_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -39,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="18sp"
-                android:text="Age"/>
+                android:text="@string/age"/>
 
             <EditText
                 android:id="@+id/pet_age_years"
@@ -47,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:inputType="number"
-                android:hint="Years"/>
+                android:hint="@string/years"/>
 
             <EditText
                 android:id="@+id/pet_age_months"
@@ -55,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:inputType="number"
-                android:hint="Months"/>
+                android:hint="@string/months"/>
         </LinearLayout>
 
         <!-- optional -->
@@ -69,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:layout_marginEnd="8dp"
-                android:text="Birthday"/>
+                android:text="@string/birthday"/>
 
             <EditText
                 android:layout_width="0dp"
@@ -88,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:layout_marginEnd="8dp"
-                android:text="Breed"/>
+                android:text="@string/breed"/>
 
             <EditText
                 android:layout_width="0dp"
@@ -102,6 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp">
 
             <RadioButton
@@ -109,13 +112,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:text="Male"/>
+                android:text="@string/male"/>
 
             <RadioButton
+                android:id="@+id/female_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:text="Female"/>
+                android:text="@string/female"/>
         </RadioGroup>
 
         <RadioGroup
@@ -123,6 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp">
 
             <RadioButton
@@ -130,35 +135,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:text="Dog"/>
+                android:text="@string/dog"/>
 
             <RadioButton
                 android:id="@+id/cat_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:text="Cat"/>
+                android:text="@string/cat"/>
         </RadioGroup>
-    </View>
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/edit_pet_fab"
+        android:id="@+id/save_edit_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
-        app:fabSize="mini"
-        android:src="@drawable/ic_edit_black_24dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/save_pet_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
-        app:fabSize="mini"
-        android:src="@drawable/ic_check_black_24dp" />
+        app:fabSize="normal"
+        android:src="@drawable/ic_edit_black_24dp"/>
 
 </RelativeLayout>

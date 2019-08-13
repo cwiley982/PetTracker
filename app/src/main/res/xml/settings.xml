@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:key="display"
+        android:title="Display"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            android:key="dark_theme_enabled"
+            android:title="@string/dark_theme_setting"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="account"
+        android:title="Account"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="sign_out"
+            android:title="Sign Out"
+            app:iconSpaceReserved="false"/>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/schedule"
-        android:textColor="@color/secondaryDarkColor" />
+        android:textColor="@color/accentColorLight" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/schedule_fab"
