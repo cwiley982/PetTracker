@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.activities;
+package com.caitlynwiley.pettracker;
 
 import android.content.Intent;
 import androidx.annotation.NonNull;
@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.caitlynwiley.pettracker.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;

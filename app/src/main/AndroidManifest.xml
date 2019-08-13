@@ -14,8 +14,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-        <activity android:name=".activities.MainActivity" />
-        <activity android:name=".activities.LoginActivity">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,8 +24,8 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.CreateAccountActivity"/>
-        <activity android:name=".activities.AddPetActivity" />
+        <activity android:name=".CreateAccountActivity"/>
+        <activity android:name=".AddPetActivity" />
 
         <!-- FB -->
         <activity android:name="com.facebook.FacebookActivity"
