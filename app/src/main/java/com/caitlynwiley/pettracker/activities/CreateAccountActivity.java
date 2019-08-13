@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.caitlynwiley.pettracker.R;
 import com.caitlynwiley.pettracker.models.Account;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;

@@ -9,6 +9,9 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.caitlynwiley.pettracker.fragments.AddByIdFragment;
+import com.caitlynwiley.pettracker.fragments.CreatePetFragment;
+
 public class ChooseAdditionTypeFragment extends Fragment {
     private View mFragView;
 
