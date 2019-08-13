@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,6 +14,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.caitlynwiley.pettracker.EventAdapter;
+import com.caitlynwiley.pettracker.R;
+import com.caitlynwiley.pettracker.SwipeToDeleteHelper;
 import com.caitlynwiley.pettracker.models.Day;
 import com.caitlynwiley.pettracker.models.Pet;
 import com.caitlynwiley.pettracker.models.TrackerEvent;
