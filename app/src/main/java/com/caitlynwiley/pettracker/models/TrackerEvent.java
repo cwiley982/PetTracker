@@ -1,15 +1,22 @@
 package com.caitlynwiley.pettracker.models;
 
+import android.annotation.TargetApi;
+import android.icu.util.TimeZone;
+import android.util.Log;
+
 import com.caitlynwiley.pettracker.R;
 import com.google.firebase.database.Exclude;
 
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Objects;
 
 public class TrackerEvent extends TrackerItem {
 
     private EventType type;
     private WalkLength walkLength;
-    private String time;
+    @Exclude
+    private String localTime;
     private String petId;
     private double cupsFood;
     private boolean number1;
@@ -33,27 +40,23 @@ public class TrackerEvent extends TrackerItem {
         return petId;
     }
 
-    protected void setTime(String time) {
-        this.time = time;
+    @Override
+    public void setUtcMillis(long utcMillis) {
+        super.setUtcMillis(utcMillis);
+        setLocalTime(utcMillis);
     }
 
-    public String getTime() {
-        return time;
+    @Exclude
+    @TargetApi(24)
+    private void setLocalTime(long utcMillis) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(utcMillis);
+        localTime = String.format(Locale.US, "%d:%02d %s", c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR), c.get(Calendar.MINUTE),
+                c.get(Calendar.AM_PM) == Calendar.AM? "am" : "pm");
     }
 
-    // mm/dd/yyyy
-    // 0123456789
-
-    public int getYear() {
-        return Integer.parseInt(getDate().substring(6));
-    }
-
-    public int getMonth() {
-        return Integer.parseInt(getDate().substring(0, 2).trim());
-    }
-
-    public int getDay() {
-        return Integer.parseInt(getDate().substring(3, 5).trim());
+    public String getLocalTime() {
+        return localTime;
     }
 
     public int getDrawableResId() {
@@ -73,7 +76,7 @@ public class TrackerEvent extends TrackerItem {
         return type;
     }
 
-    // these methods are just a Firebase 9.0.0 hack to handle the enum
+    // these methods are a Firebase 9.0.0 hack to handle the enum
     public String getType(){
         if (type == null){
             return null;
@@ -127,7 +130,7 @@ public class TrackerEvent extends TrackerItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, time, getDate(), getId(), petId);
+        return Objects.hash(type, localTime, getDate(), getId(), petId);
     }
 
     @Override
@@ -136,7 +139,7 @@ public class TrackerEvent extends TrackerItem {
         if (!(o instanceof TrackerEvent)) return false;
         TrackerEvent that = (TrackerEvent) o;
         return type == that.type &&
-                Objects.equals(time, that.time) &&
+                Objects.equals(localTime, that.localTime) &&
                 Objects.equals(getDate(), that.getDate()) &&
                 Objects.equals(getId(), that.getId()) &&
                 Objects.equals(petId, that.petId);
@@ -158,13 +161,8 @@ public class TrackerEvent extends TrackerItem {
             return this;
         }
 
-        public Builder setTime(String time) {
-            event.setTime(time);
-            return this;
-        }
-
         public Builder setMillis(long millis) {
-            event.setMillis(millis);
+            event.setUtcMillis(millis);
             return this;
         }
 

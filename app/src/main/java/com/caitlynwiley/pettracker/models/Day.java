@@ -9,11 +9,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class Day extends TrackerItem {
-    private int day;
-    private int month;
-    private int year;
     @Exclude
     private Context mContext;
+    private String prettyDate;
 
     public Day() {}
 
@@ -23,47 +21,19 @@ public class Day extends TrackerItem {
         setItemType("day");
     }
 
+    public void setPrettyDate(String prettyDate) {
+        this.prettyDate = prettyDate;
+    }
+
     public String getPrettyDate() {
-        return String.format(Locale.US, "%s %d", mContext.getResources().getStringArray(R.array.months)[month - 1], day);
+        if (prettyDate == null) {
+            prettyDate = String.format(Locale.US, "%s %d", mContext.getResources().getStringArray(R.array.months)[getMonth() - 1], getDay());
+        }
+        return prettyDate;
     }
 
     public void setContext(Context context) {
         mContext = context;
-    }
-
-    @Override
-    public void setDate(String date) {
-        super.setDate(date);
-        month = Integer.parseInt(date.substring(0, 2).trim());
-        day = Integer.parseInt(date.substring(3, 5).trim());
-        year = Integer.parseInt(date.substring(6));
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    public Day setDay(int day) {
-        this.day = day;
-        return this;
-    }
-
-    public int getMonth() {
-        return month;
-    }
-
-    public Day setMonth(int month) {
-        this.month = month;
-        return this;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public Day setYear(int year) {
-        this.year = year;
-        return this;
     }
 
     @Override
