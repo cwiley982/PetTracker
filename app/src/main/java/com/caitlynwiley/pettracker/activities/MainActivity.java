@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -12,6 +12,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.caitlynwiley.pettracker.R;
+import com.caitlynwiley.pettracker.fragments.ManagePetsFragment;
+import com.caitlynwiley.pettracker.fragments.SettingsFragment;
+import com.caitlynwiley.pettracker.fragments.TrackerFragment;
 import com.caitlynwiley.pettracker.models.Account;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;

@@ -1,10 +1,12 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.activities;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.caitlynwiley.pettracker.R;
 
 public class BaseActivity extends AppCompatActivity {
 
