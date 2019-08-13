@@ -1,8 +1,11 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.activities;
 
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+
+import com.caitlynwiley.pettracker.R;
+import com.caitlynwiley.pettracker.fragments.ChooseAdditionTypeFragment;
 
 public class AddPetActivity extends BaseActivity {
 

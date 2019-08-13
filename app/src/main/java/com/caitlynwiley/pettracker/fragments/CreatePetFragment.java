@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import com.caitlynwiley.pettracker.activities.MainActivity;
+import com.caitlynwiley.pettracker.R;
 import com.caitlynwiley.pettracker.models.Pet;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
