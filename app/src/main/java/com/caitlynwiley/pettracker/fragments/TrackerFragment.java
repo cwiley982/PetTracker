@@ -269,15 +269,17 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 } else {
                     openFab();
                 }
-                mIsFabOpen = !mIsFabOpen;
                 break;
             case R.id.track_fed_fab:
+                closeFab();
                 addEvent(TrackerEvent.EventType.FEED);
                 break;
             case R.id.track_potty_fab:
+                closeFab();
                 addEvent(TrackerEvent.EventType.POTTY);
                 break;
             case R.id.track_let_out_fab:
+                closeFab();
                 addEvent(TrackerEvent.EventType.WALK);
                 break;
         }
@@ -447,6 +449,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mPottyFabLabel.startAnimation(mLabelAppear);
         mFeedFabLabel.startAnimation(mLabelAppear);
         mLetOutFabLabel.startAnimation(mLabelAppear);
+        mIsFabOpen = true;
     }
 
     private void closeFab() {
@@ -457,5 +460,6 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mPottyFabLabel.startAnimation(mLabelDisappear);
         mFeedFabLabel.startAnimation(mLabelDisappear);
         mLetOutFabLabel.startAnimation(mLabelDisappear);
+        mIsFabOpen = false;
     }
 }
