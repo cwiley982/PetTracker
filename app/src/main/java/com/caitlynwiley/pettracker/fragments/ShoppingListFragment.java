@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker;
+package com.caitlynwiley.pettracker.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.caitlynwiley.pettracker.R;
 
 public class ShoppingListFragment extends Fragment {
 
