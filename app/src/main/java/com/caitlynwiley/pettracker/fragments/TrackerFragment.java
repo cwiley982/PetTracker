@@ -2,6 +2,7 @@ package com.caitlynwiley.pettracker.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +63,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private FloatingActionButton mFeedFab;
     private FloatingActionButton mLetOutFab;
     private EventAdapter mAdapter;
+    private LinearLayoutManager mLayoutManager;
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private ArrayList<String> pets = new ArrayList<>();
@@ -160,7 +162,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         RecyclerView recyclerView = mFragView.findViewById(R.id.tracker_items);
 
         // use a linear layout manager
-        recyclerView.setLayoutManager(new LinearLayoutManager(mFragView.getContext()));
+        mLayoutManager = new LinearLayoutManager(mFragView.getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
         mAdapter = new EventAdapter(mFragView);
@@ -260,6 +263,35 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        // TODO: This doesn't work because not everything is in the list yet. Once REST apis are
+        //  implemented will revisit.
+        // get today's date
+        Calendar c = Calendar.getInstance();
+        String today = String.format(Locale.US, "%02d/%02d/%4d", c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.YEAR));
+        // find date in list
+        int index = -1;
+        int count = mAdapter.getItemCount();
+        for (int i = 0; i < count; i++) {
+            Log.d("date", mAdapter.getItem(i).getDate());
+            if (mAdapter.getItem(i) instanceof Day) {
+                if (mAdapter.getItem(i).getDate().equalsIgnoreCase(today)) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        if (index == -1) {
+            Log.d("date", "index is -1");
+            // date not in list yet, don't do anything
+            return;
+        }
+        // scroll to that view
+        mLayoutManager.scrollToPositionWithOffset(index, 10);
+    }
+
+    @Override
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
@@ -318,7 +350,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     boolean num2 = ((CheckBox) d.findViewById(R.id.number2)).isChecked();
                     //date
                     Calendar c = Calendar.getInstance();
-                    String date = String.format(Locale.US, "%2d/%2d/%4d",
+                    String date = String.format(Locale.US, "%02d/%02d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR));
                     if (!mAdapter.getMostRecentDate().equals(date)) {
@@ -362,7 +394,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             .getText().toString());
                     //date
                     Calendar c = Calendar.getInstance();
-                    String date = String.format(Locale.US, "%2d/%2d/%4d",
+                    String date = String.format(Locale.US, "%02d/%02d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR));
                     if (!mAdapter.getMostRecentDate().equals(date)) {
@@ -403,7 +435,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             .getText().toString());
                     //date
                     Calendar c = Calendar.getInstance();
-                    String date = String.format(Locale.US, "%2d/%2d/%4d",
+                    String date = String.format(Locale.US, "%02d/%02d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR));
                     if (!mAdapter.getMostRecentDate().equals(date)) {
