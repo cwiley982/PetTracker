@@ -2,6 +2,7 @@ package com.caitlynwiley.pettracker.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.caitlynwiley.pettracker.EventAdapter;
+import com.caitlynwiley.pettracker.FirebaseApi;
 import com.caitlynwiley.pettracker.R;
 import com.caitlynwiley.pettracker.SwipeToDeleteHelper;
-import com.caitlynwiley.pettracker.models.Day;
 import com.caitlynwiley.pettracker.models.Pet;
-import com.caitlynwiley.pettracker.models.TrackerEvent;
 import com.caitlynwiley.pettracker.models.TrackerItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,11 +28,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
@@ -42,6 +44,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TrackerFragment extends Fragment implements View.OnClickListener {
 
@@ -70,9 +78,9 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private FirebaseAuth mAuth;
 
     private boolean mIsFabOpen;
-    private boolean mPetsListWasEmpty = true;
     private Pet mPet;
     private TimeZone mLondonTZ;
+    private Retrofit retrofit;
 
     private ChildEventListener eventListener;
 
@@ -80,12 +88,19 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+        retrofit = new Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
         mFragView = inflater.inflate(R.layout.tracker_fragment, container, false);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         mUID = mUser.getUid();
         mLondonTZ = TimeZone.getTimeZone("Europe/London");
-        //parentActivity = getActivity();
+
         mRotateForward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_forward);
         mRotateBackward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_backward);
 
@@ -166,26 +181,31 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mAdapter = new EventAdapter(mFragView);
         recyclerView.setAdapter(mAdapter);
 
+        FirebaseApi api = retrofit.create(FirebaseApi.class);
+        api.getPets(mUID).enqueue(new Callback<Map<String, Boolean>>() {
+            @Override
+            public void onResponse(Call<Map<String, Boolean>> call, Response<Map<String, Boolean>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    pets.addAll(response.body().keySet());
+                    getItems();
+                    getPet(pets.get(0));
+                    Log.d("id", pets.get(0));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Boolean>> call, Throwable t) {
+
+            }
+        });
+
         // listens to changes made to user's mPet list
         mDatabase.child("users").child(mUID).child("pets").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                pets.add(dataSnapshot.getKey());
-                if (mPetsListWasEmpty) {
-                    mDatabase.child("pets").child(pets.get(0)).child("events").addChildEventListener(eventListener);
-                    mPetsListWasEmpty = false;
-
-                    mDatabase.child("pets").child(pets.get(0)).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            mPet = dataSnapshot.getValue(Pet.class);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
+                String newId = dataSnapshot.getKey();
+                if (!pets.contains(newId)) {
+                    pets.add(newId);
                 }
             }
 
@@ -211,52 +231,51 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        eventListener = new ChildEventListener() {
-
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                TrackerItem item;
-                if (dataSnapshot.child("itemType").getValue(String.class).equals("event")) {
-                    item = dataSnapshot.getValue(TrackerEvent.class);
-                } else {
-                    item = dataSnapshot.getValue(Day.class);
-                    ((Day) item).setContext(getContext());
-                }
-                if (mAdapter.getItemCount() == 0 && item instanceof TrackerEvent) {
-                    // need to insert a day item before the event
-                    TrackerEvent event = (TrackerEvent) item;
-                    addDayToList(getContext(), Calendar.getInstance(), event.getPetId(), event.getDate());
-                }
-                mAdapter.addItem(item);
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                mAdapter.removeEvent(dataSnapshot.getValue(TrackerItem.class));
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteHelper(mAdapter, getContext()));
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         return mFragView;
+    }
+
+    private void getItems() {
+        FirebaseApi api = retrofit.create(FirebaseApi.class);
+        api.getEvents(pets.get(0)).enqueue(new Callback<Map<String, TrackerItem>>() {
+            @Override
+            public void onResponse(Call<Map<String, TrackerItem>> call, Response<Map<String, TrackerItem>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        mAdapter.addItems(response.body());
+                    }
+                    Log.d("count", "" + mAdapter.getItemCount());
+                } else {
+                    Log.d("body", response.errorBody().toString());
+                    onFailure(call, new Throwable(response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, TrackerItem>> call, Throwable t) {
+                Log.e("json-error", "Error getting events: " + t.getMessage());
+
+            }
+        });
+    }
+
+    private void getPet(String id) {
+        FirebaseApi api = retrofit.create(FirebaseApi.class);
+        api.getPet(id).enqueue(new Callback<Map<String, Pet>>() {
+            @Override
+            public void onResponse(Call<Map<String, Pet>> call, Response<Map<String, Pet>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    mPet = response.body().get(id);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Pet>> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override
@@ -272,19 +291,18 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 mIsFabOpen = !mIsFabOpen;
                 break;
             case R.id.track_fed_fab:
-                addEvent(TrackerEvent.EventType.FEED);
+                addEvent(TrackerItem.EventType.FEED);
                 break;
             case R.id.track_potty_fab:
-                addEvent(TrackerEvent.EventType.POTTY);
+                addEvent(TrackerItem.EventType.POTTY);
                 break;
             case R.id.track_let_out_fab:
-                addEvent(TrackerEvent.EventType.WALK);
+                addEvent(TrackerItem.EventType.WALK);
                 break;
         }
     }
 
-    private void addEvent(final TrackerEvent.EventType type) {
-
+    private void addEvent(final TrackerItem.EventType type) {
         switch (type) {
             case FEED:
                 trackFeed();
@@ -325,12 +343,14 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                         addDayToList(context, c, petId, date);
                     }
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                    TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.POTTY)
+                    TrackerItem e = new TrackerItem.Builder()
+                            .setType(TrackerItem.EventType.POTTY)
                             .setDate(date)
                             .setMillis(System.currentTimeMillis())
                             .setNumber1(num1)
                             .setNumber2(num2)
                             .setPetId(petId)
+                            .setItemType("event")
                             .setId(id)
                             .build();
                     mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
@@ -355,6 +375,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     View radioButton = radioGroup.findViewById(radioButtonID);
                     int petChosen = radioGroup.indexOfChild(radioButton);
                     String petId = pets.get(petChosen);
+                    Log.d("id", petId);
                     // duration
                     int hours = Integer.parseInt(((EditText) d.findViewById(R.id.walk_duration_hours))
                             .getText().toString());
@@ -369,11 +390,13 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                         addDayToList(context, c, petId, date);
                     }
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                    TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.WALK)
+                    TrackerItem e = new TrackerItem.Builder()
+                            .setType(TrackerItem.EventType.WALK)
                             .setDate(date)
                             .setMillis(System.currentTimeMillis())
                             .setWalkLength(hours, mins)
                             .setPetId(petId)
+                            .setItemType("event")
                             .setId(id)
                             .build();
                     mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
@@ -410,11 +433,13 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                         addDayToList(context, c, petId, date);
                     }
                     String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
-                    TrackerEvent e = new TrackerEvent.Builder(TrackerEvent.EventType.FEED)
+                    TrackerItem e = new TrackerItem.Builder()
+                            .setType(TrackerItem.EventType.FEED)
                             .setDate(date)
                             .setMillis(System.currentTimeMillis())
                             .setCupsFood(cupsFood)
                             .setPetId(petId)
+                            .setItemType("event")
                             .setId(id)
                             .build();
                     mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
@@ -425,9 +450,13 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     }
 
     private void addDayToList(Context context, Calendar c, String petId, String date) {
-        Day day = new Day(context, date);
+        TrackerItem day = new TrackerItem.Builder()
+                .setContext(context)
+                .setDate(date)
+                .setItemType("day")
+                .build();
         String dayId = mDatabase.child("pets").child(petId).child("events").push().getKey();
-        day.setId(dayId);
+        day.setItemId(dayId);
         long now = System.currentTimeMillis();
         c.setTimeInMillis(now);
         c.set(Calendar.HOUR, 0);

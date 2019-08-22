@@ -1,14 +1,17 @@
 package com.caitlynwiley.pettracker;
 
+import com.caitlynwiley.pettracker.models.Pet;
 import com.caitlynwiley.pettracker.models.TrackerItem;
 import com.caitlynwiley.pettracker.models.UserInfo;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface FirebaseApi {
@@ -22,8 +25,17 @@ public interface FirebaseApi {
     Call<Void> addItemToTracker(@Path("id") String petId,
                                 @Body TrackerItem item);
 
-    @GET("pets/{id}/events.json")
-    Call<List<TrackerItem>> getEvents(@Path("id") String petId);
+    @GET("/users/{uid}/pets.json")
+    Call<Map<String, Boolean>> getPets(@Path("uid") String uid);
+
+    @GET("/pets/{id}.json")
+    Call<Map<String, Pet>> getPet(@Path("id") String petId);
+
+    @PUT("/pets/{id}")
+    Call<Void> addPet(@Path("id") String id, @Body Pet p);
+
+    @GET("/pets/{id}/events.json")
+    Call<Map<String, TrackerItem>> getEvents(@Path("id") String petId);
 
     /*
     To use apis:
