@@ -15,7 +15,7 @@ public class TrackerItem {
     private String date;
 
     @Exclude
-    private String localTime;
+    private transient String localTime;
 
     @SerializedName("item_id")
     private String itemId;
@@ -57,7 +57,7 @@ public class TrackerItem {
     private String prettyDate;
 
     @Exclude
-    private Context mContext;
+    private transient Context mContext;
 
     public TrackerItem(){}
 

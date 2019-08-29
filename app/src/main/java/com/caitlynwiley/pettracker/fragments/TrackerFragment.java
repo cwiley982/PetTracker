@@ -1,6 +1,8 @@
 package com.caitlynwiley.pettracker.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -81,6 +84,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private Pet mPet;
     private TimeZone mLondonTZ;
     private Retrofit retrofit;
+
+    private String mPetId = "-LnSdUIL3M0AE1Bqw6k3";
 
     private ChildEventListener eventListener;
 
@@ -188,8 +193,8 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 if (response.isSuccessful() && response.body() != null) {
                     pets.addAll(response.body().keySet());
                     getItems();
-                    getPet(pets.get(0));
-                    Log.d("id", pets.get(0));
+                    mPetId = pets.get(0);
+                    getPetById(mPetId);
                 }
             }
 
@@ -239,7 +244,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private void getItems() {
         FirebaseApi api = retrofit.create(FirebaseApi.class);
-        api.getEvents(pets.get(0)).enqueue(new Callback<Map<String, TrackerItem>>() {
+        api.getEvents(mPetId).enqueue(new Callback<Map<String, TrackerItem>>() {
             @Override
             public void onResponse(Call<Map<String, TrackerItem>> call, Response<Map<String, TrackerItem>> response) {
                 if (response.isSuccessful()) {
@@ -256,12 +261,11 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onFailure(Call<Map<String, TrackerItem>> call, Throwable t) {
                 Log.e("json-error", "Error getting events: " + t.getMessage());
-
             }
         });
     }
 
-    private void getPet(String id) {
+    private void getPetById(String id) {
         FirebaseApi api = retrofit.create(FirebaseApi.class);
         api.getPet(id).enqueue(new Callback<Map<String, Pet>>() {
             @Override
@@ -273,7 +277,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onFailure(Call<Map<String, Pet>> call, Throwable t) {
-
+                Log.d("error", t.getMessage());
             }
         });
     }
@@ -318,7 +322,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private void trackPotty() {
         View v = getLayoutInflater().inflate(R.layout.track_potty_dialog, null);
-        ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
+        //((RadioButton) v.findViewById(R.id.pet0)).setText("Techs");
         final Context context = this.getActivity().getApplicationContext();
 
         new AlertDialog.Builder(getContext())
@@ -326,34 +330,36 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 .setPositiveButton(R.string.save, (dialog, which) -> {
                     AlertDialog d = (AlertDialog) dialog;
                     // pet
-                    RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
-                    int radioButtonID = radioGroup.getCheckedRadioButtonId();
-                    View radioButton = radioGroup.findViewById(radioButtonID);
-                    int petChosen = radioGroup.indexOfChild(radioButton);
-                    String petId = pets.get(petChosen);
+                    /* For multipet support in future
+                        RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
+                        int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                        View radioButton = radioGroup.findViewById(radioButtonID);
+                        int petChosen = radioGroup.indexOfChild(radioButton);
+                    String petId = mPetId;
+                    */
                     // type
                     boolean num1 = ((CheckBox) d.findViewById(R.id.number1)).isChecked();
                     boolean num2 = ((CheckBox) d.findViewById(R.id.number2)).isChecked();
                     //date
                     Calendar c = Calendar.getInstance();
-                    String date = String.format(Locale.US, "%2d/%2d/%4d",
+                    String date = String.format(Locale.US, "%02d/%02d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR));
                     if (!mAdapter.getMostRecentDate().equals(date)) {
-                        addDayToList(context, c, petId, date);
+                        addDayToList(context, c, mPetId, date);
                     }
-                    String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
+                    String id = mDatabase.child("pets").child(mPetId).child("events").push().getKey();
                     TrackerItem e = new TrackerItem.Builder()
                             .setType(TrackerItem.EventType.POTTY)
                             .setDate(date)
                             .setMillis(System.currentTimeMillis())
                             .setNumber1(num1)
                             .setNumber2(num2)
-                            .setPetId(petId)
+                            .setPetId(mPetId)
                             .setItemType("event")
                             .setId(id)
                             .build();
-                    mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
+                    new PostEventTask().execute(e);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
                 .create()
@@ -362,7 +368,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private void trackWalk() {
         View v = getLayoutInflater().inflate(R.layout.track_walk_dialog, null);
-        ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
+        //((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
         final Context context = this.getActivity().getApplicationContext();
 
         new AlertDialog.Builder(getContext())
@@ -370,12 +376,13 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 .setPositiveButton(R.string.save, (dialog, which) -> {
                     AlertDialog d = (AlertDialog) dialog;
                     // pet
-                    RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
-                    int radioButtonID = radioGroup.getCheckedRadioButtonId();
-                    View radioButton = radioGroup.findViewById(radioButtonID);
-                    int petChosen = radioGroup.indexOfChild(radioButton);
-                    String petId = pets.get(petChosen);
-                    Log.d("id", petId);
+                    /* For multipet support in future
+                        RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
+                        int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                        View radioButton = radioGroup.findViewById(radioButtonID);
+                        int petChosen = radioGroup.indexOfChild(radioButton);
+                        String petId = mPetId;
+                    */
                     // duration
                     int hours = Integer.parseInt(((EditText) d.findViewById(R.id.walk_duration_hours))
                             .getText().toString());
@@ -383,23 +390,23 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                             .getText().toString());
                     //date
                     Calendar c = Calendar.getInstance();
-                    String date = String.format(Locale.US, "%2d/%2d/%4d",
+                    String date = String.format(Locale.US, "%02d/%02d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR));
                     if (!mAdapter.getMostRecentDate().equals(date)) {
-                        addDayToList(context, c, petId, date);
+                        addDayToList(context, c, mPetId, date);
                     }
-                    String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
+                    String id = mDatabase.child("pets").child(mPetId).child("events").push().getKey();
                     TrackerItem e = new TrackerItem.Builder()
                             .setType(TrackerItem.EventType.WALK)
                             .setDate(date)
                             .setMillis(System.currentTimeMillis())
                             .setWalkLength(hours, mins)
-                            .setPetId(petId)
+                            .setPetId(mPetId)
                             .setItemType("event")
                             .setId(id)
                             .build();
-                    mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
+                    new PostEventTask().execute(e);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
                 .create()
@@ -408,45 +415,58 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private void trackFeed() {
         View v = getLayoutInflater().inflate(R.layout.track_meal_dialog, null);
-        ((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
+        v.findViewById(R.id.error_msg).setVisibility(View.GONE);
+        //((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
         final Context context = this.getActivity().getApplicationContext();
 
-        new AlertDialog.Builder(getContext())
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setView(v)
                 .setPositiveButton(R.string.save, (dialog, which) -> {
                     AlertDialog d = (AlertDialog) dialog;
                     // pet
-                    RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
-                    int radioButtonID = radioGroup.getCheckedRadioButtonId();
-                    View radioButton = radioGroup.findViewById(radioButtonID);
-                    int petChosen = radioGroup.indexOfChild(radioButton);
-                    String petId = pets.get(petChosen);
+                    /* For multipet support in future
+                        RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
+                        int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                        View radioButton = radioGroup.findViewById(radioButtonID);
+                        int petChosen = radioGroup.indexOfChild(radioButton);
+                        String petId = mPetId;
+                    */
                     // amount
                     double cupsFood = Double.parseDouble(((EditText) d.findViewById(R.id.num_cups))
                             .getText().toString());
                     //date
                     Calendar c = Calendar.getInstance();
-                    String date = String.format(Locale.US, "%2d/%2d/%4d",
+                    String date = String.format(Locale.US, "%02d/%02d/%4d",
                             c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                             c.get(Calendar.YEAR));
                     if (!mAdapter.getMostRecentDate().equals(date)) {
-                        addDayToList(context, c, petId, date);
+                        addDayToList(context, c, mPetId, date);
                     }
-                    String id = mDatabase.child("pets").child(petId).child("events").push().getKey();
+                    String id = mDatabase.child("pets").child(mPetId).child("events").push().getKey();
                     TrackerItem e = new TrackerItem.Builder()
                             .setType(TrackerItem.EventType.FEED)
                             .setDate(date)
                             .setMillis(System.currentTimeMillis())
                             .setCupsFood(cupsFood)
-                            .setPetId(petId)
+                            .setPetId(mPetId)
                             .setItemType("event")
                             .setId(id)
                             .build();
-                    mDatabase.child("pets").child(petId).child("events").child(id).setValue(e);
+                    new PostEventTask().execute(e);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
-                .create()
-                .show();
+                .create();
+        alertDialog.show();
+
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener((view) -> {
+            EditText cups = alertDialog.findViewById(R.id.num_cups);
+            if (cups.getText().length() == 0 || cups.getText().toString().equals("0")) {
+                // stay open and show error message
+                alertDialog.findViewById(R.id.error_msg).setVisibility(View.VISIBLE);
+            } else {
+                alertDialog.dismiss();
+            }
+        });
     }
 
     private void addDayToList(Context context, Calendar c, String petId, String date) {
@@ -465,7 +485,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         c.set(Calendar.MILLISECOND, 0);
         c.add(Calendar.MILLISECOND, mLondonTZ.getOffset(now));
         day.setUtcMillis(c.getTimeInMillis());
-        mDatabase.child("pets").child(petId).child("events").child(dayId).setValue(day);
+        new PostEventTask().execute(day);
     }
 
     private void openFab() {
@@ -486,5 +506,17 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mPottyFabLabel.startAnimation(mLabelDisappear);
         mFeedFabLabel.startAnimation(mLabelDisappear);
         mLetOutFabLabel.startAnimation(mLabelDisappear);
+    }
+
+    class PostEventTask extends AsyncTask<TrackerItem, Void, Void> {
+        @Override
+        protected Void doInBackground(TrackerItem... items) {
+            try {
+                retrofit.create(FirebaseApi.class).addEvent(items[0].getPetId(), items[0].getItemId(), items[0]).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }

@@ -31,11 +31,14 @@ public interface FirebaseApi {
     @GET("/pets/{id}.json")
     Call<Map<String, Pet>> getPet(@Path("id") String petId);
 
-    @PUT("/pets/{id}")
+    @PUT("/pets/{id}.json")
     Call<Void> addPet(@Path("id") String id, @Body Pet p);
 
     @GET("/pets/{id}/events.json")
     Call<Map<String, TrackerItem>> getEvents(@Path("id") String petId);
+
+    @PUT("/pets/{petId}/events/{eventId}.json")
+    Call<Void> addEvent(@Path("petId") String petId, @Path("eventId") String dayId, @Body TrackerItem event);
 
     /*
     To use apis:

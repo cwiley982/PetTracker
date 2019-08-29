@@ -1,6 +1,7 @@
 package com.caitlynwiley.pettracker.fragments;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,7 +49,7 @@ public class CreatePetFragment extends Fragment {
             Pet pet = new Pet(name, years, months, getGender(genderId), getSpecies(speciesId));
             String petId = ref.child("pets").push().getKey();
             pet.setId(petId);
-            addPet(petId, pet);
+            new AddPetTask().execute(pet);
             ref.child("users").child(mUid).child("pets").child(petId).setValue(true);
             ref.child("users").child(mUid).child("num_pets").setValue(1);
 
@@ -56,21 +57,6 @@ public class CreatePetFragment extends Fragment {
         });
 
         return mFragView;
-    }
-
-    // TODO: NetworkOnMainThreadException wrap in async task
-    private void addPet(String id, Pet p) {
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        try {
-            retrofit.create(FirebaseApi.class).addPet(id, p).execute();
-        } catch (IOException e) {
-            Log.d("api", "error adding pet");
-        }
     }
 
     private String getGender(int id) {
@@ -88,6 +74,24 @@ public class CreatePetFragment extends Fragment {
                 return "dog";
             default:
                 return "cat";
+        }
+    }
+
+    class AddPetTask extends AsyncTask<Pet, Void, Void> {
+        @Override
+        protected Void doInBackground(Pet... pets) {
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+            Retrofit retrofit = new Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+            try {
+                retrofit.create(FirebaseApi.class).addPet(pets[0].getId(), pets[0]).execute();
+            } catch (IOException e) {
+                Log.d("api", "error adding pet");
+            }
+            return null;
         }
     }
 }
