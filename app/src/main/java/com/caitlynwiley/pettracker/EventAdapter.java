@@ -145,6 +145,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
         notifyDataSetChanged();
     }
 
+    public void setItems(Map<String, TrackerItem> list) {
+        mDataset = new ArrayList<>(list.values());
+        notifyDataSetChanged();
+    }
+
     public void removeEvent(TrackerItem item) {
         mDataset.remove(item);
     }

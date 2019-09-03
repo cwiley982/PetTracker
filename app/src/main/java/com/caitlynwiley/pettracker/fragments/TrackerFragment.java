@@ -47,6 +47,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,6 +73,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private FloatingActionButton mPottyFab;
     private FloatingActionButton mFeedFab;
     private FloatingActionButton mLetOutFab;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private EventAdapter mAdapter;
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -167,6 +169,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mPottyFabLabel = mFragView.findViewById(R.id.potty_fab_label);
         mFeedFabLabel = mFragView.findViewById(R.id.fed_fab_label);
         mLetOutFabLabel = mFragView.findViewById(R.id.let_out_fab_label);
+        mSwipeRefreshLayout = mFragView.findViewById(R.id.swipe_refresh_view);
 
         // set on click listeners
         mTrackerFab.setOnClickListener(this);
@@ -176,6 +179,21 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
         mPottyFabLabel.setOnClickListener(this);
         mFeedFabLabel.setOnClickListener(this);
         mLetOutFabLabel.setOnClickListener(this);
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            FirebaseApi api = retrofit.create(FirebaseApi.class);
+            api.getEvents(mPetId).enqueue(new Callback<Map<String, TrackerItem>>() {
+                @Override
+                public void onResponse(Call<Map<String, TrackerItem>> call, Response<Map<String, TrackerItem>> response) {
+                    mAdapter.setItems(response.body());
+                }
+
+                @Override
+                public void onFailure(Call<Map<String, TrackerItem>> call, Throwable t) {
+
+                }
+            });
+            mSwipeRefreshLayout.setRefreshing(false);
+        });
 
         RecyclerView recyclerView = mFragView.findViewById(R.id.tracker_items);
 
