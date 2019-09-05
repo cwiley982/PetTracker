@@ -1,5 +1,6 @@
 package com.caitlynwiley.pettracker;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
     private int mRecentlyDeletedItemPosition;
     private View mFragView;
     private List<Integer> forceDeleteEventVals = new ArrayList<>();
+    private Context mContext;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -58,6 +60,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
     public EventAdapter(View fragView) {
         mDataset = new ArrayList<>();
         mFragView = fragView;
+        mContext = fragView.getContext();
         forceDeleteEventVals.add(DISMISS_EVENT_SWIPE);
         forceDeleteEventVals.add(DISMISS_EVENT_TIMEOUT);
         forceDeleteEventVals.add(DISMISS_EVENT_CONSECUTIVE);
@@ -76,7 +79,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
     public void onBindViewHolder(TrackerViewHolder holder, int position) {
         TrackerItem o = mDataset.get(position);
         if (o.getItemType().equals("day")) {
-            holder.dateTextView.setText(o.getPrettyDate());
+            holder.dateTextView.setText(o.getPrettyDate(mContext));
         } else {
             holder.timeTextView.setText(o.getLocalTime());
             holder.imageView.setImageResource(o.getDrawableResId());

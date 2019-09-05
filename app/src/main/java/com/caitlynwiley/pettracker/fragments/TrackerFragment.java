@@ -87,9 +87,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     private TimeZone mLondonTZ;
     private Retrofit retrofit;
 
-    private String mPetId = "-LnSdUIL3M0AE1Bqw6k3";
-
-    private ChildEventListener eventListener;
+    private String mPetId;
 
     @Nullable
     @Override
@@ -184,7 +182,12 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             api.getEvents(mPetId).enqueue(new Callback<Map<String, TrackerItem>>() {
                 @Override
                 public void onResponse(Call<Map<String, TrackerItem>> call, Response<Map<String, TrackerItem>> response) {
-                    mAdapter.setItems(response.body());
+                    if (response.body() != null) {
+                        mFragView.findViewById(R.id.no_events_label).setVisibility(View.GONE);
+                        mAdapter.setItems(response.body());
+                    } else {
+                        mFragView.findViewById(R.id.no_events_label).setVisibility(View.VISIBLE);
+                    }
                 }
 
                 @Override
@@ -210,46 +213,14 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<Map<String, Boolean>> call, Response<Map<String, Boolean>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     pets.addAll(response.body().keySet());
-                    getItems();
                     mPetId = pets.get(0);
+                    getItems();
                     getPetById(mPetId);
                 }
             }
 
             @Override
             public void onFailure(Call<Map<String, Boolean>> call, Throwable t) {
-
-            }
-        });
-
-        // listens to changes made to user's mPet list
-        mDatabase.child("users").child(mUID).child("pets").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String newId = dataSnapshot.getKey();
-                if (!pets.contains(newId)) {
-                    pets.add(newId);
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                pets.remove(dataSnapshot.getKey());
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -489,9 +460,9 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private void addDayToList(Context context, Calendar c, String petId, String date) {
         TrackerItem day = new TrackerItem.Builder()
-                .setContext(context)
                 .setDate(date)
                 .setItemType("day")
+                .setPetId(petId)
                 .build();
         String dayId = mDatabase.child("pets").child(petId).child("events").push().getKey();
         day.setItemId(dayId);
@@ -529,11 +500,19 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
     class PostEventTask extends AsyncTask<TrackerItem, Void, Void> {
         @Override
         protected Void doInBackground(TrackerItem... items) {
-            try {
-                retrofit.create(FirebaseApi.class).addEvent(items[0].getPetId(), items[0].getItemId(), items[0]).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            retrofit.create(FirebaseApi.class).addEvent(items[0].getPetId(), items[0].getItemId(), items[0]).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("addEvent", "Event added");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.d("addEvent", "Event add failed");
+                }
+            });
             return null;
         }
     }

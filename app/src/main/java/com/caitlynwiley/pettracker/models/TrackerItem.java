@@ -56,9 +56,6 @@ public class TrackerItem {
     @SerializedName("pretty_date")
     private String prettyDate;
 
-    @Exclude
-    private transient Context mContext;
-
     public TrackerItem(){}
 
     public String getDate() {
@@ -210,15 +207,11 @@ public class TrackerItem {
         this.prettyDate = prettyDate;
     }
 
-    public String getPrettyDate() {
+    public String getPrettyDate(Context context) {
         if (prettyDate == null) {
-            prettyDate = String.format(Locale.US, "%s %d", mContext.getResources().getStringArray(R.array.months)[getMonth() - 1], getDay());
+            prettyDate = String.format(Locale.US, "%s %d", context.getResources().getStringArray(R.array.months)[getMonth() - 1], getDay());
         }
         return prettyDate;
-    }
-
-    public void setContext(Context context) {
-        mContext = context;
     }
 
     public enum EventType {
@@ -286,11 +279,6 @@ public class TrackerItem {
 
         public Builder setType(EventType type) {
             item.setType(type.name());
-            return this;
-        }
-
-        public Builder setContext(Context context) {
-            item.setContext(context);
             return this;
         }
 
