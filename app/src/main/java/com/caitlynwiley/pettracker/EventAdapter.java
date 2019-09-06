@@ -145,6 +145,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
 
     public void addItems(Map<String, TrackerItem> list) {
         mDataset.addAll(list.values());
+        for (TrackerItem item : mDataset) {
+            if (item.getItemType().equalsIgnoreCase("event")) {
+                item.setLocalTime();
+            }
+        }
         notifyDataSetChanged();
     }
 

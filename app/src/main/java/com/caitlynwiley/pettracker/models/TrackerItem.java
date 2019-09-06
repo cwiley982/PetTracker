@@ -71,12 +71,12 @@ public class TrackerItem {
 
     public void setUtcMillis(long utcMillis) {
         this.utcMillis = utcMillis;
-        setLocalTime(utcMillis);
+        setLocalTime();
     }
 
     @Exclude
     @TargetApi(24)
-    private void setLocalTime(long utcMillis) {
+    public void setLocalTime() {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(utcMillis);
         localTime = String.format(Locale.US, "%d:%02d %s", c.get(Calendar.HOUR) == 0 ? 12 : c.get(Calendar.HOUR), c.get(Calendar.MINUTE),
