@@ -513,6 +513,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                     Log.d("addEvent", "Event add failed");
                 }
             });
+            mAdapter.addItem(items[0]);
             return null;
         }
     }
