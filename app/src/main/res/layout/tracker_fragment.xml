@@ -17,6 +17,7 @@
         android:layout_marginEnd="16dp"
         tools:backgroundTint="@color/accentColorLight"
         android:backgroundTint="?android:attr/colorAccent"
+        android:tint="?android:attr/windowBackground"
         app:fabSize="normal"
         android:src="@drawable/ic_add_white_24dp" />
 
