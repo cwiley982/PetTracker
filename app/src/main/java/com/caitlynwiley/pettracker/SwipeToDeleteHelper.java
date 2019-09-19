@@ -7,12 +7,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import com.caitlynwiley.pettracker.models.Day;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.caitlynwiley.pettracker.models.TrackerItem;
 
 public class SwipeToDeleteHelper extends ItemTouchHelper.SimpleCallback {
     private Drawable icon;
@@ -42,8 +42,8 @@ public class SwipeToDeleteHelper extends ItemTouchHelper.SimpleCallback {
     @Override
     public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         int position = viewHolder.getAdapterPosition();
-        Object o = mAdapter.getItem(position);
-        if (o instanceof Day) {
+        TrackerItem o = mAdapter.getItem(position);
+        if (o.getItemType().equalsIgnoreCase("day")) {
             return 0;
         } else {
             return super.getSwipeDirs(recyclerView, viewHolder);

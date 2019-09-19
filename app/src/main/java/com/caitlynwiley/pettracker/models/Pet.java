@@ -1,16 +1,31 @@
 package com.caitlynwiley.pettracker.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Calendar;
 import java.util.Locale;
 
 public class Pet {
 
+    @SerializedName("species")
     private String species;
+
+    @SerializedName("breed")
     private String breed;
+
+    @SerializedName("name")
     private String name;
+
+    @SerializedName("age")
     private double age;
+
+    @SerializedName("birthday")
     private String birthday;
+
+    @SerializedName("gender")
     private String gender;
+
+    @SerializedName("id")
     private String id;
 
     public Pet() {
