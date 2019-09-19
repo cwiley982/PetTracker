@@ -284,15 +284,15 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.track_fed_fab:
                 closeFab();
-                addEvent(TrackerEvent.EventType.FEED);
+                addEvent(TrackerItem.EventType.FEED);
                 break;
             case R.id.track_potty_fab:
                 closeFab();
-                addEvent(TrackerEvent.EventType.POTTY);
+                addEvent(TrackerItem.EventType.POTTY);
                 break;
             case R.id.track_let_out_fab:
                 closeFab();
-                addEvent(TrackerEvent.EventType.WALK);
+                addEvent(TrackerItem.EventType.WALK);
                 break;
         }
     }
