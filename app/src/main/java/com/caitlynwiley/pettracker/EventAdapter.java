@@ -1,13 +1,12 @@
 package com.caitlynwiley.pettracker;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.caitlynwiley.pettracker.models.Day;
-import com.caitlynwiley.pettracker.models.TrackerEvent;
 import com.caitlynwiley.pettracker.models.TrackerItem;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -16,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,10 +28,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
 
     private ArrayList<TrackerItem> mDataset;
     private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
-    private TrackerEvent mRecentlyDeletedItem;
+    private TrackerItem mRecentlyDeletedItem;
+    private TrackerItem mRecentlyDeletedDate;
     private int mRecentlyDeletedItemPosition;
     private View mFragView;
     private List<Integer> forceDeleteEventVals = new ArrayList<>();
+    private Context mContext;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -59,6 +61,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
     public EventAdapter(View fragView) {
         mDataset = new ArrayList<>();
         mFragView = fragView;
+        mContext = fragView.getContext();
         forceDeleteEventVals.add(DISMISS_EVENT_SWIPE);
         forceDeleteEventVals.add(DISMISS_EVENT_TIMEOUT);
         forceDeleteEventVals.add(DISMISS_EVENT_CONSECUTIVE);
@@ -75,12 +78,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
 
     @Override
     public void onBindViewHolder(TrackerViewHolder holder, int position) {
-        Object o = mDataset.get(position);
-        if (o instanceof Day) {
-            holder.dateTextView.setText(((Day) o).getPrettyDate());
+        TrackerItem o = mDataset.get(position);
+        if (o.getItemType().equals("day")) {
+            holder.dateTextView.setText(o.getPrettyDate(mContext));
         } else {
-            holder.timeTextView.setText(((TrackerEvent) o).getLocalTime());
-            holder.imageView.setImageResource(((TrackerEvent) o).getDrawableResId());
+            holder.timeTextView.setText(o.getLocalTime());
+            holder.imageView.setImageResource(o.getDrawableResId());
         }
     }
 
@@ -91,7 +94,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
 
     @Override
     public int getItemViewType(int position) {
-        return mDataset.get(position) instanceof Day ? R.layout.date_header : R.layout.tracker_event;
+        return mDataset.get(position).getItemType().equalsIgnoreCase("day") ? R.layout.date_header : R.layout.tracker_event;
     }
 
     public TrackerItem getItem(int i) {
@@ -104,11 +107,27 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
     }
 
     public void deleteItem(int position) {
-        mRecentlyDeletedItem = (TrackerEvent) mDataset.get(position);
+        mRecentlyDeletedItem = mDataset.get(position);
         mRecentlyDeletedItemPosition = position;
         mDataset.remove(position);
-        notifyItemRemoved(position);
+        if (deletedLastItemOnDay()) {
+            mRecentlyDeletedDate = mDataset.get(position - 1);
+            mDataset.remove(position - 1);
+        } else {
+            mRecentlyDeletedDate = null;
+        }
+        notifyDataSetChanged();
         showUndoSnackbar();
+    }
+
+    private boolean deletedLastItemOnDay() {
+        // if item before is a date (no preceding events) and either deleted item was last in the list
+        // or the next item is a new date, then the deleted item was the last one for that date
+        if (mDataset.get(mRecentlyDeletedItemPosition - 1).getItemType().equalsIgnoreCase("day")
+            && (mDataset.size() == mRecentlyDeletedItemPosition || mDataset.get(mRecentlyDeletedItemPosition).getItemType().equalsIgnoreCase("day"))) {
+            return true;
+        }
+        return false;
     }
 
     private void showUndoSnackbar() {
@@ -121,7 +140,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
                 if (forceDeleteEventVals.contains(event)) {
-                    mRef.child("pets").child(mRecentlyDeletedItem.getPetId()).child("events").child(mRecentlyDeletedItem.getId()).setValue(null);
+                    mRef.child("pets").child(mRecentlyDeletedItem.getPetId()).child("events").child(mRecentlyDeletedItem.getItemId()).setValue(null);
+                    mRef.child("pets").child(mRecentlyDeletedItem.getPetId()).child("events").child(mRecentlyDeletedDate.getItemId()).setValue(null);
                 }
             }
         });
@@ -129,16 +149,31 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.TrackerViewH
     }
 
     private void undoDelete() {
+        // order below is important, events AT index get shifted right
+        if (mRecentlyDeletedDate != null) {
+            mDataset.add(mRecentlyDeletedItemPosition - 1, mRecentlyDeletedDate);
+        }
         mDataset.add(mRecentlyDeletedItemPosition, mRecentlyDeletedItem);
-        notifyItemInserted(mRecentlyDeletedItemPosition);
+        notifyDataSetChanged();
     }
 
     public void addItem(TrackerItem item) {
         mDataset.add(item);
     }
 
-    public void addItem(int index, TrackerItem item) {
-        mDataset.add(index, item);
+    public void addItems(Map<String, TrackerItem> list) {
+        mDataset.addAll(list.values());
+        for (TrackerItem item : mDataset) {
+            if (item.getItemType().equalsIgnoreCase("event")) {
+                item.setLocalTime();
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void setItems(Map<String, TrackerItem> list) {
+        mDataset = new ArrayList<>(list.values());
+        notifyDataSetChanged();
     }
 
     public void removeEvent(TrackerItem item) {
