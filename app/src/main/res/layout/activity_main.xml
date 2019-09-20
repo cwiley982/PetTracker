@@ -32,8 +32,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:itemTextColor="?attr/navigationTextSelectedColor"
-        app:itemIconTint="?attr/navigationTextSelectedColor"
+        app:itemTextColor="?attr/navigation_text_selected_color"
+        app:itemIconTint="?attr/navigation_text_selected_color"
         app:menu="@menu/drawer_view"
         app:headerLayout="@layout/nav_drawer_header"/>
 
