@@ -24,6 +24,9 @@ import androidx.annotation.NonNull;
 
 public class CreateAccountActivity extends BaseActivity {
 
+    /* Indicates the email used to attempt a sign up is already in use. */
+    private static final int FIRAuthErrorCodeEmailAlreadyInUse = 17007;
+
     private EditText mEmail;
     private EditText mPassword;
     private EditText mPasswordRepeated;
@@ -75,7 +78,13 @@ public class CreateAccountActivity extends BaseActivity {
                         }
                     });
                 } else {
-                    showError("Account creation failed with message: " + task.getException().getMessage());
+                    String msg = "";
+                    /*if (errorCode == FIRAuthErrorCodeEmailAlreadyInUse) {
+                        msg = "Email address already in use. Please use a different email.";
+                    } else {
+                        msg = "Account creation failed with message: " + task.getException().getMessage();
+                    }*/
+                    showError(msg);
                     hideKeyboard();
                 }
             });

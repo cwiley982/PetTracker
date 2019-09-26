@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,7 +24,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -50,9 +50,17 @@ import java.util.Arrays;
  */
 public class LoginActivity extends BaseActivity implements OnClickListener {
 
+    /* Indicates the email is invalid. */
+    private static final int FIRAuthErrorCodeInvalidEmail = 17008;
+    /* Indicates the user attempted sign in with a wrong password. */
+    private static final int FIRAuthErrorCodeWrongPassword = 17009;
+    /* Indicates the user account was not found.  */
+    private static final int FIRAuthErrorCodeUserNotFound = 17011;
+
     private static final int RC_SIGN_IN = 1;
     private static final int RC_GOOGLE_SIGN_IN = 2;
     private static final String TAG = "LoginActivity";
+    private int signInAttempt = 0;
 
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
@@ -105,7 +113,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         mAuth.addAuthStateListener(firebaseAuth -> {
             mAuth = firebaseAuth;
             mUser = firebaseAuth.getCurrentUser();
-            updateUI("");
+            updateUI("", "");
         });
 
         mUser = mAuth.getCurrentUser();
@@ -166,7 +174,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         super.onStart();
         if (mAuth.getCurrentUser() != null) {
             mUser = mAuth.getCurrentUser();
-            updateUI("");
+            updateUI("", "");
         }
     }
 
@@ -198,19 +206,20 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        signInAttempt++;
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("LoginActivity", "signInWithCredential:success");
                         mUser = mAuth.getCurrentUser();
-                        updateUI("");
+                        updateUI("", "");
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w("LoginActivity", "signInWithCredential:failure", task.getException());
                         Toast.makeText(getApplicationContext(), "Authentication Failed.", Toast.LENGTH_SHORT).show();
                         mUser = null;
-                        updateUI("");
+                        updateUI("", ((FirebaseAuthException)task.getException()).getErrorCode());
                     }
                 });
     }
@@ -219,27 +228,47 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        signInAttempt++;
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
                         mUser = mAuth.getCurrentUser();
-                        updateUI("");
+                        updateUI("", "");
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
                         Toast.makeText(LoginActivity.this, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show();
                         mUser = null;
-                        updateUI(task.getException().getMessage());
+                        updateUI(task.getException().getMessage(), "");
                     }
                 });
     }
 
-    private void updateUI(String errorMsg) {
+    private void updateUI(String errorMsg, String error) {
         if (mUser == null) {
-            Toast.makeText(getApplicationContext(), "Error signing in. Error message: " + errorMsg, Toast.LENGTH_SHORT).show();
+            if (signInAttempt == 0) return;
+            String msg;
+            switch (error) {
+                case "":
+                    msg = "Error signing in. Error message: " + errorMsg;
+                    break;
+                case "ERROR_INVALID_EMAIL":
+                    msg = "Invalid email address. Please try again.";
+                    break;
+                case "ERROR_WRONG_PASSWORD":
+                    msg = "Incorrect password. Please try again.";
+                    break;
+                case "ERROR_USER_NOT_FOUND":
+                    msg = "No user found with that email address.";
+                    break;
+                default:
+                    msg = error;
+                    break;
+            }
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
             return;
         }
         ref.child("users").child(mUser.getUid()).child("num_pets").addValueEventListener(new ValueEventListener() {
@@ -267,14 +296,22 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
 
+        signInAttempt++;
+
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            // show error message "Error: Email and password fields must not be empty
+            return;
+        }
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         mUser = task.getResult().getUser();
-                        updateUI("");
+                        updateUI("", "");
                     } else {
-                        FirebaseAuthException e = (FirebaseAuthException) task.getException();
-                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        updateUI("", ((FirebaseAuthException)task.getException()).getErrorCode());
+                        //FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                        //Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
