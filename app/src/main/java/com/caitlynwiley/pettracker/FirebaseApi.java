@@ -19,7 +19,7 @@ public interface FirebaseApi {
     String BASE_URL = "https://pet-tracker-1530373031875.firebaseio.com";
 
     @GET("/users/{uid}/num_pets.json")
-    Call<UserInfo> getNumPets(@Path("uid") String uid);
+    Call<Integer> getNumPets(@Path("uid") String uid);
 
     @POST("/pets/{id}/events")
     Call<Void> addItemToTracker(@Path("id") String petId,

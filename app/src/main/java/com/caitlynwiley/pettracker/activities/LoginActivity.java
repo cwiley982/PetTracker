@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.caitlynwiley.pettracker.FirebaseApi;
 import com.caitlynwiley.pettracker.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -37,13 +38,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.Arrays;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A login screen that offers login via email/password.
@@ -271,20 +277,27 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
             return;
         }
-        ref.child("users").child(mUser.getUid()).child("num_pets").addValueEventListener(new ValueEventListener() {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        FirebaseApi api = retrofit.create(FirebaseApi.class);
+        api.getNumPets(mUser.getUid()).enqueue(new Callback<Integer>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() == null || dataSnapshot.getValue().equals(0)) {
-                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean("creating_pet", true).apply();
-                    startActivity(new Intent(LoginActivity.this, AddPetActivity.class));
-                } else {
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().equals(0)) {
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean("logged_in", true).apply();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                } else {
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean("creating_pet", true).apply();
+                    startActivity(new Intent(LoginActivity.this, AddPetActivity.class));
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onFailure(Call<Integer> call, Throwable t) {
 
             }
         });
