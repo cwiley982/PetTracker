@@ -22,6 +22,7 @@ import com.google.gson.GsonBuilder;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
 
@@ -53,6 +54,7 @@ public class CreatePetFragment extends Fragment {
             ref.child("users").child(mUid).child("pets").child(petId).setValue(true);
             ref.child("users").child(mUid).child("num_pets").setValue(1);
 
+            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("creating_pet", false).apply();
             startActivity(new Intent(getActivity(), MainActivity.class));
         });
 

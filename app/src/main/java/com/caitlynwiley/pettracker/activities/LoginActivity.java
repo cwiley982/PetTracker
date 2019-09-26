@@ -4,6 +4,7 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -245,8 +246,10 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null || dataSnapshot.getValue().equals(0)) {
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean("creating_pet", true).apply();
                     startActivity(new Intent(LoginActivity.this, AddPetActivity.class));
                 } else {
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean("logged_in", true).apply();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }
             }
