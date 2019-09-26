@@ -39,6 +39,10 @@
                 android:title="@string/remove_ads"
                 android:icon="@drawable/ic_credit_card_black_24dp"/>-->
             <item
+                android:id="@+id/share_item"
+                android:title="@string/share"
+                android:icon="@drawable/ic_share_black_24dp"/>
+            <item
                 android:id="@+id/settings_item"
                 android:title="@string/settings"
                 android:icon="@drawable/ic_settings_black_24dp"/>
