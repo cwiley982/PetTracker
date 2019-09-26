@@ -176,14 +176,16 @@ public class MainActivity extends BaseActivity {
 
     private void getPet() {
         FirebaseApi api = retrofit.create(FirebaseApi.class);
-        api.getPet(petID).enqueue(new Callback<Map<String, Pet>>() {
+        api.getPet(petID).enqueue(new Callback<Pet>() {
             @Override
-            public void onResponse(Call<Map<String, Pet>> call, Response<Map<String, Pet>> response) {
-                mPet = (Pet) response.body().values().toArray()[0];
+            public void onResponse(Call<Pet> call, Response<Pet> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    mPet = response.body();
+                }
             }
 
             @Override
-            public void onFailure(Call<Map<String, Pet>> call, Throwable t) {
+            public void onFailure(Call<Pet> call, Throwable t) {
 
             }
         });

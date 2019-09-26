@@ -256,16 +256,16 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
     private void getPetById(String id) {
         FirebaseApi api = retrofit.create(FirebaseApi.class);
-        api.getPet(id).enqueue(new Callback<Map<String, Pet>>() {
+        api.getPet(id).enqueue(new Callback<Pet>() {
             @Override
-            public void onResponse(Call<Map<String, Pet>> call, Response<Map<String, Pet>> response) {
+            public void onResponse(Call<Pet> call, Response<Pet> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    mPet = response.body().get(id);
+                    mPet = response.body();
                 }
             }
 
             @Override
-            public void onFailure(Call<Map<String, Pet>> call, Throwable t) {
+            public void onFailure(Call<Pet> call, Throwable t) {
                 Log.d("error", t.getMessage());
             }
         });

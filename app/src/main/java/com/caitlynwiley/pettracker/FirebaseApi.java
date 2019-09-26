@@ -29,7 +29,7 @@ public interface FirebaseApi {
     Call<Map<String, Boolean>> getPets(@Path("uid") String uid);
 
     @GET("/pets/{id}.json")
-    Call<Map<String, Pet>> getPet(@Path("id") String petId);
+    Call<Pet> getPet(@Path("id") String petId);
 
     @PUT("/pets/{id}.json")
     Call<Void> addPet(@Path("id") String id, @Body Pet p);
