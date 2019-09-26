@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
 import android.view.LayoutInflater;
@@ -34,6 +35,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
         mDarkThemePref.setOnPreferenceChangeListener(this);
         mSignOut.setOnPreferenceClickListener(preference -> {
+            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("logged_in", false).apply();
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(getActivity(), LoginActivity.class));
             return true;

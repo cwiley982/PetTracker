@@ -14,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 public class AddByIdFragment extends Fragment {
 
@@ -32,6 +33,7 @@ public class AddByIdFragment extends Fragment {
                     .child("pets")
                     .child(id)
                     .setValue(true);
+            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("creating_pet", false).apply();
             startActivity(new Intent(getActivity(), MainActivity.class));
         });
 

@@ -21,20 +21,10 @@ public class ChooseAdditionTypeFragment extends Fragment {
         mFragView = inflater.inflate(R.layout.choose_new_or_existing_pet, container, false);
 
         Button petIdOption = mFragView.findViewById(R.id.add_existing_button);
-        petIdOption.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.add_pet_frag_view, new AddByIdFragment()).commit();
-            }
-        });
+        petIdOption.setOnClickListener(v -> getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.add_pet_frag_view, new AddByIdFragment()).commit());
 
         Button createPetOption = mFragView.findViewById(R.id.create_new_button);
-        createPetOption.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.add_pet_frag_view, new CreatePetFragment()).commit();
-            }
-        });
+        createPetOption.setOnClickListener(v -> getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.add_pet_frag_view, new CreatePetFragment()).commit());
 
         return mFragView;
     }
