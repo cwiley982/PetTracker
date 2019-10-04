@@ -48,7 +48,7 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        mFragView = inflater.inflate(R.layout.manage_pets_fragment, container, false);
+        mFragView = inflater.inflate(R.layout.fragment_manage_pets, container, false);
 
         mUid = mAuth.getCurrentUser().getUid();
         petId = "";

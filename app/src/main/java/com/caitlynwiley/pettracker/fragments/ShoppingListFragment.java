@@ -40,7 +40,7 @@ public class ShoppingListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        mFragView = inflater.inflate(R.layout.shopping_list_fragment, container, false);
+        mFragView = inflater.inflate(R.layout.fragment_shopping_list, container, false);
         mNewItemEditText = mFragView.findViewById(R.id.new_list_item);
         mAddButton = mFragView.findViewById(R.id.add_list_item);
         mAddButton.setOnClickListener(new View.OnClickListener() {

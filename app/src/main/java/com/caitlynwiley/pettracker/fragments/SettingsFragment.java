@@ -49,7 +49,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.settings_fragment, container, false);
+        View v = inflater.inflate(R.layout.fragment_settings, container, false);
         ViewGroup innerContainer = v.findViewById(R.id.settings_frame);
         View innerView = super.onCreateView(inflater, innerContainer, savedInstanceState);
         if (innerView != null) {

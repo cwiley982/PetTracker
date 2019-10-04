@@ -57,7 +57,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        mFragView = inflater.inflate(R.layout.schedule_fragment, container, false);
+        mFragView = inflater.inflate(R.layout.fragment_schedule, container, false);
         mRotateForward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_forward);
         mRotateBackward = AnimationUtils.loadAnimation(getContext(), R.anim.fab_spin_backward);
 
