@@ -136,6 +136,7 @@ public class TrackerItem {
     }
 
     public String getLocalTime() {
+        if (localTime == null) setLocalTime();
         return localTime;
     }
 
