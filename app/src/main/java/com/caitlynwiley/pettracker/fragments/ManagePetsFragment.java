@@ -34,6 +34,8 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
     private EditText mPetNameET;
     private EditText mYearsET;
     private EditText mMonthsET;
+    private EditText mBirthdayET;
+    private EditText mBreedET;
     private RadioGroup mGenderGroup;
     private RadioGroup mSpeciesGroup;
     private FloatingActionButton mSaveEditFab;
@@ -72,6 +74,8 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         mPetNameET = mFragView.findViewById(R.id.pet_name);
         mYearsET = mFragView.findViewById(R.id.pet_age_years);
         mMonthsET = mFragView.findViewById(R.id.pet_age_months);
+        mBirthdayET = mFragView.findViewById(R.id.pet_birthday);
+        mBreedET = mFragView.findViewById(R.id.pet_breed);
         mGenderGroup = mFragView.findViewById(R.id.pet_gender);
         mSpeciesGroup = mFragView.findViewById(R.id.pet_species);
         mSaveEditFab = mFragView.findViewById(R.id.save_edit_fab);
@@ -79,6 +83,8 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         mPetNameET.setEnabled(false);
         mYearsET .setEnabled(false);
         mMonthsET.setEnabled(false);
+        mBirthdayET.setEnabled(false);
+        mBreedET.setEnabled(false);
         mGenderGroup.setEnabled(false);
         mSpeciesGroup.setEnabled(false);
 
@@ -107,8 +113,20 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         mPetNameET.setText(pet.getName());
         mYearsET.setText(String.format(Locale.US, "%d", (int) pet.getAge()));
         mMonthsET.setText(String.format(Locale.US, "%d", (int) ((pet.getAge() % 1) * 12) ));
+        mBirthdayET.setText(pet.getBirthday());
+        mBreedET.setText(pet.getBreed());
         ((RadioButton) mFragView.findViewById(pet.getGender().equals("male") ? R.id.male_btn : R.id.female_btn)).toggle();
-        ((RadioButton) mFragView.findViewById(pet.getSpecies().equals("dog") ? R.id.dog_btn : R.id.cat_btn)).toggle();
+        ((RadioButton) mFragView.findViewById(mapSpeciesToId(pet.getSpecies()))).toggle();
+    }
+
+    private int mapSpeciesToId(String species) {
+        switch (species) {
+            case "dog":
+                return R.id.dog_btn;
+            case "cat":
+            default:
+                return R.id.cat_btn;
+        }
     }
 
     @Override
@@ -126,6 +144,8 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         mPetNameET.setEnabled(true);
         mYearsET .setEnabled(true);
         mMonthsET.setEnabled(true);
+        mBirthdayET.setEnabled(true);
+        mBreedET.setEnabled(true);
         mGenderGroup.setEnabled(true);
         mSpeciesGroup.setEnabled(true);
         mEditing = true;
@@ -136,16 +156,22 @@ public class ManagePetsFragment extends Fragment implements View.OnClickListener
         String name = mPetNameET.getText().toString();
         String years = mYearsET.getText().toString();
         String months = mMonthsET.getText().toString();
+        String birthday = mBirthdayET.getText() == null ? "" : mBirthdayET.getText().toString();
+        String breed = mBreedET.getText() == null ? "" : mBreedET.getText().toString();
         int genderId = mGenderGroup.getCheckedRadioButtonId();
         int speciesId = mSpeciesGroup.getCheckedRadioButtonId();
         Pet pet = new Pet(name, years, months, getGender(genderId), getSpecies(speciesId));
         pet.setId(petId);
+        pet.setBreed(breed);
+        pet.setBirthday(birthday);
         ref.child("pets").child(petId).setValue(pet);
         // change icon on fab
         mSaveEditFab.setImageResource(R.drawable.ic_edit_black_24dp);
         mPetNameET.setEnabled(false);
         mYearsET .setEnabled(false);
         mMonthsET.setEnabled(false);
+        mBirthdayET.setEnabled(false);
+        mBreedET.setEnabled(false);
         mGenderGroup.setEnabled(false);
         mSpeciesGroup.setEnabled(false);
         mEditing = false;
