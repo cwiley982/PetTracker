@@ -2,9 +2,6 @@ package com.caitlynwiley.pettracker.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Calendar;
-import java.util.Locale;
-
 public class Pet {
 
     @SerializedName("species")
@@ -84,8 +81,8 @@ public class Pet {
         return birthday;
     }
 
-    public void setBirthday(Calendar c) {
-        this.birthday = String.format(Locale.US, "%2d/%2d/%4d", c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.YEAR));
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
     }
 
     public String getGender() {
