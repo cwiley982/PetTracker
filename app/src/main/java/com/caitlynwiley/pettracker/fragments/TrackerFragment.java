@@ -412,39 +412,7 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
 
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setView(v)
-                .setPositiveButton(R.string.save, (dialog, which) -> {
-                    AlertDialog d = (AlertDialog) dialog;
-                    // pet
-                    /* For multipet support in future
-                        RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
-                        int radioButtonID = radioGroup.getCheckedRadioButtonId();
-                        View radioButton = radioGroup.findViewById(radioButtonID);
-                        int petChosen = radioGroup.indexOfChild(radioButton);
-                        String petId = mPetId;
-                    */
-                    // amount
-                    double cupsFood = Double.parseDouble(((EditText) d.findViewById(R.id.num_cups))
-                            .getText().toString());
-                    //date
-                    Calendar c = Calendar.getInstance();
-                    String date = String.format(Locale.US, "%02d/%02d/%4d",
-                            c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
-                            c.get(Calendar.YEAR));
-                    if (!mAdapter.getMostRecentDate().equals(date)) {
-                        addDayToList(context, c, mPetId, date);
-                    }
-                    String id = mDatabase.child("pets").child(mPetId).child("events").push().getKey();
-                    TrackerItem e = new TrackerItem.Builder()
-                            .setType(TrackerItem.EventType.FEED)
-                            .setDate(date)
-                            .setMillis(System.currentTimeMillis())
-                            .setCupsFood(cupsFood)
-                            .setPetId(mPetId)
-                            .setItemType("event")
-                            .setId(id)
-                            .build();
-                    new PostEventTask().execute(e);
-                })
+                .setPositiveButton(R.string.save, null) // set below
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel())
                 .create();
         alertDialog.show();
@@ -455,6 +423,36 @@ public class TrackerFragment extends Fragment implements View.OnClickListener {
                 // stay open and show error message
                 alertDialog.findViewById(R.id.error_msg).setVisibility(View.VISIBLE);
             } else {
+                Log.d("TrackerFragment", "positive button clicked");
+                // pet
+                    /* For multipet support in future
+                        RadioGroup radioGroup = d.findViewById(R.id.pet_radio_group);
+                        int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                        View radioButton = radioGroup.findViewById(radioButtonID);
+                        int petChosen = radioGroup.indexOfChild(radioButton);
+                        String petId = mPetId;
+                    */
+                // amount
+                double cupsFood = Double.parseDouble((cups.getText().toString()));
+                //date
+                Calendar c = Calendar.getInstance();
+                String date = String.format(Locale.US, "%02d/%02d/%4d",
+                        c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
+                        c.get(Calendar.YEAR));
+                if (!mAdapter.getMostRecentDate().equals(date)) {
+                    addDayToList(context, c, mPetId, date);
+                }
+                String id = mDatabase.child("pets").child(mPetId).child("events").push().getKey();
+                TrackerItem e = new TrackerItem.Builder()
+                        .setType(TrackerItem.EventType.FEED)
+                        .setDate(date)
+                        .setMillis(System.currentTimeMillis())
+                        .setCupsFood(cupsFood)
+                        .setPetId(mPetId)
+                        .setItemType("event")
+                        .setId(id)
+                        .build();
+                new PostEventTask().execute(e);
                 alertDialog.dismiss();
             }
         });
