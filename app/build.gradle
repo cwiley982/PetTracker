@@ -42,7 +42,7 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-auth:19.3.2'
     implementation 'com.facebook.android:facebook-android-sdk:5.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
