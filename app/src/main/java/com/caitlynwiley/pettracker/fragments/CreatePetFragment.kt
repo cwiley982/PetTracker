@@ -71,7 +71,7 @@ class CreatePetFragment : Fragment() {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build()
             try {
-                retrofit.create(FirebaseApi::class.java).addPet(pets[0]?.id, pets[0]).execute()
+                retrofit.create(FirebaseApi::class.java).addPet(pets[0]?.id, pets[0])?.execute()
             } catch (e: IOException) {
                 Log.d("api", "error adding pet")
             }

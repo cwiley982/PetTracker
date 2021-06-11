@@ -105,7 +105,7 @@ class EventAdapter(fragView: View) : RecyclerView.Adapter<TrackerViewHolder>() {
         val view = mFragView
         val snackbar = Snackbar.make(view, R.string.snack_bar_text,
                 Snackbar.LENGTH_LONG)
-        snackbar.setAction(R.string.snack_bar_undo) { v: View? -> undoDelete() }
+        snackbar.setAction(R.string.snack_bar_undo) { undoDelete() }
         snackbar.addCallback(object : BaseCallback<Snackbar?>() {
             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)

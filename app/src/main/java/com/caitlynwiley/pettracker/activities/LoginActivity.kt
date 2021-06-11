@@ -13,7 +13,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.preference.PreferenceManager
 import com.caitlynwiley.pettracker.FirebaseApi
 import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.activities.LoginActivity
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -222,7 +221,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
         val api = retrofit.create(FirebaseApi::class.java)
-        api.getNumPets(mUser!!.uid).enqueue(object : Callback<Int?> {
+        api.getNumPets(mUser!!.uid)?.enqueue(object : Callback<Int?> {
             override fun onResponse(call: Call<Int?>, response: Response<Int?>) {
                 if (response.isSuccessful && response.body() != null && response.body() != 0) {
                     PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().putBoolean("logged_in", true).apply()

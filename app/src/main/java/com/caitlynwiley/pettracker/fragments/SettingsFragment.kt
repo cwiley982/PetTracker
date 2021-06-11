@@ -23,7 +23,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         mDarkThemePref = findPreference("dark_theme_enabled")
         mSignOut = findPreference("sign_out")
         mDarkThemePref!!.onPreferenceChangeListener = this
-        mSignOut!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference: Preference? ->
+        mSignOut!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("logged_in", false).apply()
             FirebaseAuth.getInstance().signOut()
             startActivity(Intent(activity, LoginActivity::class.java))

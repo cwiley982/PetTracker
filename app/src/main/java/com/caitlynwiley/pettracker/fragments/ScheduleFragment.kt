@@ -41,7 +41,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener, OnItemSelectedListene
     private var mNote: EditText? = null
     private var mIsFabOpen = false
     private var mEvents: MutableList<ScheduleEvent>? = null
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         mFragView = inflater.inflate(R.layout.schedule_fragment, container, false)
         mRotateForward = AnimationUtils.loadAnimation(context, R.anim.fab_spin_forward)
@@ -82,8 +82,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener, OnItemSelectedListene
     }
 
     override fun onClick(v: View) {
-        val id = v.id
-        when (id) {
+        when (v.id) {
             R.id.schedule_fab -> {
                 if (mIsFabOpen) {
                     closeFab()
@@ -135,7 +134,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener, OnItemSelectedListene
                 .setView(v)
                 .setCancelable(true)
                 .setNegativeButton("Cancel", null) //just closes the window by default
-                .setPositiveButton("Add") { dialog: DialogInterface?, which: Int ->
+                .setPositiveButton("Add") { _: DialogInterface?, _: Int ->
                     // add event to schedule
                     val type = if (resId == R.drawable.ic_sleep_white_24dp) ScheduleEvent.Type.SLEEP else if (resId == R.drawable.ic_food_white_24dp) ScheduleEvent.Type.FEED else ScheduleEvent.Type.WALK
                     // get title and stuff then set it

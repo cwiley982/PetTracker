@@ -17,10 +17,10 @@ import java.util.*
 
 class ShoppingListFragment : Fragment() {
     var mList: MutableList<String>? = null
-    lateinit var mNewItemEditText: EditText
-    lateinit var mAddButton: ImageButton
+    private lateinit var mNewItemEditText: EditText
+    private lateinit var mAddButton: ImageButton
     private lateinit var mFragView: View
-    lateinit var mRecyclerView: RecyclerView
+    private lateinit var mRecyclerView: RecyclerView
     lateinit var mAdapter: RecyclerView.Adapter<*>
     lateinit var mManager: RecyclerView.LayoutManager
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,17 +28,17 @@ class ShoppingListFragment : Fragment() {
         mList = ArrayList()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         mFragView = inflater.inflate(R.layout.shopping_list_fragment, container, false)
         mNewItemEditText = mFragView.findViewById(R.id.new_list_item)
         mAddButton = mFragView.findViewById(R.id.add_list_item)
-        mAddButton.setOnClickListener(View.OnClickListener {
-            val newItem = mNewItemEditText.getText().toString()
+        mAddButton.setOnClickListener{
+            val newItem = mNewItemEditText.text!!.toString()
             mList!!.add(newItem)
             mNewItemEditText.setText("")
             mAdapter!!.notifyDataSetChanged()
-        })
+        }
         mRecyclerView = mFragView.findViewById(R.id.recyclerView)
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.isClickable = true
@@ -79,7 +79,7 @@ class ShoppingListFragment : Fragment() {
                     val text = ctv.text.toString()
                     mList!!.remove(text)
                     mList!!.add(text)
-                    mAdapter!!.notifyDataSetChanged()
+                    mAdapter.notifyDataSetChanged()
                 } else {
                     ctv.isChecked = true
                 }
@@ -108,11 +108,7 @@ class ShoppingListFragment : Fragment() {
             mAdapter.notifyItemRemoved(position);
         }*/
         inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            var textView: CheckedTextView
-
-            init {
-                textView = itemView as CheckedTextView
-            }
+            var textView: CheckedTextView = itemView as CheckedTextView
         }
     }
 }

@@ -30,14 +30,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : BaseActivity() {
-    lateinit var mDrawerLayout : DrawerLayout
-    lateinit var mNavigationView : NavigationView
-    var mNavHeader : View? = null
+    private lateinit var mDrawerLayout : DrawerLayout
+    private lateinit var mNavigationView : NavigationView
+    private var mNavHeader : View? = null
     private val mDatabase = FirebaseDatabase.getInstance()
     private val mReference = mDatabase.reference
-    var mUser : FirebaseUser? = null
+    private var mUser : FirebaseUser? = null
     private val mAuth = FirebaseAuth.getInstance()
-    lateinit var retrofit : Retrofit
+    private lateinit var retrofit : Retrofit
     private lateinit var mFirebaseApi : FirebaseApi
 
     var user : Account? = null
@@ -56,13 +56,13 @@ class MainActivity : BaseActivity() {
                 .build()
 
         mFirebaseApi = retrofit.create(FirebaseApi::class.java)
-        mFirebaseApi.getPets(mUser?.uid).enqueue(object : Callback<Map<String?, Boolean?>> {
-            override fun onResponse(call: Call<Map<String?, Boolean?>>, response: Response<Map<String?, Boolean?>>) {
+        mFirebaseApi.getPets(mUser?.uid)?.enqueue(object : Callback<Map<String?, Boolean?>?> {
+            override fun onResponse(call: Call<Map<String?, Boolean?>?>, response: Response<Map<String?, Boolean?>?>) {
                 petID = response.body()!!.keys.toTypedArray()[0] as String
                 getPet()
             }
 
-            override fun onFailure(call: Call<Map<String?, Boolean?>>, t: Throwable) {}
+            override fun onFailure(call: Call<Map<String?, Boolean?>?>, t: Throwable) {}
         })
 
         mReference.child("users").child(if (mUser != null) mUser!!.uid else "").addValueEventListener(object : ValueEventListener {
@@ -89,7 +89,7 @@ class MainActivity : BaseActivity() {
         actionbar?.setHomeAsUpIndicator(R.drawable.ic_menu)
 
         // add listener to navigation view to watch for menu items being selected
-        mNavigationView.setNavigationItemSelectedListener(NavigationView.OnNavigationItemSelectedListener { item : MenuItem ->
+        mNavigationView.setNavigationItemSelectedListener { item: MenuItem ->
             item.isChecked = true
             mDrawerLayout.closeDrawers()
 
@@ -122,10 +122,10 @@ class MainActivity : BaseActivity() {
             }
 
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_view, newFragment!!)
-                    .commit()
+                .replace(R.id.fragment_view, newFragment!!)
+                .commit()
             true
-        })
+        }
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -143,14 +143,14 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getPet() {
-        mFirebaseApi.getPet(petID).enqueue(object : Callback<Pet> {
-            override fun onResponse(call: Call<Pet>, response: Response<Pet>) {
+        mFirebaseApi.getPet(petID)?.enqueue(object : Callback<Pet?> {
+            override fun onResponse(call: Call<Pet?>, response: Response<Pet?>) {
                 if (response.isSuccessful && response.body() != null) {
                     mPet = response.body()
                 }
             }
 
-            override fun onFailure(call: Call<Pet>, t: Throwable) {
+            override fun onFailure(call: Call<Pet?>, t: Throwable) {
                 // no-op
             }
         })

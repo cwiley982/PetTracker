@@ -10,7 +10,7 @@ import com.caitlynwiley.pettracker.R
 
 class ChooseAdditionTypeFragment : Fragment() {
     private lateinit var mFragView: View
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         mFragView = inflater.inflate(R.layout.choose_new_or_existing_pet, container, false)
 
