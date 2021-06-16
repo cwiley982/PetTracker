@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.fragments
+package com.caitlynwiley.pettracker.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,11 +19,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.kotlincompose.PetTrackerViewModel
+import com.caitlynwiley.pettracker.activities.Screen
+import com.caitlynwiley.pettracker.viewmodel.PetTrackerViewModel
 
 @Composable
-fun SpeciesSelectorScreen (viewModel: PetTrackerViewModel) {
+fun SpeciesSelectorScreen (viewModel: PetTrackerViewModel, navController: NavController) {
     Box(modifier = Modifier
         .fillMaxHeight(1f)
         .fillMaxWidth(1f)) {
@@ -37,8 +39,8 @@ fun SpeciesSelectorScreen (viewModel: PetTrackerViewModel) {
         Button(modifier = Modifier
             .align(Alignment.BottomEnd)
             .padding(8.dp),
-            onClick = { /* TODO */ },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Cyan)
+            onClick = { navController.navigate(Screen.EnterPetInfo.route) },
+            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
         ) {
             Text(text = "Next", fontSize = 16.sp)
         }
@@ -111,11 +113,11 @@ enum class PetType {
     DOG, CAT, SNAKE, OTHER
 }
 
-@Preview
-@Composable
-fun PetChooserScreen() {
-    SpeciesSelectorScreen(PetTrackerViewModel())
-}
+//@Preview
+//@Composable
+//fun PetChooserScreen() {
+//    SpeciesSelectorScreen(PetTrackerViewModel())
+//}
 
 @Preview
 @Composable

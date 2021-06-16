@@ -214,7 +214,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
             }
 
             override fun onFailure(call: Call<Pet?>, t: Throwable) {
-                Log.d("error", t.message)
+                t.message?.let { Log.d("error", it) }
             }
         })
     }

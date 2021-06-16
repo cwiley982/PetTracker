@@ -2,93 +2,117 @@ package com.caitlynwiley.pettracker.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import com.caitlynwiley.pettracker.R
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.caitlynwiley.pettracker.models.Account
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class CreateAccountActivity : BaseActivity() {
-    private var mEmail: EditText? = null
-    private var mPassword: EditText? = null
-    private var mPasswordRepeated: EditText? = null
-    private var mErrorText: TextView? = null
-    private val database = FirebaseDatabase.getInstance()
-    private val ref = database.reference
-    private var mAuth: FirebaseAuth? = null
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.create_account)
-        mAuth = FirebaseAuth.getInstance()
-        mEmail = findViewById(R.id.email_field)
-        mPassword = findViewById(R.id.password_field_one)
-        mPasswordRepeated = findViewById(R.id.password_field_two)
-        mErrorText = findViewById(R.id.error_msg)
-        val createBtn = findViewById<Button>(R.id.create_btn)
-        createBtn.setOnClickListener {
-            val email = mEmail?.text.toString()
-            // check passwords
-            if (mPassword!!.text.toString() != mPasswordRepeated!!.text.toString()) {
-                hideKeyboard()
-                showError("Passwords do not match. Please try again.")
-                return@setOnClickListener
-            }
-            val t = mAuth!!.createUserWithEmailAndPassword(email, mPassword!!.text.toString())
-            t.addOnCompleteListener { task: Task<AuthResult?> ->
-                if (task.isSuccessful) {
-                    // create account
-                    val a = Account(mAuth!!.uid!!, email)
-                    ref.child("users").child(mAuth!!.uid!!).setValue(a)
-                    ref.child("users").child(mAuth!!.currentUser!!.uid).child("num_pets").addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(dataSnapshot: DataSnapshot) {
-                            if (dataSnapshot.value == null || dataSnapshot.value == 0) {
-                                startActivity(Intent(this@CreateAccountActivity, AddPetActivity::class.java))
-                            } else {
-                                startActivity(Intent(this@CreateAccountActivity, MainActivity::class.java))
-                            }
-                        }
+class CreateAccountActivity: BaseActivity() {
 
-                        override fun onCancelled(databaseError: DatabaseError) {}
-                    })
-                } else {
-                    val msg = ""
-                    /*if (errorCode == FIRAuthErrorCodeEmailAlreadyInUse) {
-                        msg = "Email address already in use. Please use a different email.";
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val goToNewPetActivity = fun() {
+            startActivity(Intent(this@CreateAccountActivity, NewPetActivity::class.java))
+        }
+        val goToMainActivity = fun() {
+            startActivity(Intent(this@CreateAccountActivity, MainActivity::class.java))
+        }
+
+        setContent {
+            Surface {
+                Content(goToNewPetActivity, goToMainActivity)
+            }
+        }
+    }
+
+    @Composable
+    fun Content(newPetActivity: () -> Unit, mainActivity: () -> Unit) {
+        val auth = FirebaseAuth.getInstance()
+        var errorMsg by remember { mutableStateOf("") }
+        val submit = fun(email: String, password: String, passwordAgain: String) {
+            if (password != passwordAgain) {
+                // hide keyboard
+                errorMsg = "Passwords do not match. Please try again."
+            } else {
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        val dbRef = FirebaseDatabase.getInstance().reference
+                        val newAccount = Account(auth.uid!!, email)
+                        dbRef.child("users").child(auth.uid!!).setValue(newAccount)
+                        dbRef.child("users").child(auth.currentUser!!.uid).child("num_pets")
+                            .addValueEventListener(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    if (dataSnapshot.value == null || dataSnapshot.value == 0) {
+                                        newPetActivity()
+                                    } else {
+                                        mainActivity()
+                                    }
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {}
+                            })
                     } else {
-                        msg = "Account creation failed with message: " + task.getException().getMessage();
-                    }*/showError(msg)
-                    hideKeyboard()
+                        errorMsg = it.exception!!.message.toString()
+                    }
                 }
             }
         }
+
+        CreateAccount(onSubmit = submit, errorMsg)
     }
 
-    private fun showError(errorMessage: String) {
-        mErrorText!!.text = errorMessage
-    }
+    @Composable
+    fun CreateAccount(onSubmit: (String, String, String) -> Unit, errorMsg: String = "") {
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        var passwordAgain by remember { mutableStateOf("") }
 
-    private fun hideKeyboard() {
-        val imm = this.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        //Find the currently focused view, so we can grab the correct window token from it.
-        var view = this.currentFocus
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = View(this)
+        Column(modifier = Modifier.padding(8.dp)) {
+            Text("Email", modifier = Modifier.padding(4.dp))
+            TextField(value = email, onValueChange = { email = it })
+
+            Text("Enter your password", modifier = Modifier.padding(4.dp))
+            TextField(value = password, onValueChange = { password = it })
+
+            Text("Enter your password again", modifier = Modifier.padding(4.dp))
+            TextField(value = passwordAgain, onValueChange = { passwordAgain = it })
+
+            Button(
+                onClick = { onSubmit(email, password, passwordAgain) }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 16.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
+            )
+            {
+                Text("CREATE")
+            }
+
+            Text(
+                errorMsg, color = Color.Red,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .align(Alignment.CenterHorizontally)
+            )
         }
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    companion object {
-        /* Indicates the email used to attempt a sign up is already in use. */
-        private const val FIRAuthErrorCodeEmailAlreadyInUse = 17007
+    @Preview
+    @Composable
+    fun PreviewCreateAccount() {
+        CreateAccount(fun(_, _, _) {})
     }
 }

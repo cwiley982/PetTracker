@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.kotlincompose
+package com.caitlynwiley.pettracker.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

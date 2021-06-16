@@ -16,15 +16,21 @@
         android:supportsRtl="true">
         <activity android:name=".activities.LauncherActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity android:name=".activities.MainActivity"/>
+        <activity android:name=".activities.LoginActivity"/>
+        <activity android:name=".activities.CreateAccountActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.MainActivity"/>
-        <activity android:name=".activities.LoginActivity"/>
-        <activity android:name=".activities.CreateAccountActivity"/>
         <activity android:name=".activities.AddPetActivity" />
 
         <!-- FB -->
@@ -42,6 +48,9 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".activities.NewPetActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
     </application>
 
 </manifest>
