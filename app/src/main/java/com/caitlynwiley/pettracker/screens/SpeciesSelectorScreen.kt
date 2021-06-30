@@ -5,11 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,22 +23,21 @@ import com.caitlynwiley.pettracker.viewmodel.PetTrackerViewModel
 @Composable
 fun SpeciesSelectorScreen (viewModel: PetTrackerViewModel, navController: NavController) {
     Box(modifier = Modifier
-        .fillMaxHeight(1f)
-        .fillMaxWidth(1f)) {
-        Text(modifier = Modifier.padding(end = 8.dp, top = 16.dp),
+        .fillMaxHeight()
+        .fillMaxWidth()
+        .padding(16.dp)) {
+        Text(modifier = Modifier.padding(top = 32.dp),
             text = "Select which type of pet you'd like to add:",
             fontSize = 20.sp,
             textAlign = TextAlign.Center,
             softWrap = true,
             overflow = TextOverflow.Visible)
         PetTypeOptions(modifier = Modifier.align(Alignment.Center))
-        Button(modifier = Modifier
-            .align(Alignment.BottomEnd)
-            .padding(8.dp),
+        Button(modifier = Modifier.align(Alignment.BottomEnd),
             onClick = { navController.navigate(Screen.EnterPetInfo.route) },
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
         ) {
-            Text(text = "Next", fontSize = 16.sp)
+            Text(text = "Next", fontSize = 16.sp, color = MaterialTheme.colors.onSecondary)
         }
     }
 }
@@ -87,7 +82,7 @@ fun PetTypeOptionItem(type: PetType, onClick: (PetType) -> Unit, currentSelectio
                     .height(iconSize)
                     .padding(4.dp),
                 painter = painterResource(id = mapTypeToResource(type)),
-                contentDescription = ""
+                contentDescription = type.name
             )
             Text(
                 modifier = Modifier
