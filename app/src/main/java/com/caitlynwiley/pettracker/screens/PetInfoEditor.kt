@@ -2,85 +2,83 @@ package com.caitlynwiley.pettracker.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.caitlynwiley.pettracker.TextRadioButton
 
 @Composable
 fun PetInfoEditor() {
     ConstraintLayout(modifier = Modifier
         .padding(16.dp)
-        .fillMaxSize(1f)) {
-        val (nameLabel, nameField, ageLabel, yearsField, monthsField,
-            birthdayLabel, birthdayField, breedLabel, breedField,
-            genderSection, doneBtn) = createRefs()
+        .fillMaxSize()
+    ) {
+        val (nameRow, ageRow, birthdayRow, breedRow, genderSection, doneBtn) = createRefs()
 
-        Text(text = "Name", fontSize = 22.sp,
-            modifier = Modifier.constrainAs(nameLabel) {
-                bottom.linkTo(nameField.bottom, 8.dp)
-                start.linkTo(parent.start)
+        Row(modifier = Modifier
+            .constrainAs(nameRow) {
+                top.linkTo(parent.top)
             }
-        )
-        TextField(value = "", onValueChange = {},
-            modifier = Modifier.constrainAs(nameField) {
-                start.linkTo(nameLabel.end, 16.dp)
-                end.linkTo(parent.end)
-        })
+            .fillMaxWidth()) {
+            Text(text = "Name", fontSize = 22.sp,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .align(Alignment.Bottom))
+            Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
+            TextField(value = "", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+        }
 
-        val ageBarrier = createBottomBarrier(nameLabel, nameField, margin = 8.dp)
-        Text(text = "Age", fontSize = 22.sp,
-            modifier = Modifier.constrainAs(ageLabel) {
-                bottom.linkTo(yearsField.bottom, 8.dp)
-                start.linkTo(parent.start)
-        })
-        TextField(value = "", onValueChange = {},
-            modifier = Modifier
-                .constrainAs(yearsField) {
-                    top.linkTo(ageBarrier)
-                    end.linkTo(monthsField.start, 8.dp)
-                }
-                .fillMaxWidth(.4f))
-        TextField(value = "", onValueChange = {},
-            modifier = Modifier
-                .constrainAs(monthsField) {
-                    top.linkTo(ageBarrier)
-                    end.linkTo(parent.end)
-                }
-                .fillMaxWidth(.4f))
-
-        val birthdayBarrier = createBottomBarrier(ageLabel, yearsField, monthsField, margin = 8.dp)
-        Text(text = "Birthday", fontSize = 22.sp,
-            modifier = Modifier.constrainAs(birthdayLabel) {
-                bottom.linkTo(birthdayField.bottom, 8.dp)
-                start.linkTo(parent.start)
+        Row(modifier = Modifier
+            .constrainAs(ageRow) {
+                top.linkTo(nameRow.bottom, 8.dp)
             }
-        )
-        TextField(value = "", onValueChange = {},
-            modifier = Modifier.constrainAs(birthdayField) {
-                top.linkTo(birthdayBarrier)
-                start.linkTo(birthdayLabel.end, 16.dp)
-                end.linkTo(parent.end)
+            .fillMaxWidth()) {
+            Text(text = "Age", fontSize = 22.sp,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .align(Alignment.Bottom))
+            Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
+            TextField(value = "", onValueChange = {}, label = { Text("Years")},
+                modifier = Modifier.weight(1f))
+            Divider(modifier = Modifier.width(8.dp), color = Color.Transparent)
+            TextField(value = "", onValueChange = {}, label = { Text("Months")},
+                modifier = Modifier.weight(1f))
+        }
+
+        Row(modifier = Modifier
+            .constrainAs(birthdayRow) {
+                top.linkTo(ageRow.bottom, 8.dp)
             }
-        )
+            .fillMaxWidth()) {
+            Text(text = "Birthday", fontSize = 22.sp,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .align(Alignment.Bottom)
+            )
+            Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
+            TextField(value = "", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+        }
 
-        val breedBarrier = createBottomBarrier(birthdayLabel, birthdayField, margin = 8.dp)
-        Text(text = "Breed", fontSize = 22.sp,
-            modifier = Modifier.constrainAs(breedLabel) {
-                bottom.linkTo(breedField.bottom, 8.dp)
-                start.linkTo(parent.start)
-        })
-        TextField(value = "", onValueChange = {},
-            modifier = Modifier.constrainAs(breedField) {
-                top.linkTo(breedBarrier)
-                end.linkTo(parent.end)
-            })
+        Row(modifier = Modifier
+            .constrainAs(breedRow) {
+                top.linkTo(birthdayRow.bottom, 8.dp)
+            }
+            .fillMaxWidth()) {
+            Text(text = "Breed", fontSize = 22.sp,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .align(Alignment.Bottom))
+            Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
+            TextField(value = "", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+        }
 
-        val genderBarrier = createBottomBarrier(breedLabel, breedField, margin = 8.dp)
         GenderOptions(modifier = Modifier.constrainAs(genderSection) {
-                top.linkTo(genderBarrier)
+                top.linkTo(breedRow.bottom, 16.dp)
             centerHorizontallyTo(parent)
         })
 
@@ -91,58 +89,56 @@ fun PetInfoEditor() {
                     bottom.linkTo(parent.bottom)
                 })
         {
-            Text("Save")
+            Text("Save", fontSize = 16.sp, color = MaterialTheme.colors.onSecondary)
         }
     }
 }
 
 @Composable
 fun GenderOptions(modifier: Modifier = Modifier) {
-    ConstraintLayout(modifier = modifier) {
-        val (title, maleBtn, maleText, femaleBtn, femaleText, unknownBtn, unknownText) = createRefs()
+    var selected by remember { mutableStateOf<Gender?>(null) }
+    Row(modifier = modifier
+        .fillMaxWidth()
+        .wrapContentHeight()) {
+        ConstraintLayout(modifier = modifier) {
+            val (title, maleOption, femaleOption, unknownOption) = createRefs()
 
-        Text(text = "Gender", fontSize = 22.sp, modifier = Modifier.constrainAs(title) {
-            centerHorizontallyTo(parent)
-        })
+            Text(text = "Gender", fontSize = 22.sp, modifier = Modifier.constrainAs(title) {
+                start.linkTo(parent.start)
+                centerVerticallyTo(parent)
+            })
 
-        val barrier = createBottomBarrier(title, margin = 8.dp)
+            val barrier = createEndBarrier(title, margin = 16.dp)
 
-        RadioButton(selected = false, onClick = {},
-            modifier = Modifier.constrainAs(maleBtn) {
-                start.linkTo(parent.start, 8.dp)
-                top.linkTo(barrier)
+            TextRadioButton(text = "Male", selected = selected == Gender.MALE,
+                modifier = Modifier.constrainAs(maleOption) {
+                    start.linkTo(barrier)
+                }) {
+                selected = Gender.MALE
             }
-        )
-        Text(text = "Male", fontSize = 18.sp, modifier = Modifier.constrainAs(maleText) {
-            start.linkTo(maleBtn.end)
-            top.linkTo(barrier)
-            centerVerticallyTo(maleBtn)
-        })
 
-        RadioButton(selected = false, onClick = {},
-            modifier = Modifier.constrainAs(femaleBtn) {
-                start.linkTo(maleText.end, 8.dp)
-                top.linkTo(barrier)
+            TextRadioButton(text = "Female", selected = selected == Gender.FEMALE,
+                modifier = Modifier.constrainAs(femaleOption) {
+                    start.linkTo(maleOption.end, 16.dp)
+                    end.linkTo(parent.end)
+                }) {
+                selected = Gender.FEMALE
             }
-        )
-        Text(text = "Female", fontSize = 18.sp, modifier = Modifier.constrainAs(femaleText) {
-            start.linkTo(femaleBtn.end)
-            top.linkTo(barrier)
-            centerVerticallyTo(femaleBtn)
-        })
 
-        RadioButton(selected = false, onClick = {},
-            modifier = Modifier.constrainAs(unknownBtn) {
-                start.linkTo(femaleText.end, 8.dp)
-                top.linkTo(barrier)
+            TextRadioButton(text = "Unknown", selected = selected == Gender.UNKNOWN,
+                modifier = Modifier.constrainAs(unknownOption) {
+                    top.linkTo(maleOption.bottom, 8.dp)
+                    start.linkTo(barrier)
+                    end.linkTo(parent.end)
+                }) {
+                selected = Gender.UNKNOWN
             }
-        )
-        Text(text = "Unknown", fontSize = 18.sp, modifier = Modifier.constrainAs(unknownText) {
-            start.linkTo(unknownBtn.end)
-            top.linkTo(barrier)
-            centerVerticallyTo(unknownBtn)
-        })
+        }
     }
+}
+
+enum class Gender {
+    MALE, FEMALE, UNKNOWN
 }
 
 @Preview
