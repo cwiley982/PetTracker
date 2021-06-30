@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.caitlynwiley.pettracker.PetTrackerTheme
 import com.caitlynwiley.pettracker.models.Account
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -34,7 +35,15 @@ class CreateAccountActivity: BaseActivity() {
 
         setContent {
             Surface {
-                Content(goToNewPetActivity, goToMainActivity)
+                PetTrackerTheme {
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(title = { Text("Create Account") })
+                        }
+                    ) {
+                        Content(goToNewPetActivity, goToMainActivity)
+                    }
+                }
             }
         }
     }
@@ -102,7 +111,7 @@ class CreateAccountActivity: BaseActivity() {
             }
 
             Text(
-                errorMsg, color = Color.Red,
+                errorMsg, color = MaterialTheme.colors.error,
                 modifier = Modifier
                     .wrapContentWidth()
                     .align(Alignment.CenterHorizontally)

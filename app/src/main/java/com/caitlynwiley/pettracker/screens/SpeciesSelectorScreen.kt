@@ -75,9 +75,8 @@ fun PetTypeOptionItem(type: PetType, onClick: (PetType) -> Unit, currentSelectio
     val iconSize = squareSize - 20.dp
     IconButton(onClick = { onClick(type) }, modifier = Modifier
         .padding(8.dp) // outside of box
-        .border(2.dp, Color.Black, squareShape)
-        .background(shape = squareShape,
-            color = if (currentSelection!! == type) Color.Cyan else Color.Transparent)
+        .border(2.dp, color = if (currentSelection!! == type) MaterialTheme.colors.secondary else Color.Black, squareShape)
+        .background(shape = squareShape, color = Color.Transparent)
         .width(squareSize)
         .height(squareSize)) {
         Box(modifier = Modifier.fillMaxSize(1f)) {

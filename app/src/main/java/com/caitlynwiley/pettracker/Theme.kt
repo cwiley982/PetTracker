@@ -2,8 +2,8 @@ package com.caitlynwiley.pettracker
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.lightColors
 import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val LightColorPalette = darkColors(
@@ -15,7 +15,7 @@ private val LightColorPalette = darkColors(
     surface = secondaryLightVariant,
     error = errorColor,
     onPrimary = primaryTextColor,
-    onSecondary = primaryTextColor,
+    onSecondary = secondaryTextColor,
     onBackground = primaryTextColor,
     onSurface = primaryTextColor,
     onError = primaryTextColorNight
@@ -30,7 +30,7 @@ private val DarkColorPalette = lightColors(
     surface = secondaryLightVariantNight,
     error = errorColorNight,
     onPrimary = primaryTextColorNight,
-    onSecondary = primaryTextColorNight,
+    onSecondary = secondaryTextColorNight,
     onBackground = primaryTextColorNight,
     onSurface = primaryTextColorNight,
     onError = primaryTextColor
