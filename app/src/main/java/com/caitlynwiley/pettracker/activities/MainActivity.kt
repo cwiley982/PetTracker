@@ -109,6 +109,7 @@ class MainActivity : BaseActivity() {
                         val shareIntent = Intent.createChooser(intent, null)
                         startActivity(shareIntent)
                     }
+                    R.id.settings_item -> newFragment = SettingsFragment()
                 }
             }
 
@@ -118,9 +119,10 @@ class MainActivity : BaseActivity() {
                 supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
             }
 
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_view, newFragment!!)
-                .commit()
+            if (newFragment != null)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_view, newFragment)
+                    .commit()
             true
         }
 

@@ -19,7 +19,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        addPreferencesFromResource(R.xml.settings)
+
         mDarkThemePref = findPreference("dark_theme_enabled")
         mSignOut = findPreference("sign_out")
         mDarkThemePref!!.onPreferenceChangeListener = this
@@ -31,7 +31,6 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         }
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle, rootKey: String) {}
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.settings_fragment, container, false)
         val innerContainer = v.findViewById<ViewGroup>(R.id.settings_frame)
@@ -40,6 +39,10 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             innerContainer.addView(innerView)
         }
         return v
+    }
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        addPreferencesFromResource(R.xml.settings)
     }
 
     override fun onPreferenceChange(preference: Preference, newValue: Any): Boolean {
