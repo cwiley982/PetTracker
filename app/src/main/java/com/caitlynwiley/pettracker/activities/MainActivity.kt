@@ -18,10 +18,8 @@ import com.caitlynwiley.pettracker.models.Pet
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,12 +31,15 @@ class MainActivity : BaseActivity() {
     private lateinit var mDrawerLayout : DrawerLayout
     private lateinit var mNavigationView : NavigationView
     private var mNavHeader : View? = null
-    private val mDatabase = FirebaseDatabase.getInstance()
-    private val mReference = mDatabase.reference
     private var mUser : FirebaseUser? = null
-    private val mAuth = FirebaseAuth.getInstance()
-    private lateinit var retrofit : Retrofit
-    private lateinit var mFirebaseApi : FirebaseApi
+    private val retrofit : Retrofit =
+        Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+            .build()
+    private lateinit var mAuth : FirebaseAuth
+    private var mFirebaseApi : FirebaseApi = retrofit.create(FirebaseApi::class.java)
+    private lateinit var mDatabase : FirebaseDatabase
+    private lateinit var mReference : DatabaseReference
 
     var user : Account? = null
     var petID : String = "0"
@@ -48,15 +49,13 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
+        mDatabase = FirebaseDatabase.getInstance()
+        mReference = mDatabase.reference
+        mAuth = FirebaseAuth.getInstance()
         mUser = mAuth.currentUser
 
-        val gson = GsonBuilder().setLenient().create()
-        retrofit = Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build()
-
-        mFirebaseApi = retrofit.create(FirebaseApi::class.java)
-        mFirebaseApi.getPets(mUser?.uid)?.enqueue(object : Callback<Map<String?, Boolean?>?> {
+        mFirebaseApi.getPets(mUser?.uid).enqueue(object : Callback<Map<String?, Boolean?>?> {
             override fun onResponse(call: Call<Map<String?, Boolean?>?>, response: Response<Map<String?, Boolean?>?>) {
                 petID = response.body()!!.keys.toTypedArray()[0] as String
                 getPet()
@@ -65,12 +64,12 @@ class MainActivity : BaseActivity() {
             override fun onFailure(call: Call<Map<String?, Boolean?>?>, t: Throwable) {}
         })
 
-        mReference.child("users").child(if (mUser != null) mUser!!.uid else "").addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                user = snapshot.value as Account?
+        mFirebaseApi.getUser(mUser?.uid).enqueue(object : Callback<Account?> {
+            override fun onResponse(call: Call<Account?>, response: Response<Account?>) {
+                user = response.body()
             }
 
-            override fun onCancelled(error: DatabaseError) {
+            override fun onFailure(call: Call<Account?>, t: Throwable) {
                 // no-op
             }
         })
@@ -83,10 +82,10 @@ class MainActivity : BaseActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setTitleTextColor(resources.getColor(android.R.color.white, null))
         setSupportActionBar(toolbar)
+
         // add menu icon to action bar
-        val actionbar = supportActionBar
-        actionbar?.setDisplayHomeAsUpEnabled(true)
-        actionbar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
 
         // add listener to navigation view to watch for menu items being selected
         mNavigationView.setNavigationItemSelectedListener { item: MenuItem ->
@@ -109,16 +108,14 @@ class MainActivity : BaseActivity() {
 
                         val shareIntent = Intent.createChooser(intent, null)
                         startActivity(shareIntent)
-                        false
                     }
-                    else -> false
                 }
             }
 
             if (newFragment is SettingsFragment) {
-                actionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp)
+                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp)
             } else {
-                actionbar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
             }
 
             supportFragmentManager.beginTransaction()
@@ -138,12 +135,12 @@ class MainActivity : BaseActivity() {
         return if (mPet == null) {
             "Here's my pet's ID: $petID"
         } else {
-            "Here's ${mPet?.name}'s ID: $petID"
+            "Here's ${mPet?.name ?: "my pet"}'s ID: $petID"
         }
     }
 
     private fun getPet() {
-        mFirebaseApi.getPet(petID)?.enqueue(object : Callback<Pet?> {
+        mFirebaseApi.getPet(petID).enqueue(object : Callback<Pet?> {
             override fun onResponse(call: Call<Pet?>, response: Response<Pet?>) {
                 if (response.isSuccessful && response.body() != null) {
                     mPet = response.body()

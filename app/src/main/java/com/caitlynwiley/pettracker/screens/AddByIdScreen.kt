@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,12 +20,16 @@ import com.caitlynwiley.pettracker.activities.Screen
 @ExperimentalComposeUiApi
 @Composable
 fun AddByIdScreen(navigator: NavController) {
-    Content { navigator.navigate(Screen.ConfirmNewPet.route) }
+    var id by remember { mutableStateOf("")}
+    Content(id = id, onIdChanged = { id = it }) {
+        navigator.navigate(route = Screen.ConfirmNewPet.route.replace("{id}", it))
+    }
 }
 
 @ExperimentalComposeUiApi
 @Composable
-fun Content(submit: () -> Unit) {
+fun Content(id: String, onIdChanged: (String) -> Unit, submit: (String) -> Unit) {
+
     ConstraintLayout {
         val (prompt, text, button) = createRefs()
 
@@ -35,12 +39,12 @@ fun Content(submit: () -> Unit) {
         })
 
         val keyboardController = LocalSoftwareKeyboardController.current
-        TextField(value = "",
-            onValueChange = { },
+        TextField(value = id,
+            onValueChange = { onIdChanged(it) },
             colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
-                submit()
+                submit(id)
                 keyboardController?.hide()
             }),
             modifier = Modifier.constrainAs(text) {
@@ -49,7 +53,7 @@ fun Content(submit: () -> Unit) {
             }
         )
 
-        Button(onClick = submit,
+        Button(onClick = { submit(id) },
             modifier = Modifier.constrainAs(button) {
                 top.linkTo(text.bottom, margin = 16.dp)
                 centerHorizontallyTo(parent)
@@ -63,5 +67,5 @@ fun Content(submit: () -> Unit) {
 @Preview
 @Composable
 fun PreviewAddById() {
-    Content{ }
+    Content("", {}, {})
 }

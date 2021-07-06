@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,9 @@ fun SpeciesSelectorScreen (viewModel: PetTrackerViewModel, navController: NavCon
             softWrap = true,
             overflow = TextOverflow.Visible)
         PetTypeOptions(modifier = Modifier.align(Alignment.Center))
+        Button(onClick = { navController.navigate(Screen.AddPetById.route) }) {
+            Text("_Have a pet's ID to enter?_", fontStyle = FontStyle.Italic)
+        }
         Button(modifier = Modifier.align(Alignment.BottomEnd),
             onClick = { navController.navigate(Screen.EnterPetInfo.route) },
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
@@ -70,7 +74,11 @@ fun PetTypeOptionItem(type: PetType, onClick: (PetType) -> Unit, currentSelectio
     val iconSize = squareSize - 20.dp
     IconButton(onClick = { onClick(type) }, modifier = Modifier
         .padding(8.dp) // outside of box
-        .border(2.dp, color = if (currentSelection!! == type) MaterialTheme.colors.secondary else Color.Black, squareShape)
+        .border(
+            2.dp,
+            color = if (currentSelection!! == type) MaterialTheme.colors.secondary else Color.Black,
+            squareShape
+        )
         .background(shape = squareShape, color = Color.Transparent)
         .width(squareSize)
         .height(squareSize)) {

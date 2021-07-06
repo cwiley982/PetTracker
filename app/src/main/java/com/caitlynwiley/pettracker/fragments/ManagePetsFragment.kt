@@ -59,7 +59,6 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
             }
         }
 
-
 //        mFragView = inflater.inflate(R.layout.manage_pets_fragment, container, false)
         mUid = mAuth.currentUser!!.uid
         petId = ""
@@ -157,6 +156,7 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
         pet.breed = breed
         pet.birthday = birthday
         ref.child("pets").child(petId!!).setValue(pet)
+
         // change icon on fab
         mSaveEditFab!!.setImageResource(R.drawable.ic_edit_black_24dp)
         mPetNameET.isEnabled = false
