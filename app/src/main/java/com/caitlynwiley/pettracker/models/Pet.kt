@@ -10,14 +10,14 @@ class Pet {
     var breed: String? = null
 
     @SerializedName("name")
-    var name: String? = null
+    var name: String = ""
 
     @SerializedName("age")
     var age = 0.0
         private set
 
     @SerializedName("birthday")
-    var birthday: String? = null
+    var birthday: String = ""
 
     @SerializedName("gender")
     var gender: String? = null
@@ -26,9 +26,12 @@ class Pet {
     @SerializedName("id")
     var id: String? = null
 
+    @SerializedName("primaryOwnerName")
+    var primaryOwnerName: String = ""
+
     constructor()
 
-    constructor(name: String?, years: String, months: String, gender: String, species: String) {
+    constructor(name: String, years: String, months: String, gender: String, species: String) {
         this.name = name
         setAge(years, months)
         setGender(gender)

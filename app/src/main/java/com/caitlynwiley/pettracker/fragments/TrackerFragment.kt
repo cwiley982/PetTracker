@@ -1,50 +1,49 @@
 package com.caitlynwiley.pettracker.fragments
 
-import android.view.animation.Animation
-import android.widget.TextView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.caitlynwiley.pettracker.EventAdapter
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.FirebaseAuth
-import com.caitlynwiley.pettracker.models.Pet
-import retrofit2.Retrofit
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.os.Bundle
-import com.google.gson.GsonBuilder
-import com.caitlynwiley.pettracker.FirebaseApi
-import retrofit2.converter.gson.GsonConverterFactory
-import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.models.TrackerItem
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
-import com.caitlynwiley.pettracker.SwipeToDeleteHelper
 import android.content.DialogInterface
 import android.os.AsyncTask
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.AnimationUtils
+import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.caitlynwiley.pettracker.EventAdapter
+import com.caitlynwiley.pettracker.FirebaseApi
+import com.caitlynwiley.pettracker.R
+import com.caitlynwiley.pettracker.SwipeToDeleteHelper
+import com.caitlynwiley.pettracker.models.Pet
+import com.caitlynwiley.pettracker.models.TrackerItem
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 
 class TrackerFragment : Fragment(), View.OnClickListener {
     private lateinit var mFragView: View
 
-    private val mRotateForward: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_spin_forward)
-    private val mRotateBackward: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_spin_backward)
-    private val mMiniAppear: Animation = AnimationUtils.loadAnimation(context, R.anim.mini_fab_appear)
-    private val mMiniDisappear: Animation = AnimationUtils.loadAnimation(context, R.anim.mini_fab_disappear)
-    private val mLabelAppear: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_label_appear)
-    private val mLabelDisappear: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_label_disappear)
+//    private val mRotateForward: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_spin_forward)
+//    private val mRotateBackward: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_spin_backward)
+//    private val mMiniAppear: Animation = AnimationUtils.loadAnimation(context, R.anim.mini_fab_appear)
+//    private val mMiniDisappear: Animation = AnimationUtils.loadAnimation(context, R.anim.mini_fab_disappear)
+//    private val mLabelAppear: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_label_appear)
+//    private val mLabelDisappear: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_label_disappear)
 
     private lateinit var mPottyFabLabel: TextView
     private lateinit var mFeedFabLabel: TextView
@@ -56,16 +55,17 @@ class TrackerFragment : Fragment(), View.OnClickListener {
 
     private var mSwipeRefreshLayout: SwipeRefreshLayout? = null
     private var mAdapter: EventAdapter? = null
-    private val mDatabase = FirebaseDatabase.getInstance().reference
     private val pets = ArrayList<String>()
     private var mUID: String? = null
     private var mUser: FirebaseUser? = null
-    private var mAuth: FirebaseAuth? = null
     private var mIsFabOpen = false
     private var mPet: Pet? = null
-    private var mLondonTZ: TimeZone? = null
-    private var retrofit: Retrofit? = null
     private var mPetId: String? = null
+    private val mLondonTZ: TimeZone = TimeZone.getTimeZone("Europe/London")
+
+    private lateinit var retrofit: Retrofit
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var mDatabase : DatabaseReference
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,44 +73,45 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        val gson = GsonBuilder()
-            .setLenient()
-            .create()
         retrofit = Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
             .build()
         mFragView = inflater.inflate(R.layout.tracker_fragment, container, false)
+        mDatabase = FirebaseDatabase.getInstance().reference
         mAuth = FirebaseAuth.getInstance()
-        mUser = mAuth!!.currentUser
-        mUID = mUser!!.uid
-        mLondonTZ = TimeZone.getTimeZone("Europe/London")
-        mMiniAppear.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {
-                mPottyFab.visibility = View.VISIBLE
-                mLetOutFab.visibility = View.VISIBLE
-                mFeedFab.visibility = View.VISIBLE
-                mPottyFabLabel.visibility = View.VISIBLE
-                mLetOutFabLabel.visibility = View.VISIBLE
-                mFeedFabLabel.visibility = View.VISIBLE
-            }
+        mUser = mAuth.currentUser
+        mUID = mUser?.uid
 
-            override fun onAnimationRepeat(animation: Animation) {}
-        })
-        mMiniDisappear.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {
-                mPottyFab.visibility = View.GONE
-                mLetOutFab.visibility = View.GONE
-                mFeedFab.visibility = View.GONE
-                mPottyFabLabel.visibility = View.GONE
-                mLetOutFabLabel.visibility = View.GONE
-                mFeedFabLabel.visibility = View.GONE
-            }
+//        mMiniAppear.setAnimationListener(object : Animation.AnimationListener {
+//            override fun onAnimationStart(animation: Animation) {}
+//            override fun onAnimationEnd(animation: Animation) {
+//                mPottyFab.visibility = View.VISIBLE
+//                mLetOutFab.visibility = View.VISIBLE
+//                mFeedFab.visibility = View.VISIBLE
+//                mPottyFabLabel.visibility = View.VISIBLE
+//                mLetOutFabLabel.visibility = View.VISIBLE
+//                mFeedFabLabel.visibility = View.VISIBLE
+//            }
+//
+//            override fun onAnimationRepeat(animation: Animation) {}
+//        })
 
-            override fun onAnimationRepeat(animation: Animation) {}
-        })
+//        mMiniDisappear.setAnimationListener(object : Animation.AnimationListener {
+//            override fun onAnimationStart(animation: Animation) {}
+//            override fun onAnimationEnd(animation: Animation) {
+//                mPottyFab.visibility = View.GONE
+//                mLetOutFab.visibility = View.GONE
+//                mFeedFab.visibility = View.GONE
+//                mPottyFabLabel.visibility = View.GONE
+//                mLetOutFabLabel.visibility = View.GONE
+//                mFeedFabLabel.visibility = View.GONE
+//            }
+//
+//            override fun onAnimationRepeat(animation: Animation) {}
+//        })
+
         mIsFabOpen = false
+
         // get views
         mTrackerFab = mFragView.findViewById(R.id.tracker_fab)
         mPottyFab = mFragView.findViewById(R.id.track_potty_fab)
@@ -129,8 +130,9 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         mPottyFabLabel.setOnClickListener(this)
         mFeedFabLabel.setOnClickListener(this)
         mLetOutFabLabel.setOnClickListener(this)
+
         mSwipeRefreshLayout?.setOnRefreshListener {
-            val api = retrofit?.create(FirebaseApi::class.java)
+            val api = retrofit.create(FirebaseApi::class.java)
             api?.getEvents(mPetId)!!.enqueue(object : Callback<Map<String?, TrackerItem?>?> {
                 override fun onResponse(
                     call: Call<Map<String?, TrackerItem?>?>,
@@ -156,7 +158,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         // specify an adapter
         mAdapter = EventAdapter(mFragView)
         recyclerView.adapter = mAdapter
-        val api = retrofit?.create(FirebaseApi::class.java)
+        val api = retrofit.create(FirebaseApi::class.java)
         api?.getPets(mUID)!!.enqueue(object : Callback<Map<String?, Boolean?>?> {
             override fun onResponse(
                 call: Call<Map<String?, Boolean?>?>,
@@ -181,7 +183,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
 
     private val items: Unit
         get() {
-            val api = retrofit!!.create(FirebaseApi::class.java)
+            val api = retrofit.create(FirebaseApi::class.java)
             api.getEvents(mPetId)!!.enqueue(object : Callback<Map<String?, TrackerItem?>?> {
                 override fun onResponse(
                     call: Call<Map<String?, TrackerItem?>?>,
@@ -205,7 +207,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         }
 
     private fun getPetById(id: String?) {
-        val api = retrofit!!.create(FirebaseApi::class.java)
+        val api = retrofit.create(FirebaseApi::class.java)
         api.getPet(id)!!.enqueue(object : Callback<Pet?> {
             override fun onResponse(call: Call<Pet?>, response: Response<Pet?>) {
                 if (response.isSuccessful && response.body() != null) {
@@ -214,7 +216,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
             }
 
             override fun onFailure(call: Call<Pet?>, t: Throwable) {
-                Log.d("error", t.message)
+                t.message?.let { Log.d("error", it) }
             }
         })
     }
@@ -411,37 +413,37 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         c[Calendar.MINUTE] = 0
         c[Calendar.SECOND] = 0
         c[Calendar.MILLISECOND] = 0
-        c.add(Calendar.MILLISECOND, mLondonTZ!!.getOffset(now))
+        c.add(Calendar.MILLISECOND, mLondonTZ.getOffset(now))
         day.setUtcMillis(c.timeInMillis)
         PostEventTask().execute(day)
     }
 
     private fun openFab() {
-        mTrackerFab.startAnimation(mRotateForward)
-        mLetOutFab.startAnimation(mMiniAppear)
-        mPottyFab.startAnimation(mMiniAppear)
-        mFeedFab.startAnimation(mMiniAppear)
-        mPottyFabLabel.startAnimation(mLabelAppear)
-        mFeedFabLabel.startAnimation(mLabelAppear)
-        mLetOutFabLabel.startAnimation(mLabelAppear)
+//        mTrackerFab.startAnimation(mRotateForward)
+//        mLetOutFab.startAnimation(mMiniAppear)
+//        mPottyFab.startAnimation(mMiniAppear)
+//        mFeedFab.startAnimation(mMiniAppear)
+//        mPottyFabLabel.startAnimation(mLabelAppear)
+//        mFeedFabLabel.startAnimation(mLabelAppear)
+//        mLetOutFabLabel.startAnimation(mLabelAppear)
         mIsFabOpen = true
     }
 
     private fun closeFab() {
-        mTrackerFab.startAnimation(mRotateBackward)
-        mLetOutFab.startAnimation(mMiniDisappear)
-        mPottyFab.startAnimation(mMiniDisappear)
-        mFeedFab.startAnimation(mMiniDisappear)
-        mPottyFabLabel.startAnimation(mLabelDisappear)
-        mFeedFabLabel.startAnimation(mLabelDisappear)
-        mLetOutFabLabel.startAnimation(mLabelDisappear)
+//        mTrackerFab.startAnimation(mRotateBackward)
+//        mLetOutFab.startAnimation(mMiniDisappear)
+//        mPottyFab.startAnimation(mMiniDisappear)
+//        mFeedFab.startAnimation(mMiniDisappear)
+//        mPottyFabLabel.startAnimation(mLabelDisappear)
+//        mFeedFabLabel.startAnimation(mLabelDisappear)
+//        mLetOutFabLabel.startAnimation(mLabelDisappear)
         mIsFabOpen = false
     }
 
-    inner class PostEventTask : AsyncTask<TrackerItem?, Void?, Void?>() {
-        override fun doInBackground(vararg items: TrackerItem?): Void? {
-            retrofit!!.create(FirebaseApi::class.java)
-                .addEvent(items[0]?.petId, items[0]?.itemId, items[0])!!
+    inner class PostEventTask : AsyncTask<TrackerItem, Void?, Void?>() {
+        override fun doInBackground(vararg items: TrackerItem): Void? {
+            retrofit.create(FirebaseApi::class.java)
+                .addEvent(items[0].petId, items[0].itemId, items[0])!!
                 .enqueue(object : Callback<Void?> {
                     override fun onResponse(call: Call<Void?>, response: Response<Void?>) {
                         if (response.isSuccessful) {

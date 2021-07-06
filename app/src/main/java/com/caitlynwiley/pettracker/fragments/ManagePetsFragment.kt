@@ -7,9 +7,12 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.models.Pet
+import com.caitlynwiley.pettracker.screens.PetInfoEditor
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -46,7 +49,17 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
     private var pet: Pet? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        mFragView = inflater.inflate(R.layout.manage_pets_fragment, container, false)
+
+        val view = ComposeView(requireContext()).apply {
+            setContent {
+                MaterialTheme {
+                    // In Compose world
+                    PetInfoEditor()
+                }
+            }
+        }
+
+//        mFragView = inflater.inflate(R.layout.manage_pets_fragment, container, false)
         mUid = mAuth.currentUser!!.uid
         petId = ""
         ref.child("users").child(mUid!!).child("pets").addValueEventListener(object : ValueEventListener {
@@ -61,21 +74,22 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
-        mBirthdayET = mFragView.findViewById(R.id.pet_birthday)
-        mBreedET = mFragView.findViewById(R.id.pet_breed)
-        mGenderGroup = mFragView.findViewById(R.id.pet_gender)
-        mSpeciesGroup = mFragView.findViewById(R.id.pet_species)
-        mSaveEditFab = mFragView.findViewById(R.id.save_edit_fab)
-        mPetNameET.isEnabled = false
-        mYearsET.isEnabled = false
-        mMonthsET.isEnabled = false
-        mBirthdayET?.isEnabled = false
-        mBreedET?.isEnabled = false
-        mGenderGroup?.isEnabled = false
-        mSpeciesGroup?.isEnabled = false
-        mSaveEditFab?.setImageResource(R.drawable.ic_edit_black_24dp)
-        mSaveEditFab?.setOnClickListener(this)
-        return mFragView
+//        mBirthdayET = mFragView.findViewById(R.id.pet_birthday)
+//        mBreedET = mFragView.findViewById(R.id.pet_breed)
+//        mGenderGroup = mFragView.findViewById(R.id.pet_gender)
+//        mSpeciesGroup = mFragView.findViewById(R.id.pet_species)
+//        mSaveEditFab = mFragView.findViewById(R.id.save_edit_fab)
+//        mPetNameET.isEnabled = false
+//        mYearsET.isEnabled = false
+//        mMonthsET.isEnabled = false
+//        mBirthdayET?.isEnabled = false
+//        mBreedET?.isEnabled = false
+//        mGenderGroup?.isEnabled = false
+//        mSpeciesGroup?.isEnabled = false
+//        mSaveEditFab?.setImageResource(R.drawable.ic_edit_black_24dp)
+//        mSaveEditFab?.setOnClickListener(this)
+//        return mFragView
+        return view
     }
 
     private fun setUpPetListener() {
@@ -142,6 +156,7 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
         pet.breed = breed
         pet.birthday = birthday
         ref.child("pets").child(petId!!).setValue(pet)
+
         // change icon on fab
         mSaveEditFab!!.setImageResource(R.drawable.ic_edit_black_24dp)
         mPetNameET.isEnabled = false
