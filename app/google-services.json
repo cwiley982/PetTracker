@@ -1,4 +1,4 @@
- {
+{
   "project_info": {
     "project_number": "435874035873",
     "firebase_url": "https://pet-tracker-1530373031875.firebaseio.com",
@@ -15,19 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "435874035873-icmmsbi2joh83f74p18qfl2sq0uc8ulg.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.caitlynwiley.pettracker",
-            "certificate_hash": "dbdb55d9db421e92e4402c3a5639d29675a6f8a3"
-          }
-        },
-        {
           "client_id": "435874035873-3annhkdt06j0pkbl0lsbqim57qa61apr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.caitlynwiley.pettracker",
             "certificate_hash": "e1333c96ec186d1075a206d0bc84b57605a7de2f"
+          }
+        },
+        {
+          "client_id": "435874035873-icmmsbi2joh83f74p18qfl2sq0uc8ulg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.caitlynwiley.pettracker",
+            "certificate_hash": "dbdb55d9db421e92e4402c3a5639d29675a6f8a3"
           }
         },
         {
@@ -49,20 +49,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "435874035873-2ukbo4dra63vodpn3imha1t7v1b0q1s6.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }
