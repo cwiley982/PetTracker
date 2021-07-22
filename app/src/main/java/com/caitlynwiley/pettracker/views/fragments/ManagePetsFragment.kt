@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.fragments
+package com.caitlynwiley.pettracker.views.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,14 +12,20 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.models.Pet
-import com.caitlynwiley.pettracker.screens.PetInfoEditor
+import com.caitlynwiley.pettracker.repository.FirebaseApi
+import com.caitlynwiley.pettracker.repository.PetTrackerRepository
+import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
+import com.caitlynwiley.pettracker.views.screens.PetInfoEditor
+import com.caitlynwiley.pettracker.views.screens.PetType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.util.*
+import com.google.gson.GsonBuilder
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class ManagePetsFragment : Fragment(), View.OnClickListener {
     private lateinit var mFragView: View
@@ -45,7 +51,7 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
     private var mSaveEditFab: FloatingActionButton? = null
     private var mEditing = false
     private var mUid: String? = null
-    private var petId: String? = null
+    private var petId: String = ""
     private var pet: Pet? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -104,19 +110,18 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun fillFields() {
-        mPetNameET.setText(pet!!.name)
-        mYearsET.setText(String.format(Locale.US, "%d", pet!!.age.toInt()))
-        mMonthsET.setText(String.format(Locale.US, "%d", (pet!!.age % 1 * 12).toInt()))
-        mBirthdayET!!.setText(pet!!.birthday)
-        mBreedET!!.setText(pet!!.breed)
-        (mFragView.findViewById<View>(if (pet!!.gender == "male") R.id.male_btn else R.id.female_btn) as RadioButton).toggle()
+        mPetNameET.setText(pet?.name)
+        mYearsET.setText(pet?.birthYear)
+        mMonthsET.setText(pet?.birthMonth)
+        mBreedET!!.setText(pet?.breed)
+        (mFragView.findViewById<View>(if (pet!!.gender == Pet.Gender.MALE) R.id.male_btn else R.id.female_btn) as RadioButton).toggle()
         (mFragView.findViewById<View>(mapSpeciesToId(pet!!.species)) as RadioButton).toggle()
     }
 
-    private fun mapSpeciesToId(species: String?): Int {
+    private fun mapSpeciesToId(species: PetType): Int {
         return when (species) {
-            "dog" -> R.id.dog_btn
-            "cat" -> R.id.cat_btn
+            PetType.DOG -> R.id.dog_btn
+            PetType.CAT -> R.id.cat_btn
             else -> R.id.cat_btn
         }
     }
@@ -147,15 +152,13 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
         val name = mPetNameET.text.toString()
         val years = mYearsET.text.toString()
         val months = mMonthsET.text.toString()
-        val birthday = if (mBirthdayET!!.text == null) "" else mBirthdayET!!.text.toString()
         val breed = if (mBreedET!!.text == null) "" else mBreedET!!.text.toString()
         val genderId = mGenderGroup!!.checkedRadioButtonId
         val speciesId = mSpeciesGroup!!.checkedRadioButtonId
-        val pet = Pet(name, years, months, getGender(genderId), getSpecies(speciesId))
+        val pet = Pet(name, years, months, getGender(genderId), getSpecies(speciesId), "")
         pet.id = petId
         pet.breed = breed
-        pet.birthday = birthday
-        ref.child("pets").child(petId!!).setValue(pet)
+        ref.child("pets").child(petId).setValue(pet)
 
         // change icon on fab
         mSaveEditFab!!.setImageResource(R.drawable.ic_edit_black_24dp)
@@ -169,17 +172,18 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
         mEditing = false
     }
 
-    private fun getGender(id: Int): String {
+    private fun getGender(id: Int): Pet.Gender {
         return when (id) {
-            R.id.male_btn -> "male"
-            else -> "female"
+            R.id.male_btn -> Pet.Gender.MALE
+            else -> Pet.Gender.FEMALE
         }
     }
 
-    private fun getSpecies(id: Int): String {
+    private fun getSpecies(id: Int): PetType {
         return when (id) {
-            R.id.dog_btn -> "dog"
-            else -> "cat"
+            R.id.dog_btn -> PetType.DOG
+            R.id.cat_btn -> PetType.CAT
+            else -> PetType.OTHER
         }
     }
 }

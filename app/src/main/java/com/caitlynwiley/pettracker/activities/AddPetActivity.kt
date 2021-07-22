@@ -1,13 +1,13 @@
 package com.caitlynwiley.pettracker.activities
 
-import android.os.Bundle
-import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.fragments.ChooseAdditionTypeFragment
-import com.google.firebase.auth.FirebaseAuth
 import android.content.Intent
+import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.preference.PreferenceManager
+import com.caitlynwiley.pettracker.R
+import com.caitlynwiley.pettracker.views.fragments.ChooseAdditionTypeFragment
+import com.google.firebase.auth.FirebaseAuth
 
 class AddPetActivity : BaseActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {

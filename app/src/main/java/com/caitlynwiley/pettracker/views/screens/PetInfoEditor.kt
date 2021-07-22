@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.screens
+package com.caitlynwiley.pettracker.views.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -11,6 +11,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.caitlynwiley.pettracker.TextRadioButton
+import com.caitlynwiley.pettracker.models.Pet
+import com.caitlynwiley.pettracker.models.Pet.Gender
 
 @Composable
 fun PetInfoEditor() {

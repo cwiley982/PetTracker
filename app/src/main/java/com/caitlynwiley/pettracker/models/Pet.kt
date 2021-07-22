@@ -1,51 +1,68 @@
 package com.caitlynwiley.pettracker.models
 
+import com.caitlynwiley.pettracker.views.screens.PetType
 import com.google.gson.annotations.SerializedName
 
 class Pet {
     @SerializedName("species")
-    var species: String? = null
+    var species: PetType = PetType.OTHER
 
     @SerializedName("breed")
-    var breed: String? = null
+    var breed: String = ""
 
     @SerializedName("name")
     var name: String = ""
 
     @SerializedName("age")
-    var age = 0.0
+    var age: String = ""
         private set
 
-    @SerializedName("birthday")
-    var birthday: String = ""
+    @SerializedName("birthMonth")
+    var birthMonth: String = ""
+
+    @SerializedName("birthYear")
+    var birthYear: String = ""
 
     @SerializedName("gender")
-    var gender: String? = null
+    var gender: Gender = Gender.UNKNOWN
         private set
 
     @SerializedName("id")
-    var id: String? = null
+    var id: String = ""
 
     @SerializedName("primaryOwnerName")
     var primaryOwnerName: String = ""
 
     constructor()
 
-    constructor(name: String, years: String, months: String, gender: String, species: String) {
+    constructor(name: String, birthYear: String, birthMonth: String, gender: Gender, species: PetType, breed: String) {
         this.name = name
-        setAge(years, months)
-        setGender(gender)
-        this.species = species
-    }
-
-    private fun setAge(y: String, m: String) {
-        val years = y.toInt().toDouble()
-        val months = m.toInt().toDouble()
-        age = years + months / 12.0
-    }
-
-    private fun setGender(gender: String) {
+        this.birthMonth = birthMonth
+        this.birthYear = birthYear
+        calculateAge(birthYear, birthMonth)
         this.gender = gender
+        this.species = species
+        this.breed = breed
+    }
+
+    private fun calculateAge(year: String, month: String) {
+        val birthYear = year.toInt()
+        val birthMonth = month.toInt()
+        // TODO: make this not hard-coded
+        val currentYear = 2021
+        val currentMonth = 7
+        var ageMonths = currentMonth - birthMonth
+        var ageYears = currentYear - birthYear
+        if (ageMonths < 0) {
+            ageYears--
+            ageMonths += 12
+        }
+        age = "$ageYears year${if (ageYears > 1) "s" else ""}" +
+                when (ageMonths) {
+                    0 -> ""
+                    1 -> " $ageMonths month"
+                    else -> " $ageMonths months"
+                }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -57,6 +74,12 @@ class Pet {
     }
 
     override fun hashCode(): Int {
-        return id?.hashCode() ?: 0
+        return id.hashCode()
+    }
+
+    enum class Gender {
+        @SerializedName("male") MALE,
+        @SerializedName("female") FEMALE,
+        @SerializedName("unknown") UNKNOWN
     }
 }

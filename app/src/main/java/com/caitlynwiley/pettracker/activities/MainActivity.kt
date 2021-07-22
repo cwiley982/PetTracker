@@ -8,24 +8,20 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import com.caitlynwiley.pettracker.FirebaseApi
 import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.fragments.ManagePetsFragment
-import com.caitlynwiley.pettracker.fragments.SettingsFragment
-import com.caitlynwiley.pettracker.fragments.TrackerFragment
 import com.caitlynwiley.pettracker.models.Account
 import com.caitlynwiley.pettracker.models.Pet
+import com.caitlynwiley.pettracker.repository.PetTrackerRepository
+import com.caitlynwiley.pettracker.views.fragments.ManagePetsFragment
+import com.caitlynwiley.pettracker.views.fragments.SettingsFragment
+import com.caitlynwiley.pettracker.views.fragments.TrackerFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.GsonBuilder
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : BaseActivity() {
     private lateinit var mDrawerLayout : DrawerLayout

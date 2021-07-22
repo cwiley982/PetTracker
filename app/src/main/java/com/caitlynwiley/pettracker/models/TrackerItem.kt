@@ -36,10 +36,8 @@ class TrackerItem {
     @SerializedName("utcmillis")
     private var utcMillis: Long = 0
 
-    @get:Exclude
-    @SerializedName("type")
-    var typeAsEnum: EventType? = null
-        private set
+    @SerializedName("event_type")
+    var eventType: EventType? = null
 
     @SerializedName("walk_length")
     private var walkLength: WalkLength? = null
@@ -74,22 +72,17 @@ class TrackerItem {
     @Exclude
     @TargetApi(24)
     fun setLocalTime() {
-        val c = Calendar.getInstance()
+        val c = getInstance()
         c.timeInMillis = utcMillis
         localTime = String.format(Locale.US, "%d:%02d %s", if (c[HOUR] == 0) 12 else c[HOUR],
                 c[MINUTE], if (c[AM_PM] == AM) "am" else "pm")
     }
 
-    fun getUtcMillis(): Long {
-        return utcMillis
-    }
-
-    // default for now
     @get:Exclude
     val drawableResId: Int
         get() {
             if (itemType.equals("day", ignoreCase = true)) return -1
-            when (typeAsEnum) {
+            when (eventType) {
                 EventType.POTTY -> return R.drawable.ic_dog_poop_64dp
                 EventType.FEED -> return R.drawable.ic_dog_bowl_64dp
                 EventType.WALK -> return R.drawable.ic_dog_walk_64dp
@@ -97,29 +90,8 @@ class TrackerItem {
             return R.drawable.ic_clock_black_24dp // default for now
         }
 
-    // these methods are a Firebase 9.0.0 hack to handle the enum
-    fun getType(): String? {
-        return if (typeAsEnum == null) {
-            null
-        } else {
-            typeAsEnum!!.name
-        }
-    }
-
-    fun setType(type: String?) {
-        if (type == null) {
-            typeAsEnum = null
-        } else {
-            typeAsEnum = EventType.valueOf(type)
-        }
-    }
-
     fun setWalkLength(hours: Int, minutes: Int) {
         walkLength = WalkLength(hours, minutes)
-    }
-
-    fun setPrettyDate(prettyDate: String?) {
-        this.prettyDate = prettyDate
     }
 
     fun getPrettyDate(context: Context): String {
@@ -130,7 +102,9 @@ class TrackerItem {
     }
 
     enum class EventType {
-        POTTY, WALK, FEED
+        @SerializedName("potty") POTTY,
+        @SerializedName("walk") WALK,
+        @SerializedName("feed") FEED
     }
 
     class Builder {
@@ -177,13 +151,13 @@ class TrackerItem {
             return this
         }
 
-        fun setItemType(type: String?): Builder {
+        fun setItemType(type: String): Builder {
             item.itemType = type
             return this
         }
 
-        fun setType(type: EventType): Builder {
-            item.setType(type.name)
+        fun setEventType(type: EventType): Builder {
+            item.eventType = type
             return this
         }
 

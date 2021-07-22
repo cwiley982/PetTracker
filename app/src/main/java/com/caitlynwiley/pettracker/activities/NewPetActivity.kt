@@ -16,11 +16,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.caitlynwiley.pettracker.PetTrackerTheme
-import com.caitlynwiley.pettracker.screens.AddByIdScreen
-import com.caitlynwiley.pettracker.screens.ConfirmPetScreen
-import com.caitlynwiley.pettracker.screens.PetInfoEntryScreen
-import com.caitlynwiley.pettracker.screens.SpeciesSelectorScreen
+import com.caitlynwiley.pettracker.repository.PetTrackerRepository
+import com.caitlynwiley.pettracker.viewmodel.PTViewModelFactory
+import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
 import com.caitlynwiley.pettracker.viewmodel.PetTrackerViewModel
+import com.caitlynwiley.pettracker.views.screens.AddByIdScreen
+import com.caitlynwiley.pettracker.views.screens.ConfirmPetScreen
+import com.caitlynwiley.pettracker.views.screens.PetInfoEntryScreen
+import com.caitlynwiley.pettracker.views.screens.SpeciesSelectorScreen
 
 class NewPetActivity: ComponentActivity() {
 
