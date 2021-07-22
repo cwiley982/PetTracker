@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.fragments
+package com.caitlynwiley.pettracker.views.fragments
 
 import android.content.Intent
 import android.os.AsyncTask
@@ -11,13 +11,16 @@ import android.widget.EditText
 import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import com.caitlynwiley.pettracker.FirebaseApi
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.activities.MainActivity
 import com.caitlynwiley.pettracker.models.Pet
+import com.caitlynwiley.pettracker.repository.FirebaseApi
+import com.caitlynwiley.pettracker.views.screens.PetType
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException

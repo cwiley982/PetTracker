@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker
+package com.caitlynwiley.pettracker.repository
 
 import com.caitlynwiley.pettracker.models.Account
 import com.caitlynwiley.pettracker.models.Pet

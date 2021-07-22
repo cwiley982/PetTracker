@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.fragments
+package com.caitlynwiley.pettracker.views.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,14 +12,20 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.models.Pet
-import com.caitlynwiley.pettracker.screens.PetInfoEditor
+import com.caitlynwiley.pettracker.repository.FirebaseApi
+import com.caitlynwiley.pettracker.repository.PetTrackerRepository
+import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
+import com.caitlynwiley.pettracker.views.screens.PetInfoEditor
+import com.caitlynwiley.pettracker.views.screens.PetType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.util.*
+import com.google.gson.GsonBuilder
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class ManagePetsFragment : Fragment(), View.OnClickListener {
     private lateinit var mFragView: View

@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.screens
+package com.caitlynwiley.pettracker.views.screens
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
@@ -7,15 +7,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.caitlynwiley.pettracker.FirebaseApi
 import com.caitlynwiley.pettracker.activities.MainActivity
 import com.caitlynwiley.pettracker.models.Pet
+import com.caitlynwiley.pettracker.repository.FirebaseApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.GsonBuilder
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

@@ -1,17 +1,17 @@
-package com.caitlynwiley.pettracker.fragments
+package com.caitlynwiley.pettracker.views.fragments
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.os.Bundle
-import com.caitlynwiley.pettracker.R
-import android.widget.EditText
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.auth.FirebaseAuth
 import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.activities.MainActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class AddByIdFragment : Fragment() {
     private var mFragView: View? = null

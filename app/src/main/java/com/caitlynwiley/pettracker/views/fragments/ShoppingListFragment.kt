@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.fragments
+package com.caitlynwiley.pettracker.views.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.fragments.ShoppingListFragment.MyAdapter.MyViewHolder
+import com.caitlynwiley.pettracker.views.fragments.ShoppingListFragment.MyAdapter.MyViewHolder
 import java.util.*
 
 class ShoppingListFragment : Fragment() {

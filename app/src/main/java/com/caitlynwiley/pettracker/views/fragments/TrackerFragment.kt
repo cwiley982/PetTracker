@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.fragments
+package com.caitlynwiley.pettracker.views.fragments
 
 import android.content.DialogInterface
 import android.os.AsyncTask
@@ -17,20 +17,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.caitlynwiley.pettracker.EventAdapter
-import com.caitlynwiley.pettracker.FirebaseApi
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.SwipeToDeleteHelper
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.TrackerItem
+import com.caitlynwiley.pettracker.repository.FirebaseApi
+import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.GsonBuilder
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.runBlocking
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
