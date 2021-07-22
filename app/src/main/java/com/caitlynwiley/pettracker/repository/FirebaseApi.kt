@@ -3,34 +3,29 @@ package com.caitlynwiley.pettracker.repository
 import com.caitlynwiley.pettracker.models.Account
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.TrackerItem
-import retrofit2.Call
 import retrofit2.http.*
 
 interface FirebaseApi {
-    @GET("/users/{uid}/num_pets.json")
-    fun getNumPets(@Path("uid") uid: String?): Call<Int?>
-
     @POST("/pets/{id}/events")
-    fun addItemToTracker(@Path("id") petId: String?,
-                         @Body item: TrackerItem?): Call<Void?>
+    suspend fun addItemToTracker(@Path("id") petId: String?, @Body item: TrackerItem?): Void?
 
     @GET("/users/{uid}/pets.json")
-    fun getPets(@Path("uid") uid: String?): Call<Map<String?, Boolean?>?>
+    suspend fun getPets(@Path("uid") uid: String): Map<String, Boolean>?
 
     @GET("/pets/{id}.json")
-    fun getPet(@Path("id") petId: String?): Call<Pet?>
+    suspend fun getPet(@Path("id") petId: String?): Pet?
 
     @PUT("/pets/{id}.json")
-    fun addPet(@Path("id") id: String?, @Body p: Pet?): Call<Void?>
+    suspend fun addPet(@Path("id") id: String?, @Body p: Pet?): Void?
 
     @GET("/pets/{id}/events.json")
-    fun getEvents(@Path("id") petId: String?): Call<Map<String?, TrackerItem?>?>
+    suspend fun getEvents(@Path("id") petId: String?): Map<String?, TrackerItem?>?
 
     @PUT("/pets/{petId}/events/{eventId}.json")
-    fun addEvent(@Path("petId") petId: String?, @Path("eventId") dayId: String?, @Body event: TrackerItem?): Call<Void?>
+    suspend fun addEvent(@Path("petId") petId: String?, @Path("eventId") dayId: String?, @Body event: TrackerItem?): Void?
 
     @GET("/users/{userId}")
-    fun getUser(@Path("userId") userId: String?): Call<Account?>
+    suspend fun getUser(@Path("userId") userId: String?): Account?
 
     /*
     To use apis:

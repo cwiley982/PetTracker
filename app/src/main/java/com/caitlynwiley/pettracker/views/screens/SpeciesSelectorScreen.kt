@@ -35,7 +35,7 @@ fun SpeciesSelectorScreen (viewModel: PetTrackerViewModel, navController: NavCon
             overflow = TextOverflow.Visible)
         PetTypeOptions(modifier = Modifier.align(Alignment.Center))
         Button(onClick = { navController.navigate(Screen.AddPetById.route) }) {
-            Text("_Have a pet's ID to enter?_", fontStyle = FontStyle.Italic)
+            Text("Have a pet's ID to enter?", fontStyle = FontStyle.Italic)
         }
         Button(modifier = Modifier.align(Alignment.BottomEnd),
             onClick = { navController.navigate(Screen.EnterPetInfo.route) },

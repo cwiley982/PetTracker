@@ -22,7 +22,7 @@ import com.caitlynwiley.pettracker.activities.Screen
 fun AddByIdScreen(navigator: NavController) {
     var id by remember { mutableStateOf("")}
     Content(id = id, onIdChanged = { id = it }) {
-        navigator.navigate(route = Screen.ConfirmNewPet.route.replace("{id}", it))
+        navigator.navigate(route = Screen.ConfirmNewPet.createRoute(it))
     }
 }
 

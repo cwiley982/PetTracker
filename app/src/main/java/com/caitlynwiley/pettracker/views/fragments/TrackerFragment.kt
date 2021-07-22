@@ -54,7 +54,6 @@ class TrackerFragment : Fragment(), View.OnClickListener {
 
     private var mSwipeRefreshLayout: SwipeRefreshLayout? = null
     private var mAdapter: EventAdapter? = null
-    private val pets = ArrayList<String>()
     private var mUID: String? = null
     private var mUser: FirebaseUser? = null
     private var mIsFabOpen = false
@@ -131,23 +130,17 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         mLetOutFabLabel.setOnClickListener(this)
 
         mSwipeRefreshLayout?.setOnRefreshListener {
-            val api = retrofit.create(FirebaseApi::class.java)
-            api?.getEvents(mPetId)!!.enqueue(object : Callback<Map<String?, TrackerItem?>?> {
-                override fun onResponse(
-                    call: Call<Map<String?, TrackerItem?>?>,
-                    response: Response<Map<String?, TrackerItem?>?>
-                ) {
-                    if (response.body() != null) {
-                        mFragView.findViewById<View>(R.id.no_events_label).visibility = View.GONE
-                        mAdapter!!.setItems(response.body()!!)
-                    } else {
-                        mFragView.findViewById<View>(R.id.no_events_label).visibility = View.VISIBLE
-                    }
+            runBlocking {
+                val response = PetTrackerRepository().getEvents(mPetId)
+                if (response?.keys?.isEmpty() != false) {
+                    mFragView.findViewById<View>(R.id.no_events_label).visibility = View.VISIBLE
+                } else {
+                    mFragView.findViewById<View>(R.id.no_events_label).visibility = View.GONE
+                    mAdapter!!.setItems(response)
                 }
 
-                override fun onFailure(call: Call<Map<String?, TrackerItem?>?>, t: Throwable) {}
-            })
-            mSwipeRefreshLayout?.isRefreshing = false
+                mSwipeRefreshLayout?.isRefreshing = false
+            }
         }
         val recyclerView: RecyclerView = mFragView.findViewById(R.id.tracker_items)
 
@@ -158,23 +151,15 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         mAdapter = EventAdapter(mFragView)
         recyclerView.adapter = mAdapter
         val api = retrofit.create(FirebaseApi::class.java)
-        api?.getPets(mUID)!!.enqueue(object : Callback<Map<String?, Boolean?>?> {
-            override fun onResponse(
-                call: Call<Map<String?, Boolean?>?>,
-                response: Response<Map<String?, Boolean?>?>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    response.body()!!.forEach {
-                        it.key?.let { it1 -> pets.add(it1) }
-                    }
-                    mPetId = pets[0]
-                    items
-                    getPetById(mPetId)
-                }
-            }
-
-            override fun onFailure(call: Call<Map<String?, Boolean?>?>, t: Throwable) {}
-        })
+//        val response = api.getPets(mUID ?: "")
+//        if (response.isSuccessful && response.body() != null) {
+//            response.body()!!.forEach {
+//                it.key?.let { it1 -> pets.add(it1) }
+//            }
+//            mPetId = pets[0]
+//            items
+//            getPetById(mPetId)
+//        }
         val itemTouchHelper = ItemTouchHelper(SwipeToDeleteHelper(mAdapter!!, requireContext()))
         itemTouchHelper.attachToRecyclerView(recyclerView)
         return mFragView
@@ -182,42 +167,27 @@ class TrackerFragment : Fragment(), View.OnClickListener {
 
     private val items: Unit
         get() {
-            val api = retrofit.create(FirebaseApi::class.java)
-            api.getEvents(mPetId)!!.enqueue(object : Callback<Map<String?, TrackerItem?>?> {
-                override fun onResponse(
-                    call: Call<Map<String?, TrackerItem?>?>,
-                    response: Response<Map<String?, TrackerItem?>?>
-                ) {
-                    if (response.isSuccessful) {
-                        if (response.body() != null) {
-                            mAdapter!!.addItems(response.body()!!)
-                        }
-                        Log.d("count", "" + mAdapter!!.itemCount)
-                    } else {
-                        Log.d("body", response.errorBody().toString())
-                        onFailure(call, Throwable(response.message()))
-                    }
-                }
-
-                override fun onFailure(call: Call<Map<String?, TrackerItem?>?>, t: Throwable) {
-                    Log.e("json-error", "Error getting events: " + t.message)
-                }
-            })
+            runBlocking {
+                val response = PetTrackerRepository().getEvents(mPetId)
+                mAdapter!!.addItems(response ?: HashMap())
+                Log.d("count", "" + mAdapter!!.itemCount)
+            }
         }
 
     private fun getPetById(id: String?) {
         val api = retrofit.create(FirebaseApi::class.java)
-        api.getPet(id)!!.enqueue(object : Callback<Pet?> {
-            override fun onResponse(call: Call<Pet?>, response: Response<Pet?>) {
-                if (response.isSuccessful && response.body() != null) {
-                    mPet = response.body()
-                }
-            }
-
-            override fun onFailure(call: Call<Pet?>, t: Throwable) {
-                t.message?.let { Log.d("error", it) }
-            }
-        })
+//        api.getPet(id)!!.enqueue(object : Callback<Pet?> {
+//            override fun onResponse(call: Call<Pet?>, response: Response<Pet?>) {
+//                if (response.isSuccessful && response.body() != null) {
+//                    mPet = response.body()
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<Pet?>, t: Throwable) {
+//                t.message?.let { Log.d("error", it) }
+//            }
+//        })
+        mPet = Pet()
     }
 
     override fun onClick(v: View) {
@@ -441,20 +411,10 @@ class TrackerFragment : Fragment(), View.OnClickListener {
 
     inner class PostEventTask : AsyncTask<TrackerItem, Void?, Void?>() {
         override fun doInBackground(vararg items: TrackerItem): Void? {
-            retrofit.create(FirebaseApi::class.java)
-                .addEvent(items[0].petId, items[0].itemId, items[0])!!
-                .enqueue(object : Callback<Void?> {
-                    override fun onResponse(call: Call<Void?>, response: Response<Void?>) {
-                        if (response.isSuccessful) {
-                            Log.d("addEvent", "Event added")
-                        }
-                    }
-
-                    override fun onFailure(call: Call<Void?>, t: Throwable) {
-                        Log.d("addEvent", "Event add failed")
-                    }
-                })
-            mAdapter!!.addItem(items[0])
+            runBlocking {
+                PetTrackerRepository().addEvent(items[0].petId, items[0].itemId, items[0])
+                mAdapter!!.addItem(items[0])
+            }
             return null
         }
     }

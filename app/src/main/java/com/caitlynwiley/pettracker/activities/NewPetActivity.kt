@@ -27,7 +27,9 @@ import com.caitlynwiley.pettracker.views.screens.SpeciesSelectorScreen
 
 class NewPetActivity: ComponentActivity() {
 
-    private val viewModel by viewModels<PetTrackerViewModel>()
+    private val viewModel by viewModels<PetTrackerViewModel>(
+        factoryProducer = { PTViewModelFactory(PetTrackerRepository()) }
+    )
 
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +60,7 @@ class NewPetActivity: ComponentActivity() {
                 SpeciesSelectorScreen(viewModel = viewModel, navController)
             }
             composable(Screen.EnterPetInfo.route) {
-                PetInfoEntryScreen(viewModel = viewModel, navController)
+                PetInfoEntryScreen(viewModel = PetInfoViewModel(PetTrackerRepository(), ""), navController)
             }
             composable(route = Screen.ConfirmNewPet.route,
                 arguments = listOf(navArgument("id") {type = NavType.StringType})) {
@@ -76,6 +78,8 @@ class NewPetActivity: ComponentActivity() {
 sealed class Screen(val route: String) {
     object SelectSpecies: Screen("selectSpecies")
     object EnterPetInfo: Screen("enterPetInfo")
-    object ConfirmNewPet: Screen("confirmNewPet/{id}")
+    object ConfirmNewPet: Screen("confirmNewPet/{id}") {
+        fun createRoute(petId: String) = "confirmNewPet/$petId"
+    }
     object AddPetById: Screen("addPetById")
 }

@@ -9,31 +9,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.caitlynwiley.pettracker.activities.MainActivity
 import com.caitlynwiley.pettracker.models.Pet
-import com.caitlynwiley.pettracker.repository.FirebaseApi
+import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.GsonBuilder
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
 fun ConfirmPetScreen(id: String, navController: NavController) {
-    var petInfo: Pet? by remember { mutableStateOf(null) }
+    var petInfo: Pet by remember { mutableStateOf(Pet()) }
     val context = LocalContext.current
 
-    val retrofit = Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-        .build()
-    val api = retrofit.create(FirebaseApi::class.java)
-    api?.getPet(id)!!.enqueue(object : Callback<Pet?> {
-        override fun onResponse(call: Call<Pet?>, response: Response<Pet?>) {
-            petInfo = response.body()
-        }
-
-        override fun onFailure(call: Call<Pet?>, t: Throwable) {
-            // no-op
-        }
-    })
+    val repo = PetTrackerRepository()
+//    petInfo = repo.getPet(id)
 
     /*
     TODO: Check if ID is valid before leaving ID entry screen, and then pass pet

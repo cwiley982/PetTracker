@@ -26,9 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.preference.PreferenceManager
-import com.caitlynwiley.pettracker.FirebaseApi
 import com.caitlynwiley.pettracker.PetTrackerTheme
 import com.caitlynwiley.pettracker.R
+import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -42,12 +42,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.GsonBuilder
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 /**
@@ -222,24 +217,19 @@ class LoginActivity : ComponentActivity() {
             Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
             return
         }
-        val gson = GsonBuilder().setLenient().create()
-        val retrofit = Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build()
-        val api = retrofit.create(FirebaseApi::class.java)
-        api.getNumPets(mUser!!.uid)?.enqueue(object : Callback<Int?> {
-            override fun onResponse(call: Call<Int?>, response: Response<Int?>) {
-                if (response.isSuccessful && response.body() != null && response.body() != 0) {
-                    PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().putBoolean("logged_in", true).apply()
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                } else {
-                    PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().putBoolean("creating_pet", true).apply()
-                    startActivity(Intent(this@LoginActivity, NewPetActivity::class.java))
-                }
-            }
 
-            override fun onFailure(call: Call<Int?>, t: Throwable) {}
-        })
+        runBlocking {
+            val numPets = PetTrackerRepository().getNumPets(mUser?.uid)
+            if (numPets == 0) {
+                PreferenceManager.getDefaultSharedPreferences(applicationContext).edit()
+                    .putBoolean("logged_in", true).apply()
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            } else {
+                PreferenceManager.getDefaultSharedPreferences(applicationContext).edit()
+                    .putBoolean("creating_pet", true).apply()
+                startActivity(Intent(this@LoginActivity, NewPetActivity::class.java))
+            }
+        }
     }
 
     private fun emailSignIn(email: String, password: String) {

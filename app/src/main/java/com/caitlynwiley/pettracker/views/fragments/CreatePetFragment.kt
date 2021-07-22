@@ -14,15 +14,12 @@ import androidx.preference.PreferenceManager
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.activities.MainActivity
 import com.caitlynwiley.pettracker.models.Pet
-import com.caitlynwiley.pettracker.repository.FirebaseApi
+import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.caitlynwiley.pettracker.views.screens.PetType
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
 class CreatePetFragment : Fragment() {
@@ -69,16 +66,15 @@ class CreatePetFragment : Fragment() {
 
     internal class AddPetTask : AsyncTask<Pet?, Void?, Void?>() {
         override fun doInBackground(vararg pets: Pet?): Void? {
-            val gson = GsonBuilder()
-                    .setLenient()
-                    .create()
-            val retrofit = Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build()
-            try {
-                retrofit.create(FirebaseApi::class.java).addPet(pets[0]?.id, pets[0])?.execute()
-            } catch (e: IOException) {
-                Log.d("api", "error adding pet")
+            runBlocking {
+                val repo = PetTrackerRepository()
+                launch {
+                    try {
+                        repo.addPet(pets[0]?.id, pets[0])
+                    } catch (e: IOException) {
+                        Log.d("api", "error adding pet")
+                    }
+                }
             }
             return null
         }
