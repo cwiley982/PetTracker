@@ -23,7 +23,6 @@ import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.TrackerItem
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -56,10 +55,9 @@ class TrackerFragment : Fragment(), View.OnClickListener {
     private var mUser: FirebaseUser? = null
     private var mIsFabOpen = false
     private var mPet: Pet? = null
-    private var mPetId: String? = null
+    private var mPetId: String = ""
     private val mLondonTZ: TimeZone = TimeZone.getTimeZone("Europe/London")
 
-    private lateinit var mAuth: FirebaseAuth
     private lateinit var mDatabase : DatabaseReference
 
     override fun onCreateView(
@@ -239,7 +237,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
                 if (mAdapter!!.mostRecentDate != date) {
                     addDayToList(c, mPetId, date)
                 }
-                val id = mDatabase.child("pets").child(mPetId!!).child("events").push().key
+                val id = mDatabase.child("pets").child(mPetId).child("events").push().key
                 val e = TrackerItem.Builder()
                     .setEventType(TrackerItem.EventType.POTTY)
                     .setDate(date)
@@ -287,7 +285,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
                 if (mAdapter!!.mostRecentDate != date) {
                     addDayToList(c, mPetId, date)
                 }
-                val id = mDatabase.child("pets").child(mPetId!!).child("events").push().key
+                val id = mDatabase.child("pets").child(mPetId).child("events").push().key
                 val e = TrackerItem.Builder()
                     .setEventType(TrackerItem.EventType.WALK)
                     .setDate(date)
@@ -343,7 +341,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
                 if (mAdapter!!.mostRecentDate != date) {
                     addDayToList(c, mPetId, date)
                 }
-                val id = mDatabase.child("pets").child(mPetId!!).child("events").push().key
+                val id = mDatabase.child("pets").child(mPetId).child("events").push().key
                 val e = TrackerItem.Builder()
                     .setEventType(TrackerItem.EventType.FEED)
                     .setDate(date)
@@ -359,14 +357,13 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun addDayToList(c: Calendar, petId: String?, date: String) {
+    private fun addDayToList(c: Calendar, petId: String, date: String) {
         val day = TrackerItem.Builder()
             .setDate(date)
             .setItemType("day")
             .setPetId(petId)
             .build()
-        val dayId = mDatabase.child("pets").child(petId!!).child("events").push().key
-        day.itemId = dayId
+        day.itemId = mDatabase.child("pets").child(petId).child("events").push().key!!
         val now = System.currentTimeMillis()
         c.timeInMillis = now
         c[Calendar.HOUR] = 0
