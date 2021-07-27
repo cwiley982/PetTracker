@@ -1,35 +1,26 @@
 package com.caitlynwiley.pettracker.views.fragments
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import androidx.fragment.app.Fragment
-import com.caitlynwiley.pettracker.R
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import com.caitlynwiley.pettracker.activities.Screen
 
-class ChooseAdditionTypeFragment : Fragment() {
-    private lateinit var mFragView: View
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        mFragView = inflater.inflate(R.layout.choose_new_or_existing_pet, container, false)
-
-        val petIdOption = mFragView.findViewById<Button>(R.id.add_existing_button)
-        petIdOption.setOnClickListener {
-            requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.add_pet_frag_view, AddByIdFragment())
-                    .commit()
+@Composable
+fun ChooseAdditionTypeScreen(navController: NavController) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
+        Button(onClick = {navController.navigate(Screen.SelectSpecies.route)} ) {
+            Text("Create new pet")
         }
 
-        val createPetOption = mFragView.findViewById<Button>(R.id.create_new_button)
-        createPetOption.setOnClickListener {
-            requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.add_pet_frag_view, CreatePetFragment())
-                    .commit()
-        }
+        Text("OR")
 
-        return mFragView
+        Button(onClick = {navController.navigate(Screen.AddPetById.route)} ) {
+            Text("Enter a pet ID")
+        }
     }
 }

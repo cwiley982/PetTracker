@@ -11,7 +11,7 @@ class LauncherActivity : BaseActivity() {
             startActivity(Intent(this@LauncherActivity, MainActivity::class.java))
         } else {
             if (PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean("creating_pet", false)) {
-                startActivity(Intent(this@LauncherActivity, AddPetActivity::class.java))
+                startActivity(Intent(this@LauncherActivity, NewPetActivity::class.java))
             } else {
                 startActivity(Intent(this@LauncherActivity, LoginActivity::class.java))
             }

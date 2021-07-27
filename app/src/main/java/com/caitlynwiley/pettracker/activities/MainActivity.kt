@@ -2,6 +2,7 @@ package com.caitlynwiley.pettracker.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
@@ -33,7 +34,7 @@ class MainActivity : BaseActivity() {
     private lateinit var mReference : DatabaseReference
 
     var mAccount : Account? = null
-    var petID : String = "0"
+    var petID : String = ""
     var mPet : Pet? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +49,7 @@ class MainActivity : BaseActivity() {
             mUser = mAuth.currentUser
 
             launch {
+                Log.d("MainActivity#onCreate", "calling getPets()")
                 val pets = PetTrackerRepository().getPets(mUser?.uid ?: "")
                 mPet = pets[0]
             }

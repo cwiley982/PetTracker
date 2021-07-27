@@ -1,6 +1,7 @@
 package com.caitlynwiley.pettracker.views.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +48,7 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
     private var mSpeciesGroup: RadioGroup? = null
     private var mSaveEditFab: FloatingActionButton? = null
     private var mEditing = false
-    private var mUid: String? = null
+    private var mUid: String = ""
     private var petId: String = ""
     private var pet: Pet? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -65,6 +66,7 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
 //        mFragView = inflater.inflate(R.layout.manage_pets_fragment, container, false)
         mUid = mAuth.currentUser!!.uid
         runBlocking {
+            Log.d("ManagePetsFragment#onCreateView", "calling getPets()")
             val response = PetTrackerRepository().getPets(mUid)
             petId = response[0].id
             setUpPetListener()

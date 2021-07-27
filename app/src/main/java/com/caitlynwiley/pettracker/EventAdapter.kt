@@ -12,18 +12,20 @@ import com.caitlynwiley.pettracker.EventAdapter.TrackerViewHolder
 import com.caitlynwiley.pettracker.models.TrackerItem
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
-class EventAdapter(fragView: View) : RecyclerView.Adapter<TrackerViewHolder>() {
-    private var mDataset: ArrayList<TrackerItem?>?
-    private val mRef = FirebaseDatabase.getInstance().reference
+class EventAdapter(private var mFragView: View) : RecyclerView.Adapter<TrackerViewHolder>() {
+
+    private var mDataset: ArrayList<TrackerItem?> = ArrayList()
+    private val mRef = Firebase.database.reference
     private var mRecentlyDeletedItem: TrackerItem? = null
     private var mRecentlyDeletedDate: TrackerItem? = null
     private var mRecentlyDeletedItemPosition = 0
-    private val mFragView: View
-    private val forceDeleteEventVals: MutableList<Int> = ArrayList()
-    private val mContext: Context
+    private val forceDeleteEventVals: List<Int> = listOf(Snackbar.Callback.DISMISS_EVENT_SWIPE,
+            Snackbar.Callback.DISMISS_EVENT_TIMEOUT, Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE)
+    private val mContext: Context = mFragView.context
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -55,7 +57,7 @@ class EventAdapter(fragView: View) : RecyclerView.Adapter<TrackerViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: TrackerViewHolder, position: Int) {
-        val o = mDataset!![position]
+        val o = mDataset[position]
         if (o!!.itemType == "day") {
             holder.dateTextView!!.text = o.getPrettyDate(mContext)
         } else {
@@ -65,15 +67,17 @@ class EventAdapter(fragView: View) : RecyclerView.Adapter<TrackerViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return mDataset!!.size
+        return mDataset.size
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (mDataset!![position]!!.itemType.equals("day", ignoreCase = true)) R.layout.date_header else R.layout.tracker_event
+        return if (mDataset[position]!!.itemType.equals("day", ignoreCase = true))
+            R.layout.date_header
+        else R.layout.tracker_event
     }
 
     fun getItem(i: Int): TrackerItem? {
-        return if (mDataset == null) null else mDataset!![i]
+        return mDataset[i]
     }
 
     override fun getItemId(i: Int): Long {
@@ -81,24 +85,24 @@ class EventAdapter(fragView: View) : RecyclerView.Adapter<TrackerViewHolder>() {
     }
 
     fun deleteItem(position: Int) {
-        mRecentlyDeletedItem = mDataset!![position]
+        mRecentlyDeletedItem = mDataset[position]
         mRecentlyDeletedItemPosition = position
-        mDataset!!.removeAt(position)
+        mDataset.removeAt(position)
         if (deletedLastItemOnDay()) {
-            mRecentlyDeletedDate = mDataset!![position - 1]
-            mDataset!!.removeAt(position - 1)
+            mRecentlyDeletedDate = mDataset[position - 1]
+            mDataset.removeAt(position - 1)
         } else {
             mRecentlyDeletedDate = null
         }
-        notifyDataSetChanged()
+        notifyItemRemoved(position)
         showUndoSnackbar()
     }
 
     private fun deletedLastItemOnDay(): Boolean {
         // if item before is a date (no preceding events) and either deleted item was last in the list
         // or the next item is a new date, then the deleted item was the last one for that date
-        return (mDataset!![mRecentlyDeletedItemPosition - 1]!!.itemType.equals("day", ignoreCase = true)
-                && (mDataset!!.size == mRecentlyDeletedItemPosition || mDataset!![mRecentlyDeletedItemPosition]!!.itemType.equals("day", ignoreCase = true)))
+        return (mDataset[mRecentlyDeletedItemPosition - 1]!!.itemType.equals("day", ignoreCase = true)
+                && (mDataset.size == mRecentlyDeletedItemPosition || mDataset[mRecentlyDeletedItemPosition]!!.itemType.equals("day", ignoreCase = true)))
     }
 
     private fun showUndoSnackbar() {
@@ -110,8 +114,8 @@ class EventAdapter(fragView: View) : RecyclerView.Adapter<TrackerViewHolder>() {
             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
                 if (forceDeleteEventVals.contains(event)) {
-                    mRef.child("pets").child(mRecentlyDeletedItem!!.petId!!).child("events").child(mRecentlyDeletedItem!!.itemId!!).setValue(null)
-                    mRef.child("pets").child(mRecentlyDeletedItem!!.petId!!).child("events").child(mRecentlyDeletedDate!!.itemId!!).setValue(null)
+                    mRef.child("pets").child(mRecentlyDeletedItem!!.petId).child("events").child(mRecentlyDeletedItem!!.itemId).setValue(null)
+                    mRef.child("pets").child(mRecentlyDeletedItem!!.petId).child("events").child(mRecentlyDeletedDate!!.itemId).setValue(null)
                 }
             }
         })
@@ -121,48 +125,36 @@ class EventAdapter(fragView: View) : RecyclerView.Adapter<TrackerViewHolder>() {
     private fun undoDelete() {
         // order below is important, events AT index get shifted right
         if (mRecentlyDeletedDate != null) {
-            mDataset!!.add(mRecentlyDeletedItemPosition - 1, mRecentlyDeletedDate)
+            mDataset.add(mRecentlyDeletedItemPosition - 1, mRecentlyDeletedDate)
         }
-        mDataset!!.add(mRecentlyDeletedItemPosition, mRecentlyDeletedItem)
-        notifyDataSetChanged()
+        mDataset.add(mRecentlyDeletedItemPosition, mRecentlyDeletedItem)
+        notifyItemInserted(mRecentlyDeletedItemPosition)
     }
 
     fun addItem(item: TrackerItem?) {
-        mDataset!!.add(item)
+        mDataset.add(item)
     }
 
     fun addItems(list: Map<String?, TrackerItem?>) {
-        mDataset!!.addAll(list.values)
-        for (item in mDataset!!) {
+        val startSize = mDataset.size
+        mDataset.addAll(list.values)
+        for (item in mDataset) {
             if (item!!.itemType.equals("event", ignoreCase = true)) {
                 item.setLocalTime()
             }
         }
-        notifyDataSetChanged()
+        notifyItemRangeInserted(startSize - 1, list.size)
     }
 
     fun setItems(list: Map<String?, TrackerItem?>) {
         mDataset = ArrayList(list.values)
-        notifyDataSetChanged()
-    }
-
-    fun removeEvent(item: TrackerItem?) {
-        mDataset!!.remove(item)
+        notifyItemRangeInserted(0, list.size)
     }
 
     val mostRecentDate: String?
         get() {
-            if (mDataset!!.size == 0) return ""
-            val lastItem = mDataset!![mDataset!!.size - 1]
+            if (mDataset.isEmpty()) return ""
+            val lastItem = mDataset[mDataset.size - 1]
             return lastItem!!.date
         }
-
-    init {
-        mDataset = ArrayList()
-        mFragView = fragView
-        mContext = fragView.context
-        forceDeleteEventVals.add(Snackbar.Callback.DISMISS_EVENT_SWIPE)
-        forceDeleteEventVals.add(Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
-        forceDeleteEventVals.add(Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE)
-    }
 }

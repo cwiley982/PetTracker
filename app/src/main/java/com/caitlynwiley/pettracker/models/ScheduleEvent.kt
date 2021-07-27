@@ -1,16 +1,8 @@
 package com.caitlynwiley.pettracker.models
 
 import android.widget.Spinner
-import java.util.*
 
-
-class ScheduleEvent(type: Type, title: String, note: String) {
-
-    lateinit var type: Type
-    lateinit var title: String
-    private lateinit var start: Calendar
-    private lateinit var end: Calendar
-    var note: String? = null
+class ScheduleEvent(var type: Type, var title: String, var note: String) {
 
     fun setStartTime(hour: Spinner, minute: Spinner) {
         // TODO
@@ -21,6 +13,6 @@ class ScheduleEvent(type: Type, title: String, note: String) {
     }
 
     enum class Type {
-        WALK, FEED, SLEEP
+        WALK, FEED, SLEEP, OTHER
     }
 }

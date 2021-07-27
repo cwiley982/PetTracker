@@ -21,17 +21,15 @@ import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.SwipeToDeleteHelper
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.TrackerItem
-import com.caitlynwiley.pettracker.repository.FirebaseApi
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.GsonBuilder
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.runBlocking
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 
 class TrackerFragment : Fragment(), View.OnClickListener {
@@ -61,7 +59,6 @@ class TrackerFragment : Fragment(), View.OnClickListener {
     private var mPetId: String? = null
     private val mLondonTZ: TimeZone = TimeZone.getTimeZone("Europe/London")
 
-    private lateinit var retrofit: Retrofit
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDatabase : DatabaseReference
 
@@ -71,13 +68,9 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        retrofit = Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-            .build()
         mFragView = inflater.inflate(R.layout.tracker_fragment, container, false)
-        mDatabase = FirebaseDatabase.getInstance().reference
-        mAuth = FirebaseAuth.getInstance()
-        mUser = mAuth.currentUser
+        mDatabase = Firebase.database.reference
+        mUser = Firebase.auth.currentUser
         mUID = mUser?.uid
 
 //        mMiniAppear.setAnimationListener(object : Animation.AnimationListener {
@@ -150,8 +143,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         // specify an adapter
         mAdapter = EventAdapter(mFragView)
         recyclerView.adapter = mAdapter
-        val api = retrofit.create(FirebaseApi::class.java)
-//        val response = api.getPets(mUID ?: "")
+//        val response = PetTrackerRepository().getPets(mUID ?: "")
 //        if (response.isSuccessful && response.body() != null) {
 //            response.body()!!.forEach {
 //                it.key?.let { it1 -> pets.add(it1) }
@@ -175,8 +167,7 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         }
 
     private fun getPetById(id: String?) {
-        val api = retrofit.create(FirebaseApi::class.java)
-//        api.getPet(id)!!.enqueue(object : Callback<Pet?> {
+//        PetTrackerRepository().getPet(id)!!.enqueue(object : Callback<Pet?> {
 //            override fun onResponse(call: Call<Pet?>, response: Response<Pet?>) {
 //                if (response.isSuccessful && response.body() != null) {
 //                    mPet = response.body()

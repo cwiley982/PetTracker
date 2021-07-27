@@ -12,14 +12,17 @@ import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun ConfirmPetScreen(id: String, navController: NavController) {
-    var petInfo: Pet by remember { mutableStateOf(Pet()) }
+    var petInfo: Pet? by remember { mutableStateOf(null) }
     val context = LocalContext.current
 
     val repo = PetTrackerRepository()
-//    petInfo = repo.getPet(id)
+    runBlocking {
+        petInfo = repo.getPet(id)
+    }
 
     /*
     TODO: Check if ID is valid before leaving ID entry screen, and then pass pet
@@ -29,7 +32,7 @@ fun ConfirmPetScreen(id: String, navController: NavController) {
     if (petInfo == null) {
         InvalidIdError()
     } else {
-        ConfirmationView((petInfo as Pet).name, (petInfo as Pet).primaryOwnerName) {
+        ConfirmationView(petInfo?.name ?: "", petInfo?.primaryOwnerName ?: "") {
             // onConfirmation -> create association between pet and this user
             FirebaseDatabase.getInstance().reference.child("users")
                 .child(FirebaseAuth.getInstance().currentUser!!.uid)

@@ -1,5 +1,6 @@
 package com.caitlynwiley.pettracker.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -30,6 +31,7 @@ class PetTrackerViewModel(
     init {
         viewModelScope.launch(block = {
             // if (uid != null) { // get pet list with uid
+            Log.d("PetTrackerViewModel#init", "calling getPets()")
             _petList.postValue(petTrackerRepository.getPets(""))
         })
     }

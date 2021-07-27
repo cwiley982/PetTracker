@@ -31,26 +31,36 @@ class PetTrackerRepository @Inject constructor(
 //        val cached: Pet = petCache.getPet(id)
 //        if (cached != null) return cached
 
-        // get from api
-        val pet = api.getPet(id)
-//        petCache.put(id, pet)
-        return pet ?: Pet()
+        if (id.isEmpty()) return Pet()
+
+        return try {
+            // get from api
+            val pet = api.getPet(id)
+//            petCache.put(id, pet)
+            pet ?: Pet()
+        } catch (_: KotlinNullPointerException) {
+            Pet()
+        }
     }
 
     suspend fun getAccount(id: String): Account? {
-        return api.getUser(id)
+        return try {
+            api.getUser(id)
+        } catch (_: KotlinNullPointerException) {
+            Account()
+        }
 
         // check cache first
 //        val cached: Account = userCache.getUser(id)
 //        if (cached != null) return cached
 
         // get from api
-//        val account = api.getUser(id).execute()
+//        val account = api.getUser(id)
 //        userCache.put(id, account)
 //        return account
     }
 
-    suspend fun getNumPets(uid: String?): Int {
+    suspend fun getNumPets(uid: String): Int {
         return getPets(uid).size
     }
 
@@ -58,11 +68,13 @@ class PetTrackerRepository @Inject constructor(
         api.addItemToTracker(petId, item)
     }
 
-    suspend fun getPets(uid: String?): List<Pet> {
-        val ids: Map<String, Boolean>? = api.getPets(uid ?: "")
+    suspend fun getPets(uid: String): List<Pet> {
+        if (uid.isEmpty()) return emptyList()
+        val map: Map<String, Boolean> = api.getPets(uid) ?: return emptyList()
+        val ids = map.keys
 
-        val list: List<Pet> = ids?.map { item -> getPet(item.key) } ?: listOf()
-        return list
+        val pets: List<Pet> = ids.map { id -> getPet(id) }
+        return pets
     }
 
     suspend fun addPet(id: String?, p: Pet?) {

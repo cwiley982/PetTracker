@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -26,9 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.preference.PreferenceManager
-import com.caitlynwiley.pettracker.PetTrackerTheme
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
+import com.caitlynwiley.pettracker.theme.PetTrackerTheme
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -38,10 +39,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.*
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
@@ -52,8 +52,6 @@ class LoginActivity : ComponentActivity() {
     private var signInAttempt = 0
     private lateinit var mAuth: FirebaseAuth
     private var mUser: FirebaseUser? = null
-    private lateinit var database: FirebaseDatabase
-    private lateinit var ref: DatabaseReference
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var mCallbackManager: CallbackManager? = null
 
@@ -92,16 +90,13 @@ class LoginActivity : ComponentActivity() {
         }
         */
 
-        FirebaseApp.initializeApp(this)
-        database = FirebaseDatabase.getInstance()
-        ref = database.reference
-
         // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance()
-        mAuth.addAuthStateListener { firebaseAuth: FirebaseAuth ->
-            mUser = firebaseAuth.currentUser
-            updateUI("", "")
-        }
+        mAuth = Firebase.auth
+
+//        mAuth.addAuthStateListener { firebaseAuth: FirebaseAuth ->
+//            mUser = firebaseAuth.currentUser
+//            updateUI("", "")
+//        }
 
         // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -111,8 +106,6 @@ class LoginActivity : ComponentActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         // Configure Facebook Sign In
-        FacebookSdk.setApplicationId(resources.getString(R.string.facebook_app_id))
-        FacebookSdk.sdkInitialize(this.applicationContext)
         mCallbackManager = CallbackManager.Factory.create()
         LoginManager.getInstance().registerCallback(mCallbackManager,
             object : FacebookCallback<LoginResult> {
@@ -122,7 +115,7 @@ class LoginActivity : ComponentActivity() {
                 }
 
                 override fun onCancel() {
-                    Toast.makeText(this@LoginActivity, "Login Cancel", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@LoginActivity, "Login Cancelled", Toast.LENGTH_LONG).show()
                 }
 
                 override fun onError(exception: FacebookException) {
@@ -219,7 +212,7 @@ class LoginActivity : ComponentActivity() {
         }
 
         runBlocking {
-            val numPets = PetTrackerRepository().getNumPets(mUser?.uid)
+            val numPets = mUser?.uid?.let { PetTrackerRepository().getNumPets(it) } ?: 0
             if (numPets == 0) {
                 PreferenceManager.getDefaultSharedPreferences(applicationContext).edit()
                     .putBoolean("logged_in", true).apply()
@@ -258,7 +251,19 @@ class LoginActivity : ComponentActivity() {
 
     private fun googleSignIn() {
         val signInIntent = mGoogleSignInClient!!.signInIntent
-        startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                // Google Sign In was successful, authenticate with Firebase
+                firebaseAuthWithGoogle(account)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Log.w("LoginActivity", "Google sign in failed", e)
+                updateUI(e.message, "")
+            }
+        }.launch(signInIntent)
+//        startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
     }
 
     private fun facebookSignIn() {

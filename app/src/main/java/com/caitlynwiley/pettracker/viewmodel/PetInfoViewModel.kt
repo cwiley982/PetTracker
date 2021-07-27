@@ -19,9 +19,7 @@ class PetInfoViewModel constructor(
     init {
         viewModelScope.launch(block = {
             val p = repository.getPet(petId)
-            if (p != null) {
-                _pet.postValue(p)
-            }
+            _pet.postValue(p)
         })
     }
 }

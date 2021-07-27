@@ -19,10 +19,10 @@ class TrackerItem {
         private set
 
     @SerializedName("item_id")
-    var itemId: String? = null
+    var itemId: String = ""
 
     @SerializedName("item_type")
-    var itemType: String? = null
+    var itemType: String = ""
 
     @SerializedName("month")
     var month = 0
@@ -43,7 +43,7 @@ class TrackerItem {
     private var walkLength: WalkLength? = null
 
     @SerializedName("pet_id")
-    var petId: String? = null
+    var petId: String = ""
 
     @SerializedName("cups_food")
     var cupsFood = 0.0
@@ -55,7 +55,7 @@ class TrackerItem {
     var isNumber2 = false
 
     @SerializedName("pretty_date")
-    private var prettyDate: String? = null
+    private var prettyDate: String = ""
 
     fun setDate(date: String) {
         this.date = date
@@ -122,12 +122,12 @@ class TrackerItem {
         }
 
         fun setId(id: String?): Builder {
-            item.itemId = id
+            item.itemId = id ?: ""
             return this
         }
 
         fun setPetId(id: String?): Builder {
-            item.petId = id
+            item.petId = id ?: ""
             return this
         }
 

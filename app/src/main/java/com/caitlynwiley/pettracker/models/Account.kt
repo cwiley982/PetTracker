@@ -1,43 +1,20 @@
 package com.caitlynwiley.pettracker.models
 
-class Account(userId: String, email: String) {
+import com.google.gson.annotations.SerializedName
 
-    private lateinit var userId: String
-    private var pets: MutableMap<String, Boolean>? = null
-    private lateinit var email: String
+class Account(@SerializedName("user_id") var userId: String,
+              @SerializedName("email") var email: String) {
 
-    init {
-        pets = HashMap()
-        setEmail(email)
-        setUserId(userId)
-    }
+    @SerializedName("pets")
+    var pets: MutableMap<String, Boolean> = HashMap()
+
+    constructor() : this("", "")
 
     fun addPet(id: String) {
-        pets!![id] = true
+        pets[id] = true
     }
 
     fun removePet(id: String) {
-        pets!!.remove(id)
+        pets.remove(id)
     }
-
-    fun getPets() : MutableMap<String, Boolean>? {
-        return pets
-    }
-
-    fun getUserId() : String {
-        return userId
-    }
-
-    private fun setUserId(userId: String) {
-        this.userId = userId
-    }
-
-    fun getEmail() : String {
-        return email
-    }
-
-    private fun setEmail(email: String) {
-        this.email = email
-    }
-
 }
