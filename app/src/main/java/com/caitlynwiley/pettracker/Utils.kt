@@ -9,10 +9,10 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 
 @Composable
-fun TextRadioButton(modifier: Modifier = Modifier, text: String, selected: Boolean, action: () -> Unit) {
+fun TextRadioButton(modifier: Modifier = Modifier, text: String, selected: Boolean, enabled: Boolean, action: () -> Unit) {
     ConstraintLayout(modifier = modifier) {
         val (textField, button) = createRefs()
-        RadioButton(selected = selected, onClick = { action() },
+        RadioButton(selected = selected, onClick = { action() }, enabled = enabled,
             modifier = Modifier.constrainAs(button) {
                 start.linkTo(parent.start)
             }

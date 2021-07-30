@@ -2,7 +2,6 @@ package com.caitlynwiley.pettracker.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
@@ -19,8 +18,10 @@ import com.caitlynwiley.pettracker.views.fragments.TrackerFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -30,7 +31,6 @@ class MainActivity : BaseActivity() {
     private var mNavHeader : View? = null
     private var mUser : FirebaseUser? = null
     private lateinit var mAuth : FirebaseAuth
-    private lateinit var mDatabase : FirebaseDatabase
     private lateinit var mReference : DatabaseReference
 
     var mAccount : Account? = null
@@ -43,13 +43,11 @@ class MainActivity : BaseActivity() {
 
             setContentView(R.layout.activity_main)
 
-            mDatabase = FirebaseDatabase.getInstance()
-            mReference = mDatabase.reference
-            mAuth = FirebaseAuth.getInstance()
+            mReference = Firebase.database.reference
+            mAuth = Firebase.auth
             mUser = mAuth.currentUser
 
             launch {
-                Log.d("MainActivity#onCreate", "calling getPets()")
                 val pets = PetTrackerRepository().getPets(mUser?.uid ?: "")
                 mPet = pets[0]
             }

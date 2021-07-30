@@ -95,10 +95,10 @@ class TrackerItem {
     }
 
     fun getPrettyDate(context: Context): String {
-        if (prettyDate == null) {
+        if (prettyDate.isEmpty()) {
             prettyDate = String.format(Locale.US, "%s %d", context.resources.getStringArray(R.array.months)[month - 1], day)
         }
-        return prettyDate as String
+        return prettyDate
     }
 
     enum class EventType {

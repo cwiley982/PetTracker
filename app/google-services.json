@@ -15,27 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "435874035873-3annhkdt06j0pkbl0lsbqim57qa61apr.apps.googleusercontent.com",
+          "client_id": "435874035873-9ro7pdridu5aakmbkl12jla893rejop4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.caitlynwiley.pettracker",
-            "certificate_hash": "e1333c96ec186d1075a206d0bc84b57605a7de2f"
+            "certificate_hash": "982a79585b5212beb71828c245759b962ad2b11a"
           }
         },
         {
-          "client_id": "435874035873-icmmsbi2joh83f74p18qfl2sq0uc8ulg.apps.googleusercontent.com",
+          "client_id": "435874035873-qaijegrqq2dp59de6ru4pa9caq8uv9bt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.caitlynwiley.pettracker",
-            "certificate_hash": "dbdb55d9db421e92e4402c3a5639d29675a6f8a3"
-          }
-        },
-        {
-          "client_id": "435874035873-j5d4uklrvqjgpksuu1ocjlk1kd3acaju.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.caitlynwiley.pettracker",
-            "certificate_hash": "466e13707d2a7ef904bfe7edc709772c2e7f7319"
+            "certificate_hash": "DC0048D3459CF2208FF7F7B26DFF21187F8014D6"
           }
         },
         {
