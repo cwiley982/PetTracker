@@ -14,7 +14,7 @@ import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import kotlinx.coroutines.launch
 
 class PetTrackerViewModel(
-    petTrackerRepository: PetTrackerRepository
+    private val repository: PetTrackerRepository
 ): ViewModel() {
 
     private var currentPetIndex by mutableStateOf(0)
@@ -29,11 +29,11 @@ class PetTrackerViewModel(
         get() = petList.value?.getOrNull(currentPetIndex)
 
     init {
-        viewModelScope.launch(block = {
+        viewModelScope.launch {
             // if (uid != null) { // get pet list with uid
             Log.d("PetTrackerViewModel#init", "calling getPets()")
-            _petList.postValue(petTrackerRepository.getPets(""))
-        })
+            _petList.postValue(repository.getPets(""))
+        }
     }
 
     fun onPetSelected(pet: Pet) {

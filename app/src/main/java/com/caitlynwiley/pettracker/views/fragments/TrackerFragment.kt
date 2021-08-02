@@ -1,17 +1,19 @@
 package com.caitlynwiley.pettracker.views.fragments
 
 import android.content.DialogInterface
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,27 +21,27 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.caitlynwiley.pettracker.EventAdapter
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.SwipeToDeleteHelper
-import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.TrackerItem
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
+import com.caitlynwiley.pettracker.viewmodel.TrackerViewModel
+import com.caitlynwiley.pettracker.viewmodel.TrackerViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.runBlocking
+import org.apache.commons.text.RandomStringGenerator
 import java.util.*
 
 class TrackerFragment : Fragment(), View.OnClickListener {
     private lateinit var mFragView: View
 
-//    private val mRotateForward: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_spin_forward)
-//    private val mRotateBackward: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_spin_backward)
-//    private val mMiniAppear: Animation = AnimationUtils.loadAnimation(context, R.anim.mini_fab_appear)
-//    private val mMiniDisappear: Animation = AnimationUtils.loadAnimation(context, R.anim.mini_fab_disappear)
-//    private val mLabelAppear: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_label_appear)
-//    private val mLabelDisappear: Animation = AnimationUtils.loadAnimation(context, R.anim.fab_label_disappear)
+    private val viewModel by viewModels<TrackerViewModel>(
+        factoryProducer = { TrackerViewModelFactory(PetTrackerRepository(), "") }
+    )
+
+    private lateinit var mRotateForward: Animation
+    private lateinit var mRotateBackward: Animation
+    private lateinit var mMiniAppear: Animation
+    private lateinit var mMiniDisappear: Animation
+    private lateinit var mLabelAppear: Animation
+    private lateinit var mLabelDisappear: Animation
 
     private lateinit var mPottyFabLabel: TextView
     private lateinit var mFeedFabLabel: TextView
@@ -50,15 +52,12 @@ class TrackerFragment : Fragment(), View.OnClickListener {
     private lateinit var mLetOutFab: FloatingActionButton
 
     private var mSwipeRefreshLayout: SwipeRefreshLayout? = null
-    private var mAdapter: EventAdapter? = null
-    private var mUID: String? = null
-    private var mUser: FirebaseUser? = null
+    private lateinit var mAdapter: EventAdapter
     private var mIsFabOpen = false
-    private var mPet: Pet? = null
-    private var mPetId: String = ""
-    private val mLondonTZ: TimeZone = TimeZone.getTimeZone("Europe/London")
 
-    private lateinit var mDatabase : DatabaseReference
+    private val randomStringGenerator: RandomStringGenerator =
+        RandomStringGenerator.Builder().withinRange(charArrayOf('0', '9'), charArrayOf('a', 'z'),
+            charArrayOf('A', 'Z')).build()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,37 +66,41 @@ class TrackerFragment : Fragment(), View.OnClickListener {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         mFragView = inflater.inflate(R.layout.tracker_fragment, container, false)
-        mDatabase = Firebase.database.reference
-        mUser = Firebase.auth.currentUser
-        mUID = mUser?.uid
 
-//        mMiniAppear.setAnimationListener(object : Animation.AnimationListener {
-//            override fun onAnimationStart(animation: Animation) {}
-//            override fun onAnimationEnd(animation: Animation) {
-//                mPottyFab.visibility = View.VISIBLE
-//                mLetOutFab.visibility = View.VISIBLE
-//                mFeedFab.visibility = View.VISIBLE
-//                mPottyFabLabel.visibility = View.VISIBLE
-//                mLetOutFabLabel.visibility = View.VISIBLE
-//                mFeedFabLabel.visibility = View.VISIBLE
-//            }
-//
-//            override fun onAnimationRepeat(animation: Animation) {}
-//        })
+        mRotateForward = AnimationUtils.loadAnimation(context, R.anim.fab_spin_forward)
+        mRotateBackward = AnimationUtils.loadAnimation(context, R.anim.fab_spin_backward)
+        mMiniAppear = AnimationUtils.loadAnimation(context, R.anim.mini_fab_appear)
+        mMiniDisappear = AnimationUtils.loadAnimation(context, R.anim.mini_fab_disappear)
+        mLabelAppear = AnimationUtils.loadAnimation(context, R.anim.fab_label_appear)
+        mLabelDisappear = AnimationUtils.loadAnimation(context, R.anim.fab_label_disappear)
 
-//        mMiniDisappear.setAnimationListener(object : Animation.AnimationListener {
-//            override fun onAnimationStart(animation: Animation) {}
-//            override fun onAnimationEnd(animation: Animation) {
-//                mPottyFab.visibility = View.GONE
-//                mLetOutFab.visibility = View.GONE
-//                mFeedFab.visibility = View.GONE
-//                mPottyFabLabel.visibility = View.GONE
-//                mLetOutFabLabel.visibility = View.GONE
-//                mFeedFabLabel.visibility = View.GONE
-//            }
-//
-//            override fun onAnimationRepeat(animation: Animation) {}
-//        })
+        mRotateForward.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                mPottyFab.visibility = View.VISIBLE
+                mLetOutFab.visibility = View.VISIBLE
+                mFeedFab.visibility = View.VISIBLE
+                mPottyFabLabel.visibility = View.VISIBLE
+                mLetOutFabLabel.visibility = View.VISIBLE
+                mFeedFabLabel.visibility = View.VISIBLE
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+
+        mRotateBackward.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                mPottyFab.visibility = View.GONE
+                mLetOutFab.visibility = View.GONE
+                mFeedFab.visibility = View.GONE
+                mPottyFabLabel.visibility = View.GONE
+                mLetOutFabLabel.visibility = View.GONE
+                mFeedFabLabel.visibility = View.GONE
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
 
         mIsFabOpen = false
 
@@ -120,63 +123,36 @@ class TrackerFragment : Fragment(), View.OnClickListener {
         mFeedFabLabel.setOnClickListener(this)
         mLetOutFabLabel.setOnClickListener(this)
 
+        // setup swipe-to-refresh logic
         mSwipeRefreshLayout?.setOnRefreshListener {
-            runBlocking {
-                val response = PetTrackerRepository().getEvents(mPetId)
-                if (response?.keys?.isEmpty() != false) {
-                    mFragView.findViewById<View>(R.id.no_events_label).visibility = View.VISIBLE
-                } else {
-                    mFragView.findViewById<View>(R.id.no_events_label).visibility = View.GONE
-                    mAdapter!!.setItems(response)
-                }
-
-                mSwipeRefreshLayout?.isRefreshing = false
-            }
+            mSwipeRefreshLayout?.isRefreshing = true
+            viewModel.forceRefreshEvents()
         }
-        val recyclerView: RecyclerView = mFragView.findViewById(R.id.tracker_items)
 
-        // use a linear layout manager
+        val recyclerView: RecyclerView = mFragView.findViewById(R.id.tracker_items)
         recyclerView.layoutManager = LinearLayoutManager(mFragView.context)
 
         // specify an adapter
-        mAdapter = EventAdapter(mFragView)
+        mAdapter = EventAdapter(mFragView, viewModel)
         recyclerView.adapter = mAdapter
-//        val response = PetTrackerRepository().getPets(mUID ?: "")
-//        if (response.isSuccessful && response.body() != null) {
-//            response.body()!!.forEach {
-//                it.key?.let { it1 -> pets.add(it1) }
-//            }
-//            mPetId = pets[0]
-//            items
-//            getPetById(mPetId)
-//        }
-        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteHelper(mAdapter!!, requireContext()))
-        itemTouchHelper.attachToRecyclerView(recyclerView)
-        return mFragView
-    }
-
-    private val items: Unit
-        get() {
-            runBlocking {
-                val response = PetTrackerRepository().getEvents(mPetId)
-                mAdapter!!.addItems(response ?: HashMap())
-                Log.d("count", "" + mAdapter!!.itemCount)
-            }
+        viewModel.trackerItems.observe(viewLifecycleOwner) {
+            mAdapter.setItems(it)
+            Log.d("count", "" + mAdapter.itemCount)
+            mSwipeRefreshLayout?.isRefreshing = false
         }
 
-    private fun getPetById(id: String?) {
-//        PetTrackerRepository().getPet(id)!!.enqueue(object : Callback<Pet?> {
-//            override fun onResponse(call: Call<Pet?>, response: Response<Pet?>) {
-//                if (response.isSuccessful && response.body() != null) {
-//                    mPet = response.body()
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<Pet?>, t: Throwable) {
-//                t.message?.let { Log.d("error", it) }
-//            }
-//        })
-        mPet = Pet()
+        viewModel.emptyLabelVisible.observe(viewLifecycleOwner) {
+            Log.d("TrackerFragment", "changing visibility of 'no events' label to " +
+                    "-${if (it) View.VISIBLE else View.GONE}-")
+            mFragView.findViewById<View>(R.id.no_events_label).visibility =
+                if (it) View.VISIBLE else View.GONE
+        }
+
+        // setup swipe-to-delete and undo logic
+        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteHelper(mAdapter, requireContext()))
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+
+        return mFragView
     }
 
     override fun onClick(v: View) {
@@ -234,21 +210,20 @@ class TrackerFragment : Fragment(), View.OnClickListener {
                     c[Calendar.MONTH] + 1, c[Calendar.DAY_OF_MONTH],
                     c[Calendar.YEAR]
                 )
-                if (mAdapter!!.mostRecentDate != date) {
-                    addDayToList(c, mPetId, date)
+                if (mAdapter.mostRecentDate != date) {
+                    addDayToList(c, viewModel.pet.value?.id ?: "", date)
                 }
-                val id = mDatabase.child("pets").child(mPetId).child("events").push().key
                 val e = TrackerItem.Builder()
                     .setEventType(TrackerItem.EventType.POTTY)
                     .setDate(date)
                     .setMillis(System.currentTimeMillis())
                     .setNumber1(num1)
                     .setNumber2(num2)
-                    .setPetId(mPetId)
+                    .setPetId(viewModel.pet.value?.id ?: "")
                     .setItemType("event")
-                    .setId(id)
+                    .setId(randomStringGenerator.generate(30))
                     .build()
-                PostEventTask().execute(e)
+                viewModel.addTrackerItem(e)
             }
             .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             .create()
@@ -282,20 +257,19 @@ class TrackerFragment : Fragment(), View.OnClickListener {
                     c[Calendar.MONTH] + 1, c[Calendar.DAY_OF_MONTH],
                     c[Calendar.YEAR]
                 )
-                if (mAdapter!!.mostRecentDate != date) {
-                    addDayToList(c, mPetId, date)
+                if (mAdapter.mostRecentDate != date) {
+                    addDayToList(c, viewModel.pet.value?.id ?: "", date)
                 }
-                val id = mDatabase.child("pets").child(mPetId).child("events").push().key
                 val e = TrackerItem.Builder()
                     .setEventType(TrackerItem.EventType.WALK)
                     .setDate(date)
                     .setMillis(System.currentTimeMillis())
                     .setWalkLength(hours, mins)
-                    .setPetId(mPetId)
+                    .setPetId(viewModel.pet.value?.id ?: "")
                     .setItemType("event")
-                    .setId(id)
+                    .setId(randomStringGenerator.generate(30))
                     .build()
-                PostEventTask().execute(e)
+                viewModel.addTrackerItem(e)
             }
             .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             .create()
@@ -305,15 +279,19 @@ class TrackerFragment : Fragment(), View.OnClickListener {
     private fun trackFeed() {
         val v = layoutInflater.inflate(R.layout.track_meal_dialog, null)
         v.findViewById<View>(R.id.error_msg).visibility = View.GONE
-        //((RadioButton) v.findViewById(R.id.pet0)).setText(mPet.getName());
-        val alertDialog = AlertDialog.Builder(
-            requireContext()
-        )
+        val alertDialog = AlertDialog.Builder(requireContext())
             .setView(v)
             .setPositiveButton(R.string.save, null) // set below
             .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             .create()
         alertDialog.show()
+        /*
+            IMPORTANT: This listener has to be set after creating the alert dialog so that it can
+            reference it to find the error message view, otherwise it can't find it. Also, the
+            onClick listener here doesn't make the button default to dismissing the dialog, so when
+            the input is invalid it won't automatically dismiss the dialog so the error message can
+            actually be seen.
+         */
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
             val cups = alertDialog.findViewById<EditText>(R.id.num_cups)
             if (cups!!.text.isEmpty() || cups.text.toString() == "0") {
@@ -338,21 +316,19 @@ class TrackerFragment : Fragment(), View.OnClickListener {
                     c[Calendar.MONTH] + 1, c[Calendar.DAY_OF_MONTH],
                     c[Calendar.YEAR]
                 )
-                if (mAdapter!!.mostRecentDate != date) {
-                    addDayToList(c, mPetId, date)
+                if (mAdapter.mostRecentDate != date) {
+                    addDayToList(c, viewModel.pet.value?.id ?: "", date)
                 }
-                val id = mDatabase.child("pets").child(mPetId).child("events").push().key
                 val e = TrackerItem.Builder()
                     .setEventType(TrackerItem.EventType.FEED)
                     .setDate(date)
                     .setMillis(System.currentTimeMillis())
                     .setCupsFood(cupsFood)
-                    .setPetId(mPetId)
+                    .setPetId(viewModel.pet.value?.id ?: "")
                     .setItemType("event")
-                    .setId(id)
+                    .setId(randomStringGenerator.generate(30))
                     .build()
-                PostEventTask().execute(e)
-                alertDialog.dismiss()
+                viewModel.addTrackerItem(e)
             }
         }
     }
@@ -362,48 +338,38 @@ class TrackerFragment : Fragment(), View.OnClickListener {
             .setDate(date)
             .setItemType("day")
             .setPetId(petId)
+            .setId(randomStringGenerator.generate(30))
             .build()
-        day.itemId = mDatabase.child("pets").child(petId).child("events").push().key!!
         val now = System.currentTimeMillis()
         c.timeInMillis = now
         c[Calendar.HOUR] = 0
         c[Calendar.MINUTE] = 0
         c[Calendar.SECOND] = 0
         c[Calendar.MILLISECOND] = 0
-        c.add(Calendar.MILLISECOND, mLondonTZ.getOffset(now))
+        c.add(Calendar.MILLISECOND, viewModel.gmtTimeZone.getOffset(now))
         day.setUtcMillis(c.timeInMillis)
-        PostEventTask().execute(day)
+        viewModel.addTrackerItem(day)
     }
 
     private fun openFab() {
-//        mTrackerFab.startAnimation(mRotateForward)
-//        mLetOutFab.startAnimation(mMiniAppear)
-//        mPottyFab.startAnimation(mMiniAppear)
-//        mFeedFab.startAnimation(mMiniAppear)
-//        mPottyFabLabel.startAnimation(mLabelAppear)
-//        mFeedFabLabel.startAnimation(mLabelAppear)
-//        mLetOutFabLabel.startAnimation(mLabelAppear)
+        mTrackerFab.startAnimation(mRotateForward)
+        mLetOutFab.startAnimation(mMiniAppear)
+        mPottyFab.startAnimation(mMiniAppear)
+        mFeedFab.startAnimation(mMiniAppear)
+        mPottyFabLabel.startAnimation(mLabelAppear)
+        mFeedFabLabel.startAnimation(mLabelAppear)
+        mLetOutFabLabel.startAnimation(mLabelAppear)
         mIsFabOpen = true
     }
 
     private fun closeFab() {
-//        mTrackerFab.startAnimation(mRotateBackward)
-//        mLetOutFab.startAnimation(mMiniDisappear)
-//        mPottyFab.startAnimation(mMiniDisappear)
-//        mFeedFab.startAnimation(mMiniDisappear)
-//        mPottyFabLabel.startAnimation(mLabelDisappear)
-//        mFeedFabLabel.startAnimation(mLabelDisappear)
-//        mLetOutFabLabel.startAnimation(mLabelDisappear)
+        mTrackerFab.startAnimation(mRotateBackward)
+        mLetOutFab.startAnimation(mMiniDisappear)
+        mPottyFab.startAnimation(mMiniDisappear)
+        mFeedFab.startAnimation(mMiniDisappear)
+        mPottyFabLabel.startAnimation(mLabelDisappear)
+        mFeedFabLabel.startAnimation(mLabelDisappear)
+        mLetOutFabLabel.startAnimation(mLabelDisappear)
         mIsFabOpen = false
-    }
-
-    inner class PostEventTask : AsyncTask<TrackerItem, Void?, Void?>() {
-        override fun doInBackground(vararg items: TrackerItem): Void? {
-            runBlocking {
-                PetTrackerRepository().addEvent(items[0].petId, items[0].itemId, items[0])
-                mAdapter!!.addItem(items[0])
-            }
-            return null
-        }
     }
 }

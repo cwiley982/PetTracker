@@ -19,7 +19,7 @@ class PetTrackerRepository @Inject constructor(
     private var api: FirebaseApi
     private val defaultPet: Pet = Pet("Nanook", "2016", "9", Pet.Gender.MALE, PetType.DOG, "Husky")
     private val defaultUser: Account = Account("123", "cwiley982@gmail.com")
-    private val defaultTrackerItem: TrackerItem = TrackerItem.Builder()
+    private val defaultEvent: TrackerItem = TrackerItem.Builder()
         .setEventType(TrackerItem.EventType.FEED)
         .setCupsFood(2.0)
         .setDate("07/30/2021")
@@ -27,12 +27,13 @@ class PetTrackerRepository @Inject constructor(
         .setId("789")
         .setPetId("456")
         .build()
-    private val defaultTrackerDay: TrackerItem = TrackerItem.Builder()
+    private val defaultDay: TrackerItem = TrackerItem.Builder()
         .setDate("07/30/2021")
         .setItemType("day")
         .setId("000")
         .setPetId("456")
         .build()
+    private var defaultTrackerItems: ArrayList<TrackerItem> = ArrayList(listOf(defaultDay, defaultEvent))
 
     init {
         val gson = GsonConverterFactory.create(GsonBuilder().setLenient().create())
@@ -104,15 +105,17 @@ class PetTrackerRepository @Inject constructor(
         api.addPet(id, p)
     }
 
-    suspend fun getEvents(petId: String?): Map<String?, TrackerItem?>? {
-        val map = HashMap<String?, TrackerItem?>()
-        map["0"] = defaultTrackerDay
-        map["1"] = defaultTrackerItem
-        return map
+    suspend fun getEvents(petId: String?): ArrayList<TrackerItem> {
+        return defaultTrackerItems
 //        return api.getEvents(petId)
     }
 
-    suspend fun addEvent(petId: String?, dayId: String?, event: TrackerItem?) {
-        api.addEvent(petId, dayId, event)
+    suspend fun addEvent(petId: String, dayId: String, event: TrackerItem) {
+        defaultTrackerItems.add(event)
+//        api.addEvent(petId, dayId, event)
+    }
+
+    suspend fun deleteEventAt(index: Int) {
+        defaultTrackerItems.removeAt(index)
     }
 }
