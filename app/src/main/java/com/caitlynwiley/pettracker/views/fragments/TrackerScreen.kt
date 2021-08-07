@@ -7,6 +7,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +26,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.models.TrackerItem
@@ -58,13 +58,7 @@ fun TrackerScreen(items: List<TrackerItem>) {
 
         // if dialog type is set, show that type's dialog, otherwise it should be hidden
         dialogType?.let {
-            TrackerDialog(onDismiss = {dialogType = null}) {
-                when (dialogType) {
-                    TrackerItem.EventType.FEED -> TrackMeal()
-                    TrackerItem.EventType.POTTY -> TrackPotty()
-                    TrackerItem.EventType.WALK -> TrackWalk()
-                }
-            }
+            TrackerDialog(onDismiss = {dialogType = null}, type = it)
         }
 
         if (items.isEmpty()) {
@@ -95,14 +89,11 @@ fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.EventType) 
         val (fab, smallFabs) = createRefs()
 
         val angle: Float by animateFloatAsState(
-            targetValue = if (groupOpenState == FabState.CLOSED) 135f else 0f,
+            targetValue = if (groupOpenState == FabState.CLOSED) 0f else 135f,
             animationSpec = tween(
-                durationMillis = 2000, // duration
+                durationMillis = 200, // duration
                 easing = FastOutSlowInEasing
-            ),
-            finishedListener = {
-                groupOpenState = if (groupOpenState == FabState.OPEN) FabState.CLOSED else FabState.OPEN
-            }
+            )
         )
 
         FloatingActionButton(
@@ -276,80 +267,95 @@ fun DateHeader(date: String) {
 }
 
 @Composable
-fun TrackerDialog(onDismiss: () -> Unit, content: @Composable () -> Unit) {
-    Dialog(onDismissRequest = { onDismiss() }) {
-        content()
+fun TrackerDialog(onDismiss: () -> Unit, type: TrackerItem.EventType) {
+    AlertDialog(
+        dismissButton = {
+            Text(text = "Cancel", Modifier.clickable { onDismiss() })
+        },
+        onDismissRequest = { onDismiss() },
+        confirmButton = { Text("Save") },
+        backgroundColor = MaterialTheme.colors.background,
+        title = { Text(text = getDialogTitleForType(type)) },
+        text = {
+            // 24.dp padding horizontally by default for text content
+            DialogContentForType(type)
+        }
+    )
+}
+
+fun getDialogTitleForType(eventType: TrackerItem.EventType) : String {
+    return when (eventType) {
+        TrackerItem.EventType.FEED -> "Cups"
+        TrackerItem.EventType.POTTY -> "Type"
+        TrackerItem.EventType.WALK -> "Duration"
     }
 }
 
 @Composable
+fun DialogContentForType(eventType: TrackerItem.EventType) {
+    return when (eventType) {
+        TrackerItem.EventType.FEED -> TrackMeal()
+        TrackerItem.EventType.POTTY -> TrackPotty()
+        TrackerItem.EventType.WALK -> TrackWalk()
+    }
+}
+
+
+@Composable
 fun TrackWalk() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(32.dp)
-    ) {
-        Text(text = "DURATION", fontSize = 22.sp,
-            modifier = Modifier.padding(bottom = 32.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(value = "0",
-                onValueChange = {},
-                textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 22.sp),
-                modifier = Modifier
-                    .wrapContentSize()
-                    .weight(1f))
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        TextField(
+            value = "0",
+            onValueChange = {},
+            textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 22.sp),
+            modifier = Modifier
+                .wrapContentSize()
+                .weight(1f)
+        )
 
-            Text(text = "Hours",
-                fontSize = 18.sp,
-                modifier = Modifier
-                    .wrapContentSize()
-                    .padding(8.dp)
-                    .weight(1f))
+        Text(
+            text = "Hours",
+            fontSize = 18.sp,
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(8.dp)
+                .weight(1f)
+        )
 
-            TextField(value = "0",
-                onValueChange = {},
-                textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 22.sp),
-                modifier = Modifier
-                    .wrapContentSize()
-                    .weight(1f))
+        TextField(
+            value = "0",
+            onValueChange = {},
+            textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 22.sp),
+            modifier = Modifier
+                .wrapContentSize()
+                .weight(1f)
+        )
 
-            Text(text = "Minutes",
-                fontSize = 18.sp,
-                modifier = Modifier
-                    .wrapContentSize()
-                    .padding(8.dp)
-                    .weight(1f)
-                    .requiredWidth(IntrinsicSize.Min))
-        }
+        Text(
+            text = "Minutes",
+            fontSize = 18.sp,
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(8.dp)
+                .weight(1f)
+                .requiredWidth(IntrinsicSize.Min)
+        )
     }
 }
 
 @Composable
 fun TrackPotty() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(32.dp)
-    ) {
-        Text(
-            text = "TYPE", fontSize = 22.sp,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = false, onCheckedChange = {}, modifier = Modifier.padding(end = 8.dp))
-            Text(text = "Number 1", fontSize = 18.sp, modifier = Modifier.padding(end = 16.dp))
-            Checkbox(checked = false, onCheckedChange = {}, modifier = Modifier.padding(end = 8.dp))
-            Text(text = "Number 2", fontSize = 18.sp)
-        }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(checked = false, onCheckedChange = {}, modifier = Modifier.padding(end = 8.dp))
+        Text(text = "Number 1", fontSize = 18.sp, modifier = Modifier.padding(end = 16.dp))
+        Checkbox(checked = false, onCheckedChange = {}, modifier = Modifier.padding(end = 8.dp))
+        Text(text = "Number 2", fontSize = 18.sp)
     }
 }
 
 @Composable
 fun TrackMeal() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(32.dp)
-    ) {
-        Text(
-            text = "AMOUNT", fontSize = 22.sp,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = "0",
@@ -378,9 +384,7 @@ private enum class FabState {
 @Composable
 @Preview(name = "Preview Dialog", group = "actual dialog")
 fun PreviewDialog() {
-    TrackerDialog({}) {
-        TrackWalk()
-    }
+    TrackerDialog({}, TrackerItem.EventType.WALK)
 }
 
 @ExperimentalAnimationApi
