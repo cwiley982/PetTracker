@@ -1,9 +1,12 @@
 package com.caitlynwiley.pettracker.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.TrackerItem
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -16,21 +19,24 @@ class TrackerViewModel(private val repository: PetTrackerRepository, petId: Stri
     private val _pet = MutableLiveData<Pet>()
     val pet: LiveData<Pet> = _pet
 
-    private val _emptyLabelVisible = MutableLiveData<Boolean>()
-    val emptyLabelVisible: LiveData<Boolean> = _emptyLabelVisible
+    private val _isRefreshing = MutableStateFlow<Boolean>(false)
+    var isRefreshing: StateFlow<Boolean> = _isRefreshing
 
     init {
         viewModelScope.launch {
             _pet.postValue(repository.getPet(petId))
             _trackerItems.postValue(repository.getEvents(petId))
-            _emptyLabelVisible.postValue(trackerItems.value?.size ?: 0 == 0)
         }
     }
 
-    fun forceRefreshEvents() {
+    fun refresh() {
         viewModelScope.launch {
+            _isRefreshing.emit(true)
+            Log.d("TrackerVM", "Refreshing...")
+            Thread.sleep(1000)
             _trackerItems.postValue(repository.getEvents(""))
-            _emptyLabelVisible.postValue(trackerItems.value?.size ?: 0 == 0)
+            _isRefreshing.emit(false)
+            Log.d("TrackerVM", "Done refreshing.")
         }
     }
 
@@ -38,7 +44,6 @@ class TrackerViewModel(private val repository: PetTrackerRepository, petId: Stri
         viewModelScope.launch {
             repository.addEvent(item.petId, item.itemId, item)
             _trackerItems.postValue(repository.getEvents(""))
-            _emptyLabelVisible.postValue(trackerItems.value?.size ?: 0 == 0)
         }
     }
 
@@ -46,7 +51,6 @@ class TrackerViewModel(private val repository: PetTrackerRepository, petId: Stri
         viewModelScope.launch {
             repository.deleteEventAt(index)
             _trackerItems.postValue(repository.getEvents(""))
-            _emptyLabelVisible.postValue(trackerItems.value?.size ?: 0 == 0)
         }
     }
 }

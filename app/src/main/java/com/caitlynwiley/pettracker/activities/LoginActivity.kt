@@ -81,14 +81,15 @@ class LoginActivity : ComponentActivity() {
         }
 
         setContent {
-            Surface {
-                PetTrackerTheme {
+            PetTrackerTheme {
+                Surface {
                     Scaffold(
                         topBar = {
-                        TopAppBar(title = {
-                            Text("Pet Tracker")
-                        })
-                    }) {
+                            TopAppBar(title = {
+                                Text("Pet Tracker")
+                            })
+                        }
+                    ) {
                         LoginActivity()
                     }
                 }

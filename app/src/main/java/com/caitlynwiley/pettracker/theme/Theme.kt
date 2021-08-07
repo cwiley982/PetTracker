@@ -5,36 +5,34 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import com.caitlynwiley.pettracker.*
 
-private val LightColorPalette = darkColors(
-    primary = primaryColor,
-    primaryVariant = primaryDarkVariant,
-    secondary = secondaryColor,
-    secondaryVariant = secondaryDarkVariant,
-    background = primaryLightVariant,
-    surface = secondaryLightVariant,
-    error = errorColor,
-    onPrimary = primaryTextColor,
-    onSecondary = secondaryTextColor,
-    onBackground = primaryTextColor,
-    onSurface = primaryTextColor,
-    onError = primaryTextColorNight
+private val LightColorPalette = lightColors(
+    primary = primaryColor_Light,
+    primaryVariant = primaryDark_Light,
+    secondary = secondaryColor_Light,
+    secondaryVariant = secondaryDark_Light,
+    background = secondaryLight_Light,
+    surface = secondaryDark_Light,
+    error = errorColor_Light,
+    onPrimary = primaryTextColor_Light,
+    onSecondary = secondaryTextColor_Light,
+    onBackground = secondaryTextColor_Light,
+    onSurface = secondaryTextColor_Light,
+    onError = secondaryTextColor_Light
 )
 
-private val DarkColorPalette = lightColors(
-    primary = primaryColorNight,
-    primaryVariant = primaryDarkVariantNight,
-    secondary = secondaryColorNight,
-    secondaryVariant = secondaryDarkVariantNight,
-    background = primaryLightVariantNight,
-    surface = secondaryLightVariantNight,
-    error = errorColorNight,
-    onPrimary = primaryTextColorNight,
-    onSecondary = secondaryTextColorNight,
-    onBackground = primaryTextColorNight,
-    onSurface = primaryTextColorNight,
-    onError = primaryTextColor
+private val DarkColorPalette = darkColors(
+    primary = primaryDark_Dark,
+    secondary = secondaryColor_Dark,
+    secondaryVariant = secondaryDark_Dark,
+    background = secondaryLight_Dark,
+    surface = secondaryDark_Dark,
+    error = errorColor_Dark,
+    onPrimary = primaryTextColor_Dark,
+    onSecondary = secondaryTextColor_Dark,
+    onBackground = secondaryTextColor_Dark,
+    onSurface = secondaryTextColor_Dark,
+    onError = primaryTextColor_Dark
 )
 
 @Composable

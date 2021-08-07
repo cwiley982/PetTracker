@@ -58,7 +58,7 @@ class EventAdapter(
     override fun onBindViewHolder(holder: TrackerViewHolder, position: Int) {
         val o = mDataset[position]
         if (o.itemType == "day") {
-            holder.dateTextView!!.text = o.getPrettyDate(mContext)
+            holder.dateTextView!!.text = o.getDisplayDate(mContext)
         } else {
             holder.timeTextView!!.text = o.localTime
             holder.imageView!!.setImageResource(o.drawableResId)

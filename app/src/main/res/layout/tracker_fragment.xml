@@ -19,7 +19,8 @@
         android:backgroundTint="?android:attr/colorAccent"
         android:tint="?android:attr/windowBackground"
         app:fabSize="normal"
-        android:src="@drawable/ic_add_white_24dp" />
+        android:src="@drawable/ic_add_white_24dp"
+        android:contentDescription="plus sign" />
 
     <TextView
         android:id="@+id/fed_fab_label"
@@ -48,7 +49,8 @@
         app:backgroundTint="@color/primaryColor"
         android:src="@drawable/ic_dog_bowl"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible"
+        android:contentDescription="dog bowl" />
 
     <TextView
         android:id="@+id/potty_fab_label"
@@ -77,7 +79,8 @@
         app:backgroundTint="@color/primaryColor"
         android:src="@drawable/ic_dog_poop"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible"
+        android:contentDescription="poop icon" />
 
     <TextView
         android:id="@+id/let_out_fab_label"
@@ -106,7 +109,8 @@
         app:backgroundTint="@color/primaryColor"
         android:src="@drawable/ic_dog_walk"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible"
+        android:contentDescription="dog on leash" />
 
     <TextView
         android:id="@+id/no_events_label"

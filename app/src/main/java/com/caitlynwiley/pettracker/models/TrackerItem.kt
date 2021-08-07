@@ -6,7 +6,6 @@ import com.caitlynwiley.pettracker.R
 import com.google.firebase.database.Exclude
 import com.google.gson.annotations.SerializedName
 import java.util.*
-import java.util.Calendar.*
 
 class TrackerItem {
     @SerializedName("date")
@@ -57,25 +56,28 @@ class TrackerItem {
     @SerializedName("pretty_date")
     private var prettyDate: String = ""
 
-    fun setDate(date: String) {
+    fun setDate(c: Calendar) {
         this.date = date
-        month = date.substring(0, 2).trim { it <= ' ' }.toInt()
-        day = date.substring(3, 5).trim { it <= ' ' }.toInt()
-        year = date.substring(6).toInt()
+        year = c[Calendar.YEAR]
+        month = c[Calendar.MONTH] + 1
+        day = c[Calendar.DAY_OF_MONTH]
     }
 
     fun setUtcMillis(utcMillis: Long) {
         this.utcMillis = utcMillis
-        setLocalTime()
+        val c = Calendar.getInstance()
+        c.timeInMillis = utcMillis
+        setLocalTime(c)
+        setDate(c)
     }
 
     @Exclude
     @TargetApi(24)
-    fun setLocalTime() {
-        val c = getInstance()
-        c.timeInMillis = utcMillis
-        localTime = String.format(Locale.US, "%d:%02d %s", if (c[HOUR] == 0) 12 else c[HOUR],
-                c[MINUTE], if (c[AM_PM] == AM) "am" else "pm")
+    fun setLocalTime(c: Calendar) {
+        localTime = String.format(Locale.US, "%d:%02d %s",
+            if (c[Calendar.HOUR] == 0) 12 else c[Calendar.HOUR],
+            c[Calendar.MINUTE],
+            if (c[Calendar.AM_PM] == Calendar.AM) "am" else "pm")
     }
 
     @get:Exclude
@@ -87,16 +89,18 @@ class TrackerItem {
                 EventType.FEED -> return R.drawable.ic_dog_bowl_64dp
                 EventType.WALK -> return R.drawable.ic_dog_walk_64dp
             }
-            return R.drawable.ic_clock_black_24dp // default for now
+            return R.drawable.ic_menu // default for now
         }
 
     fun setWalkLength(hours: Int, minutes: Int) {
         walkLength = WalkLength(hours, minutes)
     }
 
-    fun getPrettyDate(context: Context): String {
+    fun getDisplayDate(context: Context): String {
         if (prettyDate.isEmpty()) {
-            prettyDate = String.format(Locale.US, "%s %d", context.resources.getStringArray(R.array.months)[month - 1], day)
+            prettyDate = String.format(Locale.US, "%s %s",
+                context.resources.getStringArray(R.array.months)[month - 1],
+                context.resources.getStringArray(R.array.formatted_day_of_month)[day - 1])
         }
         return prettyDate
     }
@@ -109,12 +113,6 @@ class TrackerItem {
 
     class Builder {
         private val item: TrackerItem = TrackerItem()
-
-        // ... (setters)
-        fun setDate(date: String): Builder {
-            item.setDate(date)
-            return this
-        }
 
         fun setMillis(millis: Long): Builder {
             item.setUtcMillis(millis)

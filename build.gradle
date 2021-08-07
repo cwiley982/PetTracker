@@ -2,10 +2,12 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.5.10'
-        compose_version = '1.0.0'
+        kotlin_version = '1.5.21'
+        compose_version = '1.0.1'
         activity_compose_version = '1.3.0'
         viewmodel_compose_version = '1.0.0-alpha07'
+        kotlin_navigation_version = '2.3.5'
+        retrofit_version = '2.9.0'
     }
 
     repositories {
@@ -16,6 +18,8 @@ buildscript {
         }
     }
     dependencies {
+        // The dependencies below define the classpath for each plugin that's applied in the module
+        // level build.gradle files
         classpath 'com.android.tools.build:gradle:7.0.0'
         classpath 'com.google.gms:google-services:4.3.8'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
