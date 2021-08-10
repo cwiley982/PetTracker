@@ -3,7 +3,7 @@ package com.caitlynwiley.pettracker.repository
 import com.caitlynwiley.pettracker.models.Account
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.TrackerItem
-import com.caitlynwiley.pettracker.views.screens.PetType
+import com.caitlynwiley.pettracker.ui.screens.PetType
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory

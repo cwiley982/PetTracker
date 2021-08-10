@@ -7,32 +7,32 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val LightColorPalette = lightColors(
-    primary = primaryColor_Light,
-    primaryVariant = primaryDark_Light,
-    secondary = secondaryColor_Light,
-    secondaryVariant = secondaryDark_Light,
-    background = secondaryLight_Light,
-    surface = secondaryDark_Light,
-    error = errorColor_Light,
-    onPrimary = primaryTextColor_Light,
-    onSecondary = secondaryTextColor_Light,
-    onBackground = secondaryTextColor_Light,
-    onSurface = secondaryTextColor_Light,
-    onError = secondaryTextColor_Light
+    primary = primaryColor_day,
+    primaryVariant = primaryDark_day,
+    secondary = secondaryColor_day,
+    secondaryVariant = secondaryDark_day,
+    background = secondaryLight_day,
+    surface = secondaryDark_day,
+    error = errorColor_day,
+    onPrimary = primaryTextColor_day,
+    onSecondary = secondaryTextColor_day,
+    onBackground = secondaryTextColor_day,
+    onSurface = secondaryTextColor_day,
+    onError = secondaryTextColor_day
 )
 
 private val DarkColorPalette = darkColors(
-    primary = primaryDark_Dark,
-    secondary = secondaryColor_Dark,
-    secondaryVariant = secondaryDark_Dark,
-    background = secondaryLight_Dark,
-    surface = secondaryDark_Dark,
-    error = errorColor_Dark,
-    onPrimary = primaryTextColor_Dark,
-    onSecondary = secondaryTextColor_Dark,
-    onBackground = secondaryTextColor_Dark,
-    onSurface = secondaryTextColor_Dark,
-    onError = primaryTextColor_Dark
+    primary = primaryDark_night,
+    secondary = secondary_night,
+    secondaryVariant = secondary_night, // intentionally the same as secondary
+    background = backgroundColor_night,
+    surface = surfaceColor_night,
+    error = errorColor_night,
+    onPrimary = primaryTextColor_night,
+    onSecondary = secondaryTextColor_night,
+    onBackground = secondaryTextColor_night,
+    onSurface = secondaryTextColor_night,
+    onError = primaryTextColor_night
 )
 
 @Composable

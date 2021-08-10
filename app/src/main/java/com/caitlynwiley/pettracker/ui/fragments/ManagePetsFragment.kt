@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.views.fragments
+package com.caitlynwiley.pettracker.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,10 +27,9 @@ import androidx.fragment.app.Fragment
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
-import com.caitlynwiley.pettracker.theme.PetTrackerTheme
+import com.caitlynwiley.pettracker.ui.screens.PetInfoEditor
+import com.caitlynwiley.pettracker.ui.screens.PetType
 import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
-import com.caitlynwiley.pettracker.views.screens.PetInfoEditor
-import com.caitlynwiley.pettracker.views.screens.PetType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -77,30 +76,28 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
 
             view = ComposeView(requireContext()).apply {
                 setContent {
-                    PetTrackerTheme {
-                        // In Compose world
-                        var editing by remember { mutableStateOf(false) }
+                    // In Compose world
+                    var editing by remember { mutableStateOf(false) }
 
-                        ConstraintLayout(modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxSize()
-                        ) {
-                            val actionButton = createRef()
+                    ConstraintLayout(modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize()
+                    ) {
+                        val actionButton = createRef()
 
-                            PetInfoEditor(PetInfoViewModel(PetTrackerRepository(), petId), editing)
+                        PetInfoEditor(PetInfoViewModel(PetTrackerRepository(), petId), editing)
 
-                            FloatingActionButton(onClick = { editing = !editing },
-                                backgroundColor = MaterialTheme.colors.secondary,
-                                contentColor = MaterialTheme.colors.onSecondary,
-                                modifier = Modifier.constrainAs(actionButton) {
-                                    end.linkTo(parent.end)
-                                    bottom.linkTo(parent.bottom)
-                                }) {
-                                Icon(painter = painterResource(id = R.drawable.ic_add_white_24dp),
-                                    contentDescription = "add button",
-                                    tint = MaterialTheme.colors.onSecondary,
-                                    modifier = Modifier.background(MaterialTheme.colors.secondary, CircleShape))
-                            }
+                        FloatingActionButton(onClick = { editing = !editing },
+                            backgroundColor = MaterialTheme.colors.secondary,
+                            contentColor = MaterialTheme.colors.onSecondary,
+                            modifier = Modifier.constrainAs(actionButton) {
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom)
+                            }) {
+                            Icon(painter = painterResource(id = R.drawable.ic_edit_black_24dp),
+                                contentDescription = "edit button",
+                                tint = MaterialTheme.colors.onSecondary,
+                                modifier = Modifier.background(MaterialTheme.colors.secondary, CircleShape))
                         }
                     }
                 }
@@ -109,20 +106,6 @@ class ManagePetsFragment : Fragment(), View.OnClickListener {
             setUpPetListener()
         }
 
-//        mBirthdayET = mFragView.findViewById(R.id.pet_birthday)
-//        mBreedET = mFragView.findViewById(R.id.pet_breed)
-//        mGenderGroup = mFragView.findViewById(R.id.pet_gender)
-//        mSpeciesGroup = mFragView.findViewById(R.id.pet_species)
-//        mSaveEditFab = mFragView.findViewById(R.id.save_edit_fab)
-//        mPetNameET.isEnabled = false
-//        mYearsET.isEnabled = false
-//        mMonthsET.isEnabled = false
-//        mBirthdayET?.isEnabled = false
-//        mBreedET?.isEnabled = false
-//        mGenderGroup?.isEnabled = false
-//        mSpeciesGroup?.isEnabled = false
-//        mSaveEditFab?.setImageResource(R.drawable.ic_edit_black_24dp)
-//        mSaveEditFab?.setOnClickListener(this)
         return view
     }
 

@@ -1,135 +1,144 @@
 package com.caitlynwiley.pettracker.activities
 
-import android.content.Intent
-import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
+import android.util.Log
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.models.Account
-import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
-import com.caitlynwiley.pettracker.views.fragments.ManagePetsFragment
-import com.caitlynwiley.pettracker.views.fragments.SettingsFragment
-import com.caitlynwiley.pettracker.views.fragments.TrackerFragment
-import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.caitlynwiley.pettracker.ui.screens.PetInfoEditor
+import com.caitlynwiley.pettracker.ui.screens.SettingsScreen
+import com.caitlynwiley.pettracker.ui.screens.TrackerScreen
+import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
-class MainActivity : BaseActivity() {
-    private lateinit var mDrawerLayout : DrawerLayout
-    private lateinit var mNavigationView : NavigationView
-    private var mNavHeader : View? = null
-    private var mUser : FirebaseUser? = null
-    private lateinit var mAuth : FirebaseAuth
-    private lateinit var mReference : DatabaseReference
+@ExperimentalAnimationApi
+@Composable
+fun MainActivity() {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val navController = rememberNavController()
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState(drawerState = drawerState)
 
-    var mAccount : Account? = null
-    var petID : String = ""
-    var mPet : Pet? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        runBlocking {
-            super.onCreate(savedInstanceState)
-
-            setContentView(R.layout.activity_main)
-
-            mReference = Firebase.database.reference
-            mAuth = Firebase.auth
-            mUser = mAuth.currentUser
-
-            launch {
-                val pets = PetTrackerRepository().getPets(mUser?.uid ?: "")
-                mPet = pets[0]
-            }
-
-            launch {
-                mAccount = PetTrackerRepository().getAccount(mUser?.uid ?: "")
-            }
-
-            mDrawerLayout = findViewById(R.id.drawer_layout)
-            mNavigationView = findViewById(R.id.nav_view)
-            mNavHeader = mNavigationView.getHeaderView(R.layout.nav_drawer_header)
-
-            // set the toolbar as the action bar
-            val toolbar = findViewById<Toolbar>(R.id.toolbar)
-            toolbar.setTitleTextColor(resources.getColor(android.R.color.white, null))
-            setSupportActionBar(toolbar)
-
-            // add menu icon to action bar
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
-
-            // add listener to navigation view to watch for menu items being selected
-            mNavigationView.setNavigationItemSelectedListener { item: MenuItem ->
-                item.isChecked = true
-                mDrawerLayout.closeDrawers()
-
-                // replace fragment with new fragment
-                var newFragment: Fragment?
-                val id = item.itemId
-                newFragment = supportFragmentManager.findFragmentById(id)
-                if (newFragment == null) {
-                    when (id) {
-                        R.id.tracker_item -> newFragment = TrackerFragment()
-                        R.id.manage_pets_item -> newFragment = ManagePetsFragment()
-                        R.id.share_item -> {
-                            val intent = Intent()
-                            intent.action = Intent.ACTION_SEND
-                            intent.putExtra(Intent.EXTRA_TEXT, getShareableText())
-                            intent.type = "text/plain"
-
-                            val shareIntent = Intent.createChooser(intent, null)
-                            startActivity(shareIntent)
-                        }
-                        R.id.settings_item -> newFragment = SettingsFragment()
+    Scaffold (
+        scaffoldState = scaffoldState,
+        topBar = {
+            TopAppBar (
+                title = { Text("Pet Tracker") },
+                navigationIcon = {
+                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                        Icon(painter = painterResource(id = R.drawable.ic_menu), contentDescription = "menu icon")
                     }
-                }
-
-                if (newFragment is SettingsFragment) {
-                    supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp)
-                } else {
-                    supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
-                }
-
-                if (newFragment != null)
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_view, newFragment)
-                        .commit()
-                true
+                })
+        },
+        drawerContent = { DrawerContent(scope = this, navController = navController) }
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = "TrackerFragment"
+        ) {
+            composable("TrackerFragment") {
+                TrackerScreen(items = listOf())
+                scope.launch { drawerState.close() }
             }
 
-            if (savedInstanceState == null) {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_view, TrackerFragment())
-                    .commit()
+            composable("ManageFragment") {
+//                    ManagePetsFragment()
+                PetInfoEditor(
+                    viewModel = PetInfoViewModel(repository = PetTrackerRepository(), petId = "")
+                )
+                scope.launch { drawerState.close() }
+            }
+
+            composable("SettingsFragment") {
+                SettingsScreen()
             }
         }
     }
+}
 
-    private fun getShareableText() : String {
-        return if (mPet == null) {
-            "Here's my pet's ID: $petID"
-        } else {
-            "Here's ${mPet?.name ?: "my pet"}'s ID: $petID"
+@Composable
+fun DrawerContent(scope: ColumnScope, navController: NavController) {
+    with(scope) {
+        Box(modifier = Modifier
+            .background(MaterialTheme.colors.secondary)
+            .fillMaxWidth()
+            .weight(1f))
+        Column(modifier = Modifier
+            .padding(top = 16.dp, start = 8.dp, end = 8.dp)
+            .weight(4f)) {
+            Text("General", fontSize = 16.sp)
+            NavDrawerMenuItem(R.drawable.ic_dog_walk, "dog on leash", "Tracker", true) {
+                navController.navigate("TrackerFragment")
+            }
+            NavDrawerMenuItem(R.drawable.ic_edit_black_24dp, "edit icon", "Manage Pet", false) {
+                navController.navigate("ManageFragment")
+            }
+
+            Divider()
+
+            Text("Other", fontSize = 16.sp)
+            NavDrawerMenuItem(R.drawable.ic_share_black_24dp, "share icon", "Share", false) {
+                sharePet()
+            }
+            NavDrawerMenuItem(R.drawable.ic_settings_black_24dp, "gear icon", "Settings", false) {
+                navController.navigate("SettingsFragment")
+            }
         }
     }
+}
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // if the menu button is clicked on, open the drawer
-        if (item.itemId == android.R.id.home) {
-            mDrawerLayout.openDrawer(GravityCompat.START)
-            return true
+@Composable
+fun NavDrawerMenuItem(resId: Int, contentDesc: String, label: String, current: Boolean, onClick: () -> Unit) {
+    Button(onClick = { onClick() },
+        modifier = Modifier.fillMaxWidth(),
+        elevation = ButtonDefaults.elevation(defaultElevation = if (current) 2.dp else 0.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = if (current) MaterialTheme.colors.background else Color.Transparent)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Icon(painter = painterResource(id = resId), contentDescription = contentDesc)
+            Text(label, modifier = Modifier.padding(start = 16.dp))
         }
-        return super.onOptionsItemSelected(item)
     }
+}
+
+/*
+if (SettingsFragment) {
+    supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp)
+} else {
+    supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+}
+ */
+
+fun sharePet() {
+    Log.d("MainFragment", "Share button clicked")
+    /*
+    val intent = Intent()
+    intent.action = Intent.ACTION_SEND
+    intent.putExtra(Intent.EXTRA_TEXT, if (mPet == null) {
+        "Here's my pet's ID: $petID"
+    } else {
+        "Here's ${mPet?.name ?: "my pet"}'s ID: $petID"
+    })
+    intent.type = "text/plain"
+
+    val shareIntent = Intent.createChooser(intent, null)
+    startActivity(shareIntent)
+     */
 }

@@ -17,11 +17,11 @@ import androidx.navigation.compose.rememberNavController
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
+import com.caitlynwiley.pettracker.ui.fragments.ChooseAdditionTypeScreen
+import com.caitlynwiley.pettracker.ui.screens.*
 import com.caitlynwiley.pettracker.viewmodel.PTViewModelFactory
 import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
 import com.caitlynwiley.pettracker.viewmodel.PetTrackerViewModel
-import com.caitlynwiley.pettracker.views.fragments.ChooseAdditionTypeScreen
-import com.caitlynwiley.pettracker.views.screens.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 

@@ -73,7 +73,7 @@ class LoginActivity : ComponentActivity() {
                 } catch (e: ApiException) {
                     // Google Sign In failed, update UI appropriately
                     Log.w("LoginActivity", "Google sign in failed", e)
-                    updateUI(e.message, "")
+                    updateUI(errorMsg = e.message ?: "")
                 }
 //            } else {
 //                Log.e("LoginActivity", "Bad activity result, code=" + it.resultCode)
@@ -115,7 +115,7 @@ class LoginActivity : ComponentActivity() {
 
         auth.addAuthStateListener { firebaseAuth: FirebaseAuth ->
             mUser = firebaseAuth.currentUser
-            updateUI("", "")
+            updateUI()
         }
 
         // Configure Google Sign In
@@ -148,29 +148,12 @@ class LoginActivity : ComponentActivity() {
         super.onStart()
         if (auth.currentUser != null) {
             mUser = auth.currentUser
-            updateUI("", "")
+            updateUI()
         }
     }
 
 //    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 //        super.onActivityResult(requestCode, resultCode, data)
-//        when (requestCode) {
-//            RC_GOOGLE_SIGN_IN -> {
-//                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-//                try {
-//                    // Google Sign In was successful, authenticate with Firebase
-//                    val account = task.getResult(ApiException::class.java)
-//                    firebaseAuthWithGoogle(account)
-//                } catch (e: ApiException) {
-//                    // Google Sign In failed, update UI appropriately
-//                    Log.w("LoginActivity", "Google sign in failed", e)
-//                    // ...
-//                }
-//            }
-//            RC_SIGN_IN -> {
-//            }
-//        }
-//
 //        // Pass the activity result back to the Facebook SDK
 //        mCallbackManager!!.onActivityResult(requestCode, resultCode, data)
 //    }
@@ -179,20 +162,20 @@ class LoginActivity : ComponentActivity() {
         val credential = GoogleAuthProvider.getCredential(acct!!.idToken, null)
         signInAttempt++
         auth.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task: Task<AuthResult?> ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d("LoginActivity", "signInWithCredential:success")
-                        mUser = auth.currentUser
-                        updateUI("", "")
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w("LoginActivity", "signInWithCredential:failure", task.exception)
-                        Toast.makeText(applicationContext, "Authentication Failed.", Toast.LENGTH_SHORT).show()
-                        mUser = null
-                        updateUI("", (task.exception as FirebaseException?)?.message ?: "")
-                    }
+            .addOnCompleteListener(this) { task: Task<AuthResult?> ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d("LoginActivity", "signInWithCredential:success")
+                    mUser = auth.currentUser
+                    updateUI()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w("LoginActivity", "signInWithCredential:failure", task.exception)
+                    Toast.makeText(applicationContext, "Authentication Failed.", Toast.LENGTH_SHORT).show()
+                    mUser = null
+                    updateUI(error = (task.exception as FirebaseException?)?.message ?: "")
                 }
+            }
     }
 
     private fun handleFacebookAccessToken(token: AccessToken) {
@@ -205,19 +188,19 @@ class LoginActivity : ComponentActivity() {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success")
                         mUser = auth.currentUser
-                        updateUI("", "")
+                        updateUI()
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                         Toast.makeText(this@LoginActivity, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show()
                         mUser = null
-                        updateUI(task.exception!!.message, "")
+                        updateUI(errorMsg = task.exception!!.message ?: "")
                     }
                 }
     }
 
-    private fun updateUI(errorMsg: String?, error: String) {
+    private fun updateUI(errorMsg: String = "", error: String = "") {
         if (mUser == null) {
             if (signInAttempt == 0) return
             val msg: String = when (error) {
@@ -236,12 +219,11 @@ class LoginActivity : ComponentActivity() {
             if (numPets == 0) {
                 PreferenceManager.getDefaultSharedPreferences(applicationContext).edit()
                     .putBoolean("creating_pet", true).apply()
-                startActivity(Intent(this@LoginActivity, NewPetActivity::class.java))
             } else {
                 PreferenceManager.getDefaultSharedPreferences(applicationContext).edit()
                     .putBoolean("logged_in", true).apply()
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             }
+            startActivity(Intent(this@LoginActivity, BaseActivity::class.java))
         }
     }
 
@@ -256,9 +238,9 @@ class LoginActivity : ComponentActivity() {
                 .addOnCompleteListener(this) { task: Task<AuthResult> ->
                     if (task.isSuccessful) {
                         mUser = task.result!!.user
-                        updateUI("", "")
+                        updateUI()
                     } else {
-                        updateUI("", (task.exception as FirebaseAuthException?)!!.errorCode)
+                        updateUI(error = (task.exception as FirebaseAuthException?)!!.errorCode)
                         //FirebaseAuthException e = (FirebaseAuthException) task.getException();
                         //Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }

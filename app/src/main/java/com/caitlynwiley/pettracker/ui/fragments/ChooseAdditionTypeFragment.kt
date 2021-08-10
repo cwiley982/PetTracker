@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.views.fragments
+package com.caitlynwiley.pettracker.ui.fragments
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.views.fragments
+package com.caitlynwiley.pettracker.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,12 +12,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.caitlynwiley.pettracker.EventAdapter
 import com.caitlynwiley.pettracker.models.TrackerItem
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
+import com.caitlynwiley.pettracker.ui.screens.TrackerScreen
 import com.caitlynwiley.pettracker.viewmodel.TrackerViewModel
-import com.caitlynwiley.pettracker.viewmodel.TrackerViewModelFactory
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.apache.commons.text.RandomStringGenerator
@@ -25,10 +24,8 @@ import java.util.*
 
 class TrackerFragment : Fragment() {
     private val viewModel by viewModels<TrackerViewModel>(
-        factoryProducer = { TrackerViewModelFactory(PetTrackerRepository(), "") }
+        factoryProducer = { TrackerViewModel.Factory(PetTrackerRepository(), "") }
     )
-
-    private lateinit var mAdapter: EventAdapter
 
     private val randomStringGenerator: RandomStringGenerator =
         RandomStringGenerator.Builder().withinRange(charArrayOf('0', '9'), charArrayOf('a', 'z'),

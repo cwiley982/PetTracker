@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.views.screens
+package com.caitlynwiley.pettracker.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -9,6 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,13 +32,18 @@ fun PetInfoEditor(viewModel: PetInfoViewModel, editing: Boolean = true) {
             }
             .fillMaxWidth()
             .padding(bottom = 8.dp)) {
-            Text(text = "Name", fontSize = 22.sp,
+            Text(text = "Name",
+                fontSize = 22.sp,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
                     .align(Alignment.Bottom))
             Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = pet.name, onValueChange = { pet.name = it },
-                modifier = Modifier.fillMaxWidth(), enabled = editing)
+            TextField(value = pet.name,
+                onValueChange = { pet.name = it },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = editing,
+                textStyle = TextStyle(fontSize = 22.sp)
+            )
         }
 
         Row(modifier = Modifier
@@ -46,24 +52,30 @@ fun PetInfoEditor(viewModel: PetInfoViewModel, editing: Boolean = true) {
             }
             .fillMaxWidth()
             .padding(bottom = 8.dp)) {
-            Text(text = "DOB", fontSize = 22.sp,
+            Text(text = "DOB",
+                fontSize = 22.sp,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
-                    .align(Alignment.Bottom))
+                    .align(Alignment.Bottom)
+            )
 
             Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
             TextField(value = pet.birthYear,
                 onValueChange = { pet.birthYear = it },
                 label = { Text("Year") },
                 modifier = Modifier.weight(1f),
-                enabled = editing)
+                enabled = editing,
+                textStyle = TextStyle(fontSize = 22.sp)
+            )
 
             Divider(modifier = Modifier.width(8.dp), color = Color.Transparent)
             TextField(value = pet.birthMonth,
                 onValueChange = { pet.birthMonth = it },
                 label = { Text("Month") },
                 modifier = Modifier.weight(1f),
-                enabled = editing)
+                enabled = editing,
+                textStyle = TextStyle(fontSize = 22.sp)
+            )
         }
 
         Row(modifier = Modifier
@@ -78,8 +90,12 @@ fun PetInfoEditor(viewModel: PetInfoViewModel, editing: Boolean = true) {
                     .align(Alignment.Bottom)
             )
             Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = pet.age, onValueChange = {}, modifier = Modifier.fillMaxWidth(),
-                enabled = editing)
+            TextField(value = pet.age,
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                enabled = editing,
+                textStyle = TextStyle(fontSize = 22.sp)
+            )
         }
 
         Row(modifier = Modifier
@@ -93,8 +109,12 @@ fun PetInfoEditor(viewModel: PetInfoViewModel, editing: Boolean = true) {
                     .padding(bottom = 8.dp)
                     .align(Alignment.Bottom))
             Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = pet.breed, onValueChange = {}, modifier = Modifier.fillMaxWidth(),
-                enabled = editing)
+            TextField(value = pet.breed,
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                enabled = editing,
+                textStyle = TextStyle(fontSize = 22.sp)
+            )
         }
 
         GenderOptions(modifier = Modifier.constrainAs(genderSection) {

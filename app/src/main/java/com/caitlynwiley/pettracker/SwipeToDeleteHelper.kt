@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.caitlynwiley.pettracker.models.TrackerItem
 
 class SwipeToDeleteHelper(private val mAdapter: EventAdapter, context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
     private val icon: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_delete_black_32dp)
@@ -23,8 +24,8 @@ class SwipeToDeleteHelper(private val mAdapter: EventAdapter, context: Context) 
 
     override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         val position = viewHolder.bindingAdapterPosition
-        val o = mAdapter.getItem(position)
-        return if (o!!.itemType.equals("day", ignoreCase = true)) {
+        val o = TrackerItem.Builder().build()
+        return if (o.itemType.equals("day", ignoreCase = true)) {
             0
         } else {
             super.getSwipeDirs(recyclerView, viewHolder)

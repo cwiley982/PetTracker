@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.views.screens
+package com.caitlynwiley.pettracker.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,9 +33,7 @@ fun SpeciesSelectorScreen (viewModel: PetTrackerViewModel, navController: NavCon
             softWrap = true,
             overflow = TextOverflow.Visible)
         PetTypeOptions(modifier = Modifier.align(Alignment.Center))
-        Button(onClick = { navController.navigate(Screen.AddPetById.route) }) {
-            Text("Have a pet's ID to enter?", fontStyle = FontStyle.Italic)
-        }
+
         Button(modifier = Modifier.align(Alignment.BottomEnd),
             onClick = { navController.navigate(Screen.EnterPetInfo.route) },
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
@@ -115,26 +112,8 @@ enum class PetType {
     DOG, CAT, SNAKE, OTHER
 }
 
-//@Preview
-//@Composable
-//fun PetChooserScreen() {
-//    SpeciesSelectorScreen(PetTrackerViewModel())
-//}
-
 @Preview
 @Composable
 fun PreviewSpeciesPicker() {
     PetTypeOptions()
-}
-
-@Preview
-@Composable
-fun PreviewSnakeOption() {
-    PetTypeOptionItem(type = PetType.SNAKE, {}, PetType.OTHER)
-}
-
-@Preview
-@Composable
-fun PreviewOtherOption() {
-    PetTypeOptionItem(type = PetType.OTHER, {}, PetType.OTHER)
 }

@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.views.fragments
+package com.caitlynwiley.pettracker.ui.screens
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log

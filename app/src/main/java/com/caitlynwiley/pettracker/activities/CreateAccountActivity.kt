@@ -3,6 +3,7 @@ package com.caitlynwiley.pettracker.activities
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,9 +13,11 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.preference.PreferenceManager
 import com.caitlynwiley.pettracker.models.Account
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -25,14 +28,12 @@ import com.google.firebase.database.ValueEventListener
 
 class CreateAccountActivity: BaseActivity() {
 
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val goToNewPetActivity = fun() {
-            startActivity(Intent(this@CreateAccountActivity, NewPetActivity::class.java))
-        }
-        val goToMainActivity = fun() {
-            startActivity(Intent(this@CreateAccountActivity, MainActivity::class.java))
+        val startBaseActivity = fun() {
+            startActivity(Intent(this@CreateAccountActivity, BaseActivity::class.java))
         }
 
         setContent {
@@ -43,7 +44,7 @@ class CreateAccountActivity: BaseActivity() {
                             TopAppBar(title = { Text("Create Account") })
                         }
                     ) {
-                        Content(goToNewPetActivity, goToMainActivity)
+                        Content(startBaseActivity)
                     }
                 }
             }
@@ -51,7 +52,8 @@ class CreateAccountActivity: BaseActivity() {
     }
 
     @Composable
-    fun Content(newPetActivity: () -> Unit, mainActivity: () -> Unit) {
+    fun Content(startBaseActivity: () -> Unit) {
+        val context = LocalContext.current
         val auth = FirebaseAuth.getInstance()
         var errorMsg by remember { mutableStateOf("") }
         val submit = fun(email: String, password: String, passwordAgain: String) {
@@ -68,9 +70,13 @@ class CreateAccountActivity: BaseActivity() {
                             .addValueEventListener(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                                     if (dataSnapshot.value == null || dataSnapshot.value == 0) {
-                                        newPetActivity()
+                                        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                                            .putBoolean("creating_pet", true).apply()
+                                        startBaseActivity()
                                     } else {
-                                        mainActivity()
+                                        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                                            .putBoolean("creating_pet", false).apply()
+                                        startBaseActivity()
                                     }
                                 }
 

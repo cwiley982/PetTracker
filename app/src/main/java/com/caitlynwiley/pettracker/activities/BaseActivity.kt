@@ -1,26 +1,34 @@
 package com.caitlynwiley.pettracker.activities
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.preference.PreferenceManager
-import com.caitlynwiley.pettracker.R
+import com.caitlynwiley.pettracker.theme.PetTrackerTheme
 
-open class BaseActivity : AppCompatActivity() {
-    private var mUseDarkTheme : Boolean = false
+open class BaseActivity : ComponentActivity() {
 
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
-        mUseDarkTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme_enabled", false)
-        setTheme(if (mUseDarkTheme) R.style.DarkTheme else R.style.LightTheme)
         super.onCreate(savedInstanceState)
-    }
-
-    override fun onResume() {
-        val darkThemePref = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme_enabled", false)
-        if (mUseDarkTheme != darkThemePref) {
-            mUseDarkTheme = darkThemePref
-            setTheme(if (mUseDarkTheme) R.style.DarkTheme else R.style.LightTheme)
-            this.recreate()
+        if (PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean("logged_in", false)) {
+            setContent {
+                PetTrackerTheme {
+                    MainActivity()
+                }
+            }
+        } else {
+            if (PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean("creating_pet", false)) {
+                startActivity(Intent(this@BaseActivity, NewPetActivity::class.java))
+            } else {
+//                setContent {
+//                    LoginActivity()
+//                }
+                startActivity(Intent(this@BaseActivity, LoginActivity::class.java))
+            }
         }
-        super.onResume()
     }
 }

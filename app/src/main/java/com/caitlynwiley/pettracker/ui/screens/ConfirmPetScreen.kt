@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.views.screens
+package com.caitlynwiley.pettracker.ui.screens
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
@@ -7,7 +7,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.caitlynwiley.pettracker.activities.MainActivity
+import androidx.preference.PreferenceManager
+import com.caitlynwiley.pettracker.activities.BaseActivity
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -39,12 +40,13 @@ fun ConfirmPetScreen(id: String, navController: NavController) {
                 .child("pets")
                 .child(id)
                 .setValue(true)
-//    PreferenceManager.getDefaultSharedPreferences(context).edit()
-//        .putBoolean("creating_pet", false).apply()
+
+            PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putBoolean("creating_pet", false).apply()
 
             // once association is created, take user to main screen
             // navController.navigate("mainActivity")
-            context.startActivity(Intent(context, MainActivity::class.java))
+            context.startActivity(Intent(context, BaseActivity::class.java))
         }
     }
 }

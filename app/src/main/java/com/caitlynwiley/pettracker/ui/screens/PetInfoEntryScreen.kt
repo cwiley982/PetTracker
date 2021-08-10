@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.views.screens
+package com.caitlynwiley.pettracker.ui.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
