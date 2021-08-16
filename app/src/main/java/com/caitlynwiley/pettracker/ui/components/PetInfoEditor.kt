@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.ui.screens
+package com.caitlynwiley.pettracker.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.caitlynwiley.pettracker.TextRadioButton
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.Pet.Gender
@@ -21,7 +22,11 @@ import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
 
 @Composable
-fun PetInfoEditor(viewModel: PetInfoViewModel, editing: Boolean = true) {
+fun PetInfoEditor(editing: Boolean = true) {
+    val viewModel = viewModel<PetInfoViewModel>(factory = PetInfoViewModel.Factory(
+        PetTrackerRepository(), "-ME-Zsu05LZIpdajQJ-3"
+    ))
+
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val pet: Pet by viewModel.pet.observeAsState(Pet())
         val (nameRow, ageRow, birthdayRow, breedRow, genderSection) = createRefs()
@@ -170,5 +175,5 @@ fun GenderOptions(modifier: Modifier = Modifier, pet: Pet, editing: Boolean) {
 @Preview
 @Composable
 fun PreviewScreen() {
-    PetInfoEditor(PetInfoViewModel(repository = PetTrackerRepository(), "-ME-Zsu05LZIpdajQJ-3"))
+    PetInfoEditor()
 }

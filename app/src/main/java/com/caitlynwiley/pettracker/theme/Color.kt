@@ -14,8 +14,8 @@ val secondaryLight_day = Color(0xff4e7b77)
 val secondaryColor_day = Color(0xff224f4b)
 val secondaryDark_day = Color(0xff002623)
 
-val primaryTextColor_day = Color(0xff000000)
-val secondaryTextColor_day = Color(0xffffffff)
+val primaryTextColor_day = Color.Black
+val secondaryTextColor_day = Color.White
 
 val errorColor_day = Color(0xff560027)
 
@@ -23,17 +23,19 @@ val errorColor_day = Color(0xff560027)
 //                                         v DARK THEME v                                         //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-val primaryLight_night = Color(0xffe5ffff)
+//val basicallyWhite = Color(0xffe5ffff)
+//val whiteWithTouchOfGreen = Color(0xffb2dfdb)
+//val highlightColor_night = Color(0xff48575f)
+
 val primaryColor_night = Color(0xffb2dfdb)
-val primaryDark_night = Color(0xff82ada9)
+val primaryTransparent_night = Color(0x5982ADA9) // Note: Alpha is not 100%
 
-val secondary_night = Color(0xff204643)
+val secondaryColor_night = Color(0xFF204643)
 
-val highlightColor_night = Color(0xff48575f)
-val surfaceColor_night = Color(0xff202e35)
-val backgroundColor_night = Color(0xff00040f)
+val surfaceColor_night = Color(0xFF202E35)
+val backgroundColor_night = Color(0xFF00040F)
 
-val primaryTextColor_night = Color(0xff000000)
-val secondaryTextColor_night = Color(0xffffffff)
+val surfaceTextColor_night = Color(0xFFC0C0C0)
+val backgroundTextColor_night = Color(0xFF808080)
 
 val errorColor_night = Color(0xffd680a7)

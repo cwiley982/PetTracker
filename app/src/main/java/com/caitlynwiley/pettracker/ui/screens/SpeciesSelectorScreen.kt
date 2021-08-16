@@ -15,13 +15,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.activities.Screen
-import com.caitlynwiley.pettracker.viewmodel.PetTrackerViewModel
 
 @Composable
-fun SpeciesSelectorScreen (viewModel: PetTrackerViewModel, navController: NavController) {
+fun SpeciesSelectorScreen(goToDetailsScreen: () -> Unit) {
     Box(modifier = Modifier
         .fillMaxHeight()
         .fillMaxWidth()
@@ -35,7 +32,7 @@ fun SpeciesSelectorScreen (viewModel: PetTrackerViewModel, navController: NavCon
         PetTypeOptions(modifier = Modifier.align(Alignment.Center))
 
         Button(modifier = Modifier.align(Alignment.BottomEnd),
-            onClick = { navController.navigate(Screen.EnterPetInfo.route) },
+            onClick = goToDetailsScreen,
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
         ) {
             Text(text = "Next", fontSize = 16.sp, color = MaterialTheme.colors.onSecondary)

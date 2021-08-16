@@ -14,21 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
-import com.caitlynwiley.pettracker.activities.Screen
 
 @ExperimentalComposeUiApi
 @Composable
-fun AddByIdScreen(navigator: NavController) {
-    var id by remember { mutableStateOf("")}
-    Content(id = id, onIdChanged = { id = it }) {
-        navigator.navigate(route = Screen.ConfirmNewPet.createRoute(it))
-    }
-}
-
-@ExperimentalComposeUiApi
-@Composable
-fun Content(id: String, onIdChanged: (String) -> Unit, submit: (String) -> Unit) {
+fun AddByIdScreen(submit: (String) -> Unit) {
+    var id by remember { mutableStateOf("") }
 
     ConstraintLayout {
         val (prompt, text, button) = createRefs()
@@ -39,8 +29,9 @@ fun Content(id: String, onIdChanged: (String) -> Unit, submit: (String) -> Unit)
         })
 
         val keyboardController = LocalSoftwareKeyboardController.current
-        TextField(value = id,
-            onValueChange = { onIdChanged(it) },
+        TextField(
+            value = id,
+            onValueChange = { id = it },
             colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
@@ -67,5 +58,5 @@ fun Content(id: String, onIdChanged: (String) -> Unit, submit: (String) -> Unit)
 @Preview
 @Composable
 fun PreviewAddById() {
-    Content("", {}, {})
+    AddByIdScreen({})
 }

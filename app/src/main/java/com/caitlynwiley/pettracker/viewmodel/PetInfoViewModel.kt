@@ -1,16 +1,13 @@
 package com.caitlynwiley.pettracker.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import kotlinx.coroutines.launch
 
-class PetInfoViewModel constructor(
-    repository: PetTrackerRepository,
-    petId: String // throw an error here, since a pet id passed to this VM should be valid and never return null
+class PetInfoViewModel(
+    val repository: PetTrackerRepository,
+    val petId: String // throw an error here, since a pet id passed to this VM should be valid and never return null
 ): ViewModel() {
 
     private val _pet = MutableLiveData(Pet())
@@ -21,5 +18,12 @@ class PetInfoViewModel constructor(
             val p = repository.getPet(petId)
             _pet.postValue(p)
         })
+    }
+
+    class Factory(private val repo: PetTrackerRepository, private val petId: String): ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return PetInfoViewModel(repository = repo, petId = petId) as T
+        }
+
     }
 }

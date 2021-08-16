@@ -11,18 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
-import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
+import com.caitlynwiley.pettracker.ui.components.PetInfoEditor
 
 @Composable
-fun PetInfoEntryScreen(viewModel: PetInfoViewModel, navController: NavController) {
+fun NewPetDetailsScreen(goToConfirmDetails: () -> Unit) {
     ConstraintLayout(modifier = Modifier
         .padding(16.dp)
         .fillMaxSize()
     ) {
         val actionButton = createRef()
-        PetInfoEditor(viewModel)
-        Button(onClick = { /*TODO*/ },
+        PetInfoEditor()
+        Button(onClick = goToConfirmDetails,
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
             modifier = Modifier.constrainAs(actionButton) {
                 end.linkTo(parent.end)

@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val LightColorPalette = lightColors(
     primary = primaryColor_day,
@@ -22,17 +23,18 @@ private val LightColorPalette = lightColors(
 )
 
 private val DarkColorPalette = darkColors(
-    primary = primaryDark_night,
-    secondary = secondary_night,
-    secondaryVariant = secondary_night, // intentionally the same as secondary
+    primary = primaryColor_night,
+    primaryVariant = primaryTransparent_night,
+    secondary = secondaryColor_night,
+    secondaryVariant = secondaryColor_night,
     background = backgroundColor_night,
     surface = surfaceColor_night,
     error = errorColor_night,
-    onPrimary = primaryTextColor_night,
-    onSecondary = secondaryTextColor_night,
-    onBackground = secondaryTextColor_night,
-    onSurface = secondaryTextColor_night,
-    onError = primaryTextColor_night
+    onPrimary = Color.Black,
+    onSecondary = Color.White,
+    onBackground = backgroundTextColor_night,
+    onSurface = surfaceTextColor_night,
+    onError = Color.Black
 )
 
 @Composable

@@ -7,19 +7,17 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import com.caitlynwiley.pettracker.activities.Screen
 
 @Composable
-fun ChooseAdditionTypeScreen(navController: NavController) {
+fun ChooseAdditionTypeScreen(addById: () -> Unit, createNewPet: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
-        Button(onClick = {navController.navigate(Screen.SelectSpecies.route)} ) {
+        Button(onClick = createNewPet ) {
             Text("Create new pet")
         }
 
         Text("OR")
 
-        Button(onClick = {navController.navigate(Screen.AddPetById.route)} ) {
+        Button(onClick = addById ) {
             Text("Enter a pet ID")
         }
     }

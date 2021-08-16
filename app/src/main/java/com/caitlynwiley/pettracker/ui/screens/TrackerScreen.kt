@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,32 +28,38 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.models.TrackerItem
+import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
+import com.caitlynwiley.pettracker.viewmodel.TrackerViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.util.*
-import kotlin.collections.ArrayList
-
-val defaultEvent: TrackerItem = TrackerItem.Builder()
-    .setEventType(TrackerItem.EventType.FEED)
-    .setCupsFood(2.0)
-    .setMillis(System.currentTimeMillis())
-    .setItemType("event")
-    .setId("789")
-    .setPetId("456")
-    .build()
-val defaultDay: TrackerItem = TrackerItem.Builder()
-    .setItemType("day")
-    .setMillis(System.currentTimeMillis())
-    .setId("000")
-    .setPetId("456")
-    .build()
-val defaultTrackerItems: ArrayList<TrackerItem> = ArrayList(listOf(defaultDay, defaultEvent, defaultEvent))
 
 @ExperimentalAnimationApi
 @Composable
-fun TrackerScreen(items: List<TrackerItem>) {
+fun TrackerFragment() {
+    val viewModel = viewModel<TrackerViewModel>(
+        factory = TrackerViewModel.Factory(PetTrackerRepository(), "")
+    )
+
+    val trackerItems by viewModel.trackerItems.observeAsState(listOf())
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+
+    SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+        onRefresh = { viewModel.refresh() }
+    ) {
+        TrackerScreen(items = trackerItems)
+    }
+}
+
+@ExperimentalAnimationApi
+@Composable
+private fun TrackerScreen(items: List<TrackerItem>) {
     var dialogType by remember { mutableStateOf<TrackerItem.EventType?>(null) }
+
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val fabGroup = createRef()
 
@@ -81,9 +88,7 @@ fun TrackerScreen(items: List<TrackerItem>) {
 
 @ExperimentalAnimationApi
 @Composable
-fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.EventType) -> Unit) {
-//    var transition = updateTransition(targetState = groupOpenState, label = "toggleTrackerFabGroup")
-
+private fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.EventType) -> Unit) {
     ConstraintLayout(modifier = modifier.wrapContentSize(align = Alignment.BottomEnd)) {
         var groupOpenState by remember { mutableStateOf(FabState.CLOSED) }
         val (fab, smallFabs) = createRefs()
@@ -100,7 +105,7 @@ fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.EventType) 
             onClick = {
                 groupOpenState = if (groupOpenState == FabState.OPEN) FabState.CLOSED else FabState.OPEN
             },
-            backgroundColor = MaterialTheme.colors.secondary,
+//            backgroundColor = MaterialTheme.colors.primary,
             modifier = Modifier.constrainAs(fab) {
                 end.linkTo(parent.end)
                 bottom.linkTo(parent.bottom)
@@ -108,7 +113,7 @@ fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.EventType) 
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_add_white_24dp),
-                tint = MaterialTheme.colors.onSecondary,
+//                tint = MaterialTheme.colors.onPrimary,
                 contentDescription = "plus icon",
                 modifier = Modifier.rotate(angle)
             )
@@ -134,7 +139,7 @@ fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.EventType) 
 }
 
 @Composable
-fun SmallFABs(modifier: Modifier = Modifier, onClick: (TrackerItem.EventType) -> Unit) {
+private fun SmallFABs(modifier: Modifier = Modifier, onClick: (TrackerItem.EventType) -> Unit) {
     Column(horizontalAlignment = Alignment.End, modifier = modifier.wrapContentSize()) {
 
         SmallEventFAB(
@@ -164,11 +169,11 @@ fun SmallFABs(modifier: Modifier = Modifier, onClick: (TrackerItem.EventType) ->
 }
 
 @Composable
-fun SmallEventFAB(labelText: String, iconResId: Int, iconContentDesc: String, eventType: TrackerItem.EventType, onClick: (TrackerItem.EventType) -> Unit) {
+private fun SmallEventFAB(labelText: String, iconResId: Int, iconContentDesc: String, eventType: TrackerItem.EventType, onClick: (TrackerItem.EventType) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 8.dp)) {
         Text(labelText, color = MaterialTheme.colors.onBackground, modifier = Modifier.padding(end = 8.dp))
-        FloatingActionButton(onClick = { onClick(eventType) }, backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.onPrimary, modifier = Modifier
+        FloatingActionButton(onClick = { onClick(eventType) }, backgroundColor = MaterialTheme.colors.surface,
+            contentColor = MaterialTheme.colors.primary, modifier = Modifier
                 .width(40.dp)
                 .height(40.dp)) {
             Icon(painter = painterResource(iconResId), contentDescription = iconContentDesc)
@@ -177,7 +182,7 @@ fun SmallEventFAB(labelText: String, iconResId: Int, iconContentDesc: String, ev
 }
 
 @Composable
-fun EventList(list: List<TrackerItem>) {
+private fun EventList(list: List<TrackerItem>) {
     LazyColumn {
         items(list.size) {
             val item = list[it]
@@ -193,7 +198,7 @@ fun EventList(list: List<TrackerItem>) {
 }
 
 @Composable
-fun NoEventsLabel(modifier: Modifier = Modifier) {
+private fun NoEventsLabel(modifier: Modifier = Modifier) {
     Text(text = "No events for this pet",
         color = MaterialTheme.colors.primary,
         fontSize = 24.sp,
@@ -201,19 +206,19 @@ fun NoEventsLabel(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun getDisplayDate(month: Int, day: Int): String {
+private fun getDisplayDate(month: Int, day: Int): String {
     return String.format(Locale.US, "%s %s", stringArrayResource(R.array.months)[month - 1],
         stringArrayResource(R.array.formatted_day_of_month)[day - 1])
 }
 
 @Composable
-fun EventListItem(event: TrackerItem) {
+private fun EventListItem(event: TrackerItem) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
         .padding(8.dp)
         .fillMaxWidth()
         .wrapContentHeight()
         .clip(RoundedCornerShape(8.dp))
-        .background(MaterialTheme.colors.background)) {
+        .background(MaterialTheme.colors.surface)) {
         Icon(painter = painterResource(id = event.drawableResId),
             modifier = Modifier
                 .padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
@@ -233,7 +238,7 @@ fun EventListItem(event: TrackerItem) {
 }
 
 @Composable
-fun DateHeader(date: String) {
+private fun DateHeader(date: String) {
     Column {
         Divider(Modifier.height(8.dp), color = Color.Transparent)
         Box(modifier = Modifier
@@ -248,7 +253,7 @@ fun DateHeader(date: String) {
                     .height(1.dp))
             Box(modifier = Modifier
                 .background(
-                    color = MaterialTheme.colors.surface,
+                    color = MaterialTheme.colors.background,
                     shape = RoundedCornerShape(16.dp)
                 )
                 // oval border around date below vv
@@ -267,14 +272,14 @@ fun DateHeader(date: String) {
 }
 
 @Composable
-fun TrackerDialog(onDismiss: () -> Unit, type: TrackerItem.EventType) {
+private fun TrackerDialog(onDismiss: () -> Unit, type: TrackerItem.EventType) {
     AlertDialog(
         dismissButton = {
             Text(text = "Cancel", Modifier.clickable { onDismiss() })
         },
         onDismissRequest = { onDismiss() },
         confirmButton = { Text("Save") },
-        backgroundColor = MaterialTheme.colors.background,
+//        backgroundColor = MaterialTheme.colors.background,
         title = { Text(text = getDialogTitleForType(type)) },
         text = {
             // 24.dp padding horizontally by default for text content
@@ -283,7 +288,7 @@ fun TrackerDialog(onDismiss: () -> Unit, type: TrackerItem.EventType) {
     )
 }
 
-fun getDialogTitleForType(eventType: TrackerItem.EventType) : String {
+private fun getDialogTitleForType(eventType: TrackerItem.EventType) : String {
     return when (eventType) {
         TrackerItem.EventType.FEED -> "Cups"
         TrackerItem.EventType.POTTY -> "Type"
@@ -292,7 +297,7 @@ fun getDialogTitleForType(eventType: TrackerItem.EventType) : String {
 }
 
 @Composable
-fun DialogContentForType(eventType: TrackerItem.EventType) {
+private fun DialogContentForType(eventType: TrackerItem.EventType) {
     return when (eventType) {
         TrackerItem.EventType.FEED -> TrackMeal()
         TrackerItem.EventType.POTTY -> TrackPotty()
@@ -302,7 +307,7 @@ fun DialogContentForType(eventType: TrackerItem.EventType) {
 
 
 @Composable
-fun TrackWalk() {
+private fun TrackWalk() {
     Row(verticalAlignment = Alignment.CenterVertically) {
         TextField(
             value = "0",
@@ -344,7 +349,7 @@ fun TrackWalk() {
 }
 
 @Composable
-fun TrackPotty() {
+private fun TrackPotty() {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = false, onCheckedChange = {}, modifier = Modifier.padding(end = 8.dp))
         Text(text = "Number 1", fontSize = 18.sp, modifier = Modifier.padding(end = 16.dp))
@@ -354,7 +359,7 @@ fun TrackPotty() {
 }
 
 @Composable
-fun TrackMeal() {
+private fun TrackMeal() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
@@ -382,7 +387,8 @@ private enum class FabState {
 }
 
 @Composable
-@Preview(name = "Preview Dialog", group = "actual dialog")
+@Preview(name = "Preview Dialog",
+    group = "actual dialog")
 fun PreviewDialog() {
     TrackerDialog({}, TrackerItem.EventType.WALK)
 }
@@ -396,79 +402,7 @@ fun PreviewDialog() {
 fun PreviewTrackerFragment() {
     PetTrackerTheme {
         Surface {
-            TrackerScreen(items = defaultTrackerItems)
+            TrackerFragment()
         }
-    }
-}
-
-@Composable
-@Preview(name = "Walk",
-    group = "Dialogs",
-    uiMode = UI_MODE_NIGHT_YES)
-fun PreviewTrackWalk() {
-    PetTrackerTheme {
-        Surface {
-            TrackWalk()
-        }
-    }
-}
-
-@Composable
-@Preview(name = "Potty",
-    group = "Dialogs",
-    uiMode = UI_MODE_NIGHT_YES)
-fun PreviewTrackPotty() {
-    PetTrackerTheme {
-        Surface {
-            TrackPotty()
-        }
-    }
-}
-
-@Composable
-@Preview(name = "Meal",
-    group = "Dialogs",
-    uiMode = UI_MODE_NIGHT_YES)
-fun PreviewTrackMeal() {
-    PetTrackerTheme {
-        Surface {
-            TrackMeal()
-        }
-    }
-}
-
-@Composable
-@Preview("Tracker Event List",
-    backgroundColor = 0xff000000,
-    showBackground = true,
-    uiMode = UI_MODE_NIGHT_YES,
-    group = "individual_items")
-fun PreviewTrackerList() {
-    PetTrackerTheme {
-        EventList(defaultTrackerItems)
-    }
-}
-
-@Composable
-@Preview("Event Item",
-    backgroundColor = 0xff000000,
-    showBackground = true,
-    uiMode = UI_MODE_NIGHT_YES,
-    group = "individual_items")
-fun PreviewEvent() {
-    PetTrackerTheme {
-        EventListItem(defaultEvent)
-    }
-}
-
-@Composable
-@Preview("Date Header",
-    backgroundColor = 0xff000000,
-    showBackground = true,
-    uiMode = UI_MODE_NIGHT_YES,
-    group = "individual_items")
-fun PreviewDate() {
-    PetTrackerTheme {
-        DateHeader(date = "July 26th")
     }
 }
