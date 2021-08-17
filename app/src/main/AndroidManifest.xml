@@ -25,10 +25,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.LoginActivity" android:exported="true"/>
-
-        <activity android:name=".activities.CreateAccountActivity"/>
-
         <!-- FB -->
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=

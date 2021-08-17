@@ -8,8 +8,6 @@ class Account(@SerializedName("user_id") var userId: String,
     @SerializedName("pets")
     var pets: MutableMap<String, Boolean> = HashMap()
 
-    constructor() : this("", "")
-
     fun addPet(id: String) {
         pets[id] = true
     }
