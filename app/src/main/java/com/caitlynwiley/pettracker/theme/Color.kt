@@ -35,7 +35,7 @@ val secondaryColor_night = Color(0xFF204643)
 val surfaceColor_night = Color(0xFF202E35)
 val backgroundColor_night = Color(0xFF00040F)
 
-val surfaceTextColor_night = Color(0xFFC0C0C0)
-val backgroundTextColor_night = Color(0xFF808080)
+//val surfaceTextColor_night = Color(0xFFC0C0C0)
+//val backgroundTextColor_night = Color.White
 
 val errorColor_night = Color(0xffd680a7)

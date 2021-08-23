@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -19,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,10 +35,11 @@ import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.models.TrackerItem
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
+import com.caitlynwiley.pettracker.ui.icons.CustomIcons
 import com.caitlynwiley.pettracker.viewmodel.TrackerViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import java.util.*
+import android.content.res.Configuration.UI_MODE_NIGHT_YESimport java.util.*
 
 @ExperimentalAnimationApi
 @Composable
@@ -112,7 +115,7 @@ private fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.Eve
             }
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_add_white_24dp),
+                imageVector = Icons.Outlined.Add,
 //                tint = MaterialTheme.colors.onPrimary,
                 contentDescription = "plus icon",
                 modifier = Modifier.rotate(angle)
@@ -144,7 +147,7 @@ private fun SmallFABs(modifier: Modifier = Modifier, onClick: (TrackerItem.Event
 
         SmallEventFAB(
             labelText = "Walk",
-            iconResId = R.drawable.ic_dog_walk,
+            vector = CustomIcons.DogWalk,
             iconContentDesc = "dog bowl",
             eventType = TrackerItem.EventType.WALK,
             onClick = onClick
@@ -152,7 +155,7 @@ private fun SmallFABs(modifier: Modifier = Modifier, onClick: (TrackerItem.Event
 
         SmallEventFAB(
             labelText = "Potty",
-            iconResId = R.drawable.ic_dog_poop,
+            vector = CustomIcons.DogPoop,
             iconContentDesc = "poop icon",
             eventType = TrackerItem.EventType.POTTY,
             onClick = onClick
@@ -160,7 +163,7 @@ private fun SmallFABs(modifier: Modifier = Modifier, onClick: (TrackerItem.Event
 
         SmallEventFAB(
             labelText = "Meal",
-            iconResId = R.drawable.ic_dog_bowl,
+            vector = CustomIcons.DogBowl,
             iconContentDesc = "dog bowl",
             eventType = TrackerItem.EventType.FEED,
             onClick = onClick
@@ -169,14 +172,14 @@ private fun SmallFABs(modifier: Modifier = Modifier, onClick: (TrackerItem.Event
 }
 
 @Composable
-private fun SmallEventFAB(labelText: String, iconResId: Int, iconContentDesc: String, eventType: TrackerItem.EventType, onClick: (TrackerItem.EventType) -> Unit) {
+private fun SmallEventFAB(labelText: String, vector: ImageVector, iconContentDesc: String, eventType: TrackerItem.EventType, onClick: (TrackerItem.EventType) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 8.dp)) {
         Text(labelText, color = MaterialTheme.colors.onBackground, modifier = Modifier.padding(end = 8.dp))
         FloatingActionButton(onClick = { onClick(eventType) }, backgroundColor = MaterialTheme.colors.surface,
             contentColor = MaterialTheme.colors.primary, modifier = Modifier
                 .width(40.dp)
                 .height(40.dp)) {
-            Icon(painter = painterResource(iconResId), contentDescription = iconContentDesc)
+            Icon(imageVector = vector, contentDescription = iconContentDesc)
         }
     }
 }
@@ -219,7 +222,7 @@ private fun EventListItem(event: TrackerItem) {
         .wrapContentHeight()
         .clip(RoundedCornerShape(8.dp))
         .background(MaterialTheme.colors.surface)) {
-        Icon(painter = painterResource(id = event.drawableResId),
+        Icon(imageVector = event.drawableResId,
             modifier = Modifier
                 .padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
                 .width(48.dp)

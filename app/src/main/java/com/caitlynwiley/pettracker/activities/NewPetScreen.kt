@@ -1,21 +1,23 @@
 package com.caitlynwiley.pettracker.activities
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.ui.fragments.ChooseAdditionTypeScreen
 import com.caitlynwiley.pettracker.ui.screens.AddByIdScreen
+import com.caitlynwiley.pettracker.ui.screens.ChooseSpecies
 import com.caitlynwiley.pettracker.ui.screens.ConfirmPetScreen
 import com.caitlynwiley.pettracker.ui.screens.NewPetDetailsScreen
-import com.caitlynwiley.pettracker.ui.screens.SpeciesSelectorScreen
-
 
 @Composable
 @ExperimentalComposeUiApi
@@ -28,7 +30,7 @@ fun NewPetScreen(goToLoginScreen: () -> Unit) {
                         goToLoginScreen()
                     }) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_arrow_back_white_24dp),
+                            imageVector = Icons.Outlined.ArrowBack,
                             contentDescription = "back button"
                         )
                     }
@@ -48,13 +50,13 @@ fun ActivityContent() {
 
     NavHost(navController, startDestination = Screen.ChooseAdditionType.route) {
         composable(Screen.ChooseAdditionType.route) {
-            ChooseAdditionTypeScreen(
+            ChooseHowToAddPet(
                 addById = {navController.navigate(Screen.AddPetById.route)},
                 createNewPet = {navController.navigate(Screen.SelectSpecies.route)}
             )
         }
         composable(Screen.SelectSpecies.route) {
-            SpeciesSelectorScreen(
+            ChooseSpecies(
                 goToDetailsScreen = { navController.navigate(Screen.EnterPetInfo.route) }
             )
         }
@@ -66,7 +68,7 @@ fun ActivityContent() {
         composable(route = Screen.ConfirmNewPet.route,
             arguments = listOf(navArgument("id") {type = NavType.StringType})) {
             it.arguments?.getString("id")?.let { id ->
-                ConfirmPetScreen(id, navController)
+                ConfirmPetScreen(id)
             }
         }
         composable(Screen.AddPetById.route) {
@@ -75,6 +77,21 @@ fun ActivityContent() {
                     navController.navigate(Screen.ConfirmNewPet.createRoute(petId = id))
                 }
             )
+        }
+    }
+}
+
+@Composable
+fun ChooseHowToAddPet(addById: () -> Unit, createNewPet: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
+        Button(onClick = createNewPet ) {
+            Text("Create new pet")
+        }
+
+        Text("OR")
+
+        Button(onClick = addById ) {
+            Text("Enter a pet ID")
         }
     }
 }

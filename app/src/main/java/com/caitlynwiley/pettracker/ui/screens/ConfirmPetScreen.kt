@@ -6,7 +6,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import androidx.preference.PreferenceManager
 import com.caitlynwiley.pettracker.activities.BaseActivity
 import com.caitlynwiley.pettracker.models.Pet
@@ -16,7 +15,7 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.runBlocking
 
 @Composable
-fun ConfirmPetScreen(id: String, navController: NavController) {
+fun ConfirmPetScreen(id: String) {
     var petInfo: Pet? by remember { mutableStateOf(null) }
     val context = LocalContext.current
 

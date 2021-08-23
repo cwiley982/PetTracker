@@ -2,7 +2,12 @@ package com.caitlynwiley.pettracker.models
 
 import android.annotation.TargetApi
 import android.content.Context
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Today
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.caitlynwiley.pettracker.R
+import com.caitlynwiley.pettracker.ui.icons.CustomIcons
 import com.google.firebase.database.Exclude
 import com.google.gson.annotations.SerializedName
 import java.util.*
@@ -81,15 +86,15 @@ class TrackerItem {
     }
 
     @get:Exclude
-    val drawableResId: Int
+    val drawableResId: ImageVector
         get() {
-            if (itemType.equals("day", ignoreCase = true)) return -1
+            if (itemType.equals("day", ignoreCase = true)) return Icons.Outlined.Today
             when (eventType) {
-                EventType.POTTY -> return R.drawable.ic_dog_poop_64dp
-                EventType.FEED -> return R.drawable.ic_dog_bowl_64dp
-                EventType.WALK -> return R.drawable.ic_dog_walk_64dp
+                EventType.POTTY -> return CustomIcons.DogPoop
+                EventType.FEED -> return CustomIcons.DogBowl
+                EventType.WALK -> return CustomIcons.DogWalk
             }
-            return R.drawable.ic_menu // default for now
+            return Icons.Outlined.Menu // default for now
         }
 
     fun setWalkLength(hours: Int, minutes: Int) {
