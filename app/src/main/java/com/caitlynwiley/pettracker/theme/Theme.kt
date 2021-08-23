@@ -32,8 +32,8 @@ private val DarkColorPalette = darkColors(
     error = errorColor_night,
     onPrimary = Color.Black,
     onSecondary = Color.White,
-    onBackground = backgroundTextColor_night,
-    onSurface = surfaceTextColor_night,
+    onBackground = Color.White,
+    onSurface = Color.White,
     onError = Color.Black
 )
 

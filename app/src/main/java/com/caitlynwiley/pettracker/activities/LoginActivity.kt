@@ -11,6 +11,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -18,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -213,7 +216,7 @@ fun LoginScreen(createAccount: () -> Unit) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 // google sign in btn
                 SignInOption(
-                    icon = painterResource(R.drawable.google_logo),
+                    icon = painterResource(R.drawable.googleg_standard_color_18),
                     btnText = "Sign in with Google",
                     textColor = Color.Black,
                     btnColor = Color.White
@@ -239,7 +242,7 @@ fun LoginScreen(createAccount: () -> Unit) {
                 // create account btn
                 SignInOption(
                     colorFilter = ColorFilter.tint(MaterialTheme.colors.onSecondary),
-                    icon = (painterResource(R.drawable.ic_email_black_24dp)),
+                    vector = Icons.Filled.Email,
                     btnText = "Create account",
                     textColor = MaterialTheme.colors.onSecondary,
                     btnColor = MaterialTheme.colors.secondary
@@ -262,6 +265,30 @@ fun SignInOption(colorFilter: ColorFilter? = null, icon: Painter, btnText: Strin
         Box(modifier = Modifier.fillMaxWidth()) {
             Image(
                 painter = icon, contentDescription = "",
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .width(32.dp)
+                    .height(32.dp),
+                colorFilter = colorFilter?.let { colorFilter }
+            )
+            Text(text = btnText, fontSize = 14.sp, color = textColor,
+                modifier = Modifier.align(Alignment.Center))
+        }
+    }
+}
+
+@Composable
+fun SignInOption(colorFilter: ColorFilter? = null, vector: ImageVector, btnText: String,
+                 textColor: Color, btnColor: Color, signIn: () -> Unit) {
+    Button(onClick = signIn, colors = ButtonDefaults.buttonColors(backgroundColor = btnColor),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .padding(horizontal = 32.dp)) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Image(
+                imageVector = vector,
+                contentDescription = "",
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .width(32.dp)

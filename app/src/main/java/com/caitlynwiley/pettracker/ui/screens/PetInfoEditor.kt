@@ -1,10 +1,11 @@
-package com.caitlynwiley.pettracker.ui.components
+package com.caitlynwiley.pettracker.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,7 +17,6 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.caitlynwiley.pettracker.TextRadioButton
-import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.Pet.Gender
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
@@ -28,7 +28,6 @@ fun PetInfoEditor(editing: Boolean = true) {
     ))
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val pet: Pet by viewModel.pet.observeAsState(Pet())
         val (nameRow, ageRow, birthdayRow, breedRow, genderSection) = createRefs()
 
         Row(modifier = Modifier
@@ -37,14 +36,16 @@ fun PetInfoEditor(editing: Boolean = true) {
             }
             .fillMaxWidth()
             .padding(bottom = 8.dp)) {
+            val name: String by viewModel.name.observeAsState("")
+
             Text(text = "Name",
                 fontSize = 22.sp,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
                     .align(Alignment.Bottom))
             Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = pet.name,
-                onValueChange = { pet.name = it },
+            TextField(value = name,
+                onValueChange = { viewModel.setName(it) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = editing,
                 textStyle = TextStyle(fontSize = 22.sp)
@@ -57,6 +58,9 @@ fun PetInfoEditor(editing: Boolean = true) {
             }
             .fillMaxWidth()
             .padding(bottom = 8.dp)) {
+            val birthMonth: String by viewModel.birthMonth.observeAsState("")
+            val birthYear: String by viewModel.birthYear.observeAsState("")
+
             Text(text = "DOB",
                 fontSize = 22.sp,
                 modifier = Modifier
@@ -65,8 +69,8 @@ fun PetInfoEditor(editing: Boolean = true) {
             )
 
             Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = pet.birthYear,
-                onValueChange = { pet.birthYear = it },
+            TextField(value = birthYear,
+                onValueChange = { viewModel.setBirthYear(it) },
                 label = { Text("Year") },
                 modifier = Modifier.weight(1f),
                 enabled = editing,
@@ -74,8 +78,8 @@ fun PetInfoEditor(editing: Boolean = true) {
             )
 
             Divider(modifier = Modifier.width(8.dp), color = Color.Transparent)
-            TextField(value = pet.birthMonth,
-                onValueChange = { pet.birthMonth = it },
+            TextField(value = birthMonth,
+                onValueChange = { viewModel.setBirthMonth(it) },
                 label = { Text("Month") },
                 modifier = Modifier.weight(1f),
                 enabled = editing,
@@ -89,13 +93,15 @@ fun PetInfoEditor(editing: Boolean = true) {
             }
             .fillMaxWidth()
             .padding(bottom = 8.dp)) {
+            val age: String by viewModel.age.observeAsState("")
+
             Text(text = "Age", fontSize = 22.sp,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
                     .align(Alignment.Bottom)
             )
             Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = pet.age,
+            TextField(value = age,
                 onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),
                 enabled = editing,
@@ -109,29 +115,32 @@ fun PetInfoEditor(editing: Boolean = true) {
             }
             .fillMaxWidth()
             .padding(bottom = 8.dp)) {
+            val breed: String by viewModel.breed.observeAsState("")
+
             Text(text = "Breed", fontSize = 22.sp,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
                     .align(Alignment.Bottom))
             Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = pet.breed,
-                onValueChange = {},
+            TextField(value = breed,
+                onValueChange = { viewModel.setBreed(it) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = editing,
                 textStyle = TextStyle(fontSize = 22.sp)
             )
         }
 
+        val gender: Gender by viewModel.gender.observeAsState(Gender.UNKNOWN)
         GenderOptions(modifier = Modifier.constrainAs(genderSection) {
                 top.linkTo(breedRow.bottom, 16.dp)
             centerHorizontallyTo(parent)
-        }, pet, editing)
+        }, gender, editing, viewModel::updateGender)
     }
 }
 
 @Composable
-fun GenderOptions(modifier: Modifier = Modifier, pet: Pet, editing: Boolean) {
-    var selected: Gender by remember { mutableStateOf(pet.gender) }
+private fun GenderOptions(modifier: Modifier = Modifier, current: Gender, editing: Boolean,
+                          updateSelection: (Gender) -> Unit) {
     Row(modifier = modifier
         .fillMaxWidth()
         .wrapContentHeight()) {
@@ -145,28 +154,28 @@ fun GenderOptions(modifier: Modifier = Modifier, pet: Pet, editing: Boolean) {
 
             val barrier = createEndBarrier(title, margin = 16.dp)
 
-            TextRadioButton(text = "Male", selected = selected == Gender.MALE, enabled = editing,
+            TextRadioButton(text = "Male", selected = current == Gender.MALE, enabled = editing,
                 modifier = Modifier.constrainAs(maleOption) {
                     start.linkTo(barrier)
                 }) {
-                selected = Gender.MALE
+                updateSelection(Gender.MALE)
             }
 
-            TextRadioButton(text = "Female", selected = selected == Gender.FEMALE, enabled = editing,
+            TextRadioButton(text = "Female", selected = current == Gender.FEMALE, enabled = editing,
                 modifier = Modifier.constrainAs(femaleOption) {
                     start.linkTo(maleOption.end, 16.dp)
                     end.linkTo(parent.end)
                 }) {
-                selected = Gender.FEMALE
+                updateSelection(Gender.FEMALE)
             }
 
-            TextRadioButton(text = "Unknown", selected = selected == Gender.UNKNOWN, enabled = editing,
+            TextRadioButton(text = "Unknown", selected = current == Gender.UNKNOWN, enabled = editing,
                 modifier = Modifier.constrainAs(unknownOption) {
                     top.linkTo(maleOption.bottom, 8.dp)
                     start.linkTo(barrier)
                     end.linkTo(parent.end)
                 }) {
-                selected = Gender.UNKNOWN
+                updateSelection(Gender.UNKNOWN)
             }
         }
     }

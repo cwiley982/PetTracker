@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.caitlynwiley.pettracker.ui.components.PetInfoEditor
 
 @Composable
 fun NewPetDetailsScreen(goToConfirmDetails: () -> Unit) {
@@ -32,10 +31,3 @@ fun NewPetDetailsScreen(goToConfirmDetails: () -> Unit) {
         }
     }
 }
-
-/*
-val petId = ref.child("pets").push().key
-pet.id = petId ?: ""
-AddPetTask().execute(pet)
-ref.child("users").child(mUid).child("pets").child(petId!!).setValue(true)
- */

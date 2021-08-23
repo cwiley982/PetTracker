@@ -9,6 +9,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
+import com.caitlynwiley.pettracker.ui.screens.BaseAppScreen
 import com.caitlynwiley.pettracker.viewmodel.AppWideViewModel
 
 open class BaseActivity : ComponentActivity() {
@@ -25,7 +26,7 @@ open class BaseActivity : ComponentActivity() {
                 if (user.value == null) {
                     LoginActivity()
                 } else {
-                    MainActivity()
+                    BaseAppScreen()
                 }
             }
         }

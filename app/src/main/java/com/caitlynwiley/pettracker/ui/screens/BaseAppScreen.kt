@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.activities
+package com.caitlynwiley.pettracker.ui.screens
 
 import android.content.Context
 import android.content.Intent
@@ -10,13 +10,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,17 +30,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
-import com.caitlynwiley.pettracker.ui.fragments.ManagePetsFragment
-import com.caitlynwiley.pettracker.ui.screens.SettingsScreen
-import com.caitlynwiley.pettracker.ui.screens.TrackerFragment
+import com.caitlynwiley.pettracker.ui.icons.CustomIcons
 import kotlinx.coroutines.launch
 
 @ExperimentalAnimationApi
 @Composable
-fun MainActivity() {
+fun BaseAppScreen() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
@@ -48,7 +50,7 @@ fun MainActivity() {
                 title = { Text("Pet Tracker") },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                        Icon(painter = painterResource(id = R.drawable.ic_menu), contentDescription = "menu icon")
+                        Icon(imageVector = Icons.Outlined.Menu, contentDescription = "menu icon")
                     }
                 }
             )
@@ -69,7 +71,7 @@ fun MainActivity() {
             }
 
             composable("ManageFragment") {
-                ManagePetsFragment()
+                ManagePetScreen()
                 scope.launch { drawerState.close() }
             }
 
@@ -94,20 +96,20 @@ fun DrawerContent(scope: ColumnScope, navController: NavController) {
             .padding(top = 16.dp, start = 8.dp, end = 8.dp)
             .weight(4f)) {
             Text("General", fontSize = 16.sp)
-            NavDrawerMenuItem(R.drawable.ic_dog_walk, "dog on leash", "Tracker", true) {
+            NavDrawerMenuItem(CustomIcons.DogWalk, "dog on leash", "Tracker", true) {
                 navController.navigate("TrackerFragment")
             }
-            NavDrawerMenuItem(R.drawable.ic_edit_black_24dp, "edit icon", "Manage Pet", false) {
+            NavDrawerMenuItem(Icons.Outlined.Edit, "edit icon", "Manage Pet", false) {
                 navController.navigate("ManageFragment")
             }
 
             Divider()
 
             Text("Other", fontSize = 16.sp)
-            NavDrawerMenuItem(R.drawable.ic_share_black_24dp, "share icon", "Share", false) {
+            NavDrawerMenuItem(Icons.Outlined.Share, "share icon", "Share", false) {
                 sharePet(context)
             }
-            NavDrawerMenuItem(R.drawable.ic_settings_black_24dp, "gear icon", "Settings", false) {
+            NavDrawerMenuItem(Icons.Outlined.Settings, "gear icon", "Settings", false) {
                 navController.navigate("SettingsFragment")
             }
         }
@@ -115,7 +117,7 @@ fun DrawerContent(scope: ColumnScope, navController: NavController) {
 }
 
 @Composable
-fun NavDrawerMenuItem(resId: Int, contentDesc: String, label: String, current: Boolean, onClick: () -> Unit) {
+fun NavDrawerMenuItem(icon: ImageVector, contentDesc: String, label: String, current: Boolean, onClick: () -> Unit) {
     val btnBackground = if (current) MaterialTheme.colors.primaryVariant else Color.Transparent
     val textColor = if (current) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
     val iconTint = if (current) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
@@ -129,7 +131,7 @@ fun NavDrawerMenuItem(resId: Int, contentDesc: String, label: String, current: B
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        Icon(painter = painterResource(id = resId), tint = iconTint, contentDescription = contentDesc)
+        Icon(imageVector = icon, tint = iconTint, contentDescription = contentDesc)
         Text(text = label, color = textColor, modifier = Modifier.padding(start = 16.dp))
     }
 }
@@ -165,9 +167,9 @@ fun sharePet(context: Context) {
 fun PreviewDrawerItem() {
     PetTrackerTheme {
         Column(Modifier.background(MaterialTheme.colors.surface).fillMaxWidth()) {
-            NavDrawerMenuItem(R.drawable.ic_dog_walk, "dog on leash", "Tracker", true) {}
+            NavDrawerMenuItem(CustomIcons.DogWalk, "dog on leash", "Tracker", true) {}
             NavDrawerMenuItem(
-                R.drawable.ic_edit_black_24dp,
+                Icons.Outlined.Edit,
                 "edit icon",
                 "Manage Pet",
                 false

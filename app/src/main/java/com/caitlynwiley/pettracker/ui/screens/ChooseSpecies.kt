@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.caitlynwiley.pettracker.R
 
 @Composable
-fun SpeciesSelectorScreen(goToDetailsScreen: () -> Unit) {
+fun ChooseSpecies(goToDetailsScreen: () -> Unit) {
     Box(modifier = Modifier
         .fillMaxHeight()
         .fillMaxWidth()
@@ -41,7 +41,7 @@ fun SpeciesSelectorScreen(goToDetailsScreen: () -> Unit) {
 }
 
 @Composable
-fun PetTypeOptions(modifier: Modifier? = Modifier) {
+private fun PetTypeOptions(modifier: Modifier? = Modifier) {
     var selected by remember { mutableStateOf(PetType.OTHER) }
     val updateSelection = fun (type: PetType) {
         selected = type
@@ -62,7 +62,7 @@ fun PetTypeOptions(modifier: Modifier? = Modifier) {
 }
 
 @Composable
-fun PetTypeOptionItem(type: PetType, onClick: (PetType) -> Unit, currentSelection: PetType?) {
+private fun PetTypeOptionItem(type: PetType, onClick: (PetType) -> Unit, currentSelection: PetType?) {
     val squareShape = RoundedCornerShape(12.dp)
     val squareSize = 108.dp
     val iconSize = squareSize - 20.dp
@@ -96,7 +96,7 @@ fun PetTypeOptionItem(type: PetType, onClick: (PetType) -> Unit, currentSelectio
     }
 }
 
-fun mapTypeToResource(type: PetType): Int {
+private fun mapTypeToResource(type: PetType): Int {
     return when (type) {
         PetType.DOG -> R.drawable.dog_face
         PetType.CAT -> R.drawable.cat_face
