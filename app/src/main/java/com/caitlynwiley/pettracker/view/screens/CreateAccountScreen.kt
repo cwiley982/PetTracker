@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.activities
+package com.caitlynwiley.pettracker.view.screens
 
 import android.content.Context
 import android.content.Intent
@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import com.caitlynwiley.pettracker.view.BaseActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 

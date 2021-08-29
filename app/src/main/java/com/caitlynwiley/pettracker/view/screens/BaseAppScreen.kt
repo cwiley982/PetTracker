@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.ui.screens
+package com.caitlynwiley.pettracker.view.screens
 
 import android.content.Context
 import android.content.Intent
@@ -15,8 +15,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,13 +25,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
-import com.caitlynwiley.pettracker.ui.icons.CustomIcons
+import com.caitlynwiley.pettracker.view.icons.CustomIcons
 import kotlinx.coroutines.launch
 
 @ExperimentalAnimationApi
@@ -42,6 +40,7 @@ fun BaseAppScreen() {
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState(drawerState = drawerState)
+    val currentScreen = remember { mutableStateOf(MainScreen.Tracker.route) }
 
     Scaffold (
         scaffoldState = scaffoldState,
@@ -55,27 +54,24 @@ fun BaseAppScreen() {
                 }
             )
         },
-        drawerContent = { DrawerContent(scope = this, navController = navController) },
-        drawerBackgroundColor = MaterialTheme.colors.surface,
-        floatingActionButton = {
-
-        }
+        drawerContent = { DrawerContent(scope = this, currentScreen = currentScreen) },
+        drawerBackgroundColor = MaterialTheme.colors.surface
     ) {
         NavHost(
             navController = navController,
-            startDestination = "TrackerFragment"
+            startDestination = currentScreen.value
         ) {
-            composable("TrackerFragment") {
+            composable(MainScreen.Tracker.route) {
                 TrackerFragment()
                 scope.launch { drawerState.close() }
             }
 
-            composable("ManageFragment") {
+            composable(MainScreen.ManagePet.route) {
                 ManagePetScreen()
                 scope.launch { drawerState.close() }
             }
 
-            composable("SettingsFragment") {
+            composable(MainScreen.Settings.route) {
                 SettingsScreen()
                 scope.launch { drawerState.close() }
             }
@@ -84,8 +80,9 @@ fun BaseAppScreen() {
 }
 
 @Composable
-fun DrawerContent(scope: ColumnScope, navController: NavController) {
+fun DrawerContent(scope: ColumnScope, currentScreen: MutableState<String>) {
     val context = LocalContext.current
+    val currentRoute by remember { currentScreen }
 
     with(scope) {
         Box(modifier = Modifier
@@ -96,21 +93,29 @@ fun DrawerContent(scope: ColumnScope, navController: NavController) {
             .padding(top = 16.dp, start = 8.dp, end = 8.dp)
             .weight(4f)) {
             Text("General", fontSize = 16.sp)
-            NavDrawerMenuItem(CustomIcons.DogWalk, "dog on leash", "Tracker", true) {
-                navController.navigate("TrackerFragment")
+            NavDrawerMenuItem(CustomIcons.DogWalk, "dog on leash", "Tracker",
+                current = (currentRoute == MainScreen.Tracker.route)
+            ) {
+                currentScreen.value = MainScreen.Tracker.route
             }
-            NavDrawerMenuItem(Icons.Outlined.Edit, "edit icon", "Manage Pet", false) {
-                navController.navigate("ManageFragment")
+            NavDrawerMenuItem(Icons.Outlined.Edit, "edit icon", "Manage Pet",
+                current = (currentRoute == MainScreen.ManagePet.route)
+            ) {
+                currentScreen.value = MainScreen.ManagePet.route
             }
 
             Divider()
 
             Text("Other", fontSize = 16.sp)
-            NavDrawerMenuItem(Icons.Outlined.Share, "share icon", "Share", false) {
+            NavDrawerMenuItem(Icons.Outlined.Share, "share icon", "Share",
+                current = (currentRoute == MainScreen.Share.route)
+            ) {
                 sharePet(context)
             }
-            NavDrawerMenuItem(Icons.Outlined.Settings, "gear icon", "Settings", false) {
-                navController.navigate("SettingsFragment")
+            NavDrawerMenuItem(Icons.Outlined.Settings, "gear icon", "Settings",
+                current = (currentRoute == MainScreen.Settings.route)
+            ) {
+                currentScreen.value = MainScreen.Settings.route
             }
         }
     }
@@ -160,6 +165,13 @@ fun sharePet(context: Context) {
 
     val shareIntent = Intent.createChooser(intent, null)
     startActivity(context, shareIntent, null)
+}
+
+sealed class MainScreen(var route: String) {
+    object Tracker: MainScreen("tracker")
+    object ManagePet: MainScreen("manage")
+    object Share: MainScreen("share")
+    object Settings: MainScreen("settings")
 }
 
 @Composable

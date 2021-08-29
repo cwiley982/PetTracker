@@ -1,6 +1,6 @@
 package com.caitlynwiley.pettracker.models
 
-import com.caitlynwiley.pettracker.ui.screens.PetType
+import com.caitlynwiley.pettracker.view.screens.PetType
 import com.google.gson.annotations.SerializedName
 
 class Pet {

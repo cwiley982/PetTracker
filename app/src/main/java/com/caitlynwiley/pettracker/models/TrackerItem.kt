@@ -7,7 +7,7 @@ import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Today
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.caitlynwiley.pettracker.R
-import com.caitlynwiley.pettracker.ui.icons.CustomIcons
+import com.caitlynwiley.pettracker.view.icons.CustomIcons
 import com.google.firebase.database.Exclude
 import com.google.gson.annotations.SerializedName
 import java.util.*

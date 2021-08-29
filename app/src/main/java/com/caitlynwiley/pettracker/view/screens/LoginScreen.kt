@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.activities
+package com.caitlynwiley.pettracker.view.screens
 
 import android.app.Activity
 import android.text.TextUtils

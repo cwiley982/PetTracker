@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.ui.screens
+package com.caitlynwiley.pettracker.view.screens
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
@@ -7,9 +7,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.preference.PreferenceManager
-import com.caitlynwiley.pettracker.activities.BaseActivity
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
+import com.caitlynwiley.pettracker.view.BaseActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.runBlocking

@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.ui.screens
+package com.caitlynwiley.pettracker.view.screens
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.preference.PreferenceManager
-import com.caitlynwiley.pettracker.activities.BaseActivity
+import com.caitlynwiley.pettracker.view.BaseActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 

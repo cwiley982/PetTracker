@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.activities
+package com.caitlynwiley.pettracker.view.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,10 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import com.caitlynwiley.pettracker.ui.screens.AddByIdScreen
-import com.caitlynwiley.pettracker.ui.screens.ChooseSpecies
-import com.caitlynwiley.pettracker.ui.screens.ConfirmPetScreen
-import com.caitlynwiley.pettracker.ui.screens.NewPetDetailsScreen
 
 @Composable
 @ExperimentalComposeUiApi

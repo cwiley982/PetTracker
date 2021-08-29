@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.ui.screens
+package com.caitlynwiley.pettracker.view.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

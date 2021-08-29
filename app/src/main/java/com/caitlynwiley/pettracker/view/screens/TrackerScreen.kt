@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.ui.screens
+package com.caitlynwiley.pettracker.view.screens
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log
@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -35,11 +35,11 @@ import com.caitlynwiley.pettracker.R
 import com.caitlynwiley.pettracker.models.TrackerItem
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
-import com.caitlynwiley.pettracker.ui.icons.CustomIcons
+import com.caitlynwiley.pettracker.view.icons.CustomIcons
 import com.caitlynwiley.pettracker.viewmodel.TrackerViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import android.content.res.Configuration.UI_MODE_NIGHT_YESimport java.util.*
+import java.util.*
 
 @ExperimentalAnimationApi
 @Composable

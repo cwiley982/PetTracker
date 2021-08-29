@@ -1,4 +1,4 @@
-package com.caitlynwiley.pettracker.ui.icons
+package com.caitlynwiley.pettracker.view.icons
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
