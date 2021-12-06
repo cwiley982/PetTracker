@@ -1,6 +1,8 @@
 package com.caitlynwiley.pettracker.view.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -22,7 +24,7 @@ import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import com.caitlynwiley.pettracker.viewmodel.PetInfoViewModel
 
 @Composable
-fun PetInfoEditor(editing: Boolean = true) {
+fun PetInfoEditor(ActionButton: @Composable () -> Unit, editing: Boolean = true, onBtnClick: () -> Unit) {
     val viewModel = viewModel<PetInfoViewModel>(factory = PetInfoViewModel.Factory(
         PetTrackerRepository(), "-ME-Zsu05LZIpdajQJ-3"
     ))
@@ -135,6 +137,10 @@ fun PetInfoEditor(editing: Boolean = true) {
                 top.linkTo(breedRow.bottom, 16.dp)
             centerHorizontallyTo(parent)
         }, gender, editing, viewModel::updateGender)
+
+        Box(modifier = Modifier.wrapContentSize(Alignment.BottomEnd).clickable { onBtnClick() }) {
+            ActionButton()
+        }
     }
 }
 
@@ -184,5 +190,9 @@ private fun GenderOptions(modifier: Modifier = Modifier, current: Gender, editin
 @Preview
 @Composable
 fun PreviewScreen() {
-    PetInfoEditor()
+    PetInfoEditor(ActionButton = {
+        Button(onClick = {}) {
+            Text(text = "test button")
+        }
+    }) { }
 }

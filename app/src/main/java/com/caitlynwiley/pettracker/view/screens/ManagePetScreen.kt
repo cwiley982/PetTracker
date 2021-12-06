@@ -1,6 +1,7 @@
 package com.caitlynwiley.pettracker.view.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -11,33 +12,36 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 
 @Composable
 fun ManagePetScreen() {
     var editing by remember { mutableStateOf(false) }
 
-    ConstraintLayout(
+    Box(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize()
     ) {
-        PetInfoEditor(editing)
-
-        val actionButton = createRef()
-        FloatingActionButton(
-            onClick = {
-                editing = !editing
+        PetInfoEditor(
+            ActionButton = {
+                FloatingActionButton(
+                    onClick = {}, // onClick passed separately to PetInfoEditor
+                    backgroundColor = MaterialTheme.colors.secondary,
+                    contentColor = MaterialTheme.colors.onSecondary,
+                    modifier = Modifier.align(Alignment.BottomEnd)) {
+                    SaveEditIcon(editing = editing)
+                }
             },
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary,
-            modifier = Modifier.constrainAs(actionButton) {
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-            }) {
-            SaveEditIcon(editing = editing)
+            editing = editing
+        ) {
+            if (editing) {
+                // somehow save info via view model
+                // PetInfoViewModel::updatePetInfo
+            }
+            editing = !editing
         }
     }
 }

@@ -45,31 +45,38 @@ fun ActivityContent() {
     val navController = rememberNavController()
 
     NavHost(navController, startDestination = Screen.ChooseAdditionType.route) {
-        composable(Screen.ChooseAdditionType.route) {
+        composable(route = Screen.ChooseAdditionType.route) {
             ChooseHowToAddPet(
                 addById = {navController.navigate(Screen.AddPetById.route)},
                 createNewPet = {navController.navigate(Screen.SelectSpecies.route)}
             )
         }
-        composable(Screen.SelectSpecies.route) {
+
+        composable(route = Screen.SelectSpecies.route) {
             ChooseSpecies(
                 goToDetailsScreen = { navController.navigate(Screen.EnterPetInfo.route) }
             )
         }
-        composable(Screen.EnterPetInfo.route) {
-            NewPetDetailsScreen(
-                goToConfirmDetails = { navController.navigate(Screen.ConfirmNewPet.route) }
-            )
+
+        composable(route = Screen.EnterPetInfo.route) {
+            NewPetDetailsScreen()
         }
+
+        composable(route = Screen.CreatePetResults.route) {
+            PetCreationResults()
+        }
+
         composable(route = Screen.ConfirmNewPet.route,
-            arguments = listOf(navArgument("id") {type = NavType.StringType})) {
+            arguments = listOf(navArgument("id") { type = NavType.StringType }))
+        {
             it.arguments?.getString("id")?.let { id ->
                 ConfirmPetScreen(id)
             }
         }
-        composable(Screen.AddPetById.route) {
+
+        composable(route = Screen.AddPetById.route) {
             AddByIdScreen(
-                submit = { id ->
+                search = { id ->
                     navController.navigate(Screen.ConfirmNewPet.createRoute(petId = id))
                 }
             )
@@ -100,4 +107,5 @@ sealed class Screen(val route: String) {
         fun createRoute(petId: String) = "confirmNewPet/$petId"
     }
     object AddPetById: Screen("addPetById")
+    object CreatePetResults: Screen("createPetResults")
 }

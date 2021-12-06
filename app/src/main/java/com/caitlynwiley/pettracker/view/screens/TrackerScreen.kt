@@ -94,7 +94,7 @@ private fun TrackerScreen(items: List<TrackerItem>) {
 private fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.EventType) -> Unit) {
     ConstraintLayout(modifier = modifier.wrapContentSize(align = Alignment.BottomEnd)) {
         var groupOpenState by remember { mutableStateOf(FabState.CLOSED) }
-        val (fab, smallFabs) = createRefs()
+        val (fab, smallButtons) = createRefs()
 
         val angle: Float by animateFloatAsState(
             targetValue = if (groupOpenState == FabState.CLOSED) 0f else 135f,
@@ -117,14 +117,14 @@ private fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.Eve
             Icon(
                 imageVector = Icons.Outlined.Add,
 //                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "plus icon",
+                contentDescription = "add icon",
                 modifier = Modifier.rotate(angle)
             )
         }
 
         AnimatedVisibility(
             modifier = Modifier
-                .constrainAs(smallFabs) {
+                .constrainAs(smallButtons) {
                     bottom.linkTo(fab.top)
                     end.linkTo(parent.end)
                 }

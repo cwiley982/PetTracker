@@ -17,7 +17,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 
 @ExperimentalComposeUiApi
 @Composable
-fun AddByIdScreen(submit: (String) -> Unit) {
+fun AddByIdScreen(search: (String) -> Unit) {
     var id by remember { mutableStateOf("") }
 
     ConstraintLayout {
@@ -35,7 +35,7 @@ fun AddByIdScreen(submit: (String) -> Unit) {
             colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
-                submit(id)
+                search(id)
                 keyboardController?.hide()
             }),
             modifier = Modifier.constrainAs(text) {
@@ -44,7 +44,7 @@ fun AddByIdScreen(submit: (String) -> Unit) {
             }
         )
 
-        Button(onClick = { submit(id) },
+        Button(onClick = { search(id) },
             modifier = Modifier.constrainAs(button) {
                 top.linkTo(text.bottom, margin = 16.dp)
                 centerHorizontallyTo(parent)

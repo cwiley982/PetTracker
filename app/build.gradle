@@ -4,11 +4,11 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.caitlynwiley.pettracker"
         minSdkVersion 24
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 2
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -80,9 +80,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
-    implementation 'com.google.android.material:material:1.5.0-alpha01'
+    implementation 'com.google.android.material:material:1.5.0-alpha03'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
-    implementation 'com.google.gms:google-services:4.3.9'
+    implementation 'com.google.gms:google-services:4.3.10'
 
     // Firebase Dependencies
     implementation platform('com.google.firebase:firebase-bom:28.3.0') // Import the Firebase BoM
@@ -101,7 +101,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:11.0.0'
 
     // AndroidX for Kotlin (ktx)
-    implementation 'androidx.core:core-ktx:1.7.0-alpha01'
+    implementation 'androidx.core:core-ktx:1.7.0-alpha02'
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-android-extensions:1.5.21"
@@ -131,7 +131,7 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
     // Navigation Compose
-    implementation 'androidx.navigation:navigation-compose:2.4.0-alpha06'
+    implementation 'androidx.navigation:navigation-compose:2.4.0-alpha08'
 
     // SwipeRefreshLayout for Compose
     implementation "com.google.accompanist:accompanist-swiperefresh:0.16.0"

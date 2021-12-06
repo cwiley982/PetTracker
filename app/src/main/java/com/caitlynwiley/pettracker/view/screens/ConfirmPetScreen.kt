@@ -44,7 +44,6 @@ fun ConfirmPetScreen(id: String) {
                 .putBoolean("creating_pet", false).apply()
 
             // once association is created, take user to main screen
-            // navController.navigate("mainActivity")
             context.startActivity(Intent(context, BaseActivity::class.java))
         }
     }

@@ -44,6 +44,14 @@ class PetInfoViewModel(
         })
     }
 
+    fun createPet() {
+        // TODO: use info here to create a new pet in db and store results in variable to be observed
+    }
+
+    fun updatePetInfo() {
+        // TODO: use info here to update the existing pet in db, using specified petId
+    }
+
     fun setName(name: String) {
         _name.postValue(name)
     }
