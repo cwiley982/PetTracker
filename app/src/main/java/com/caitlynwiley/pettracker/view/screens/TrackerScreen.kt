@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -301,10 +303,12 @@ private fun getDialogTitleForType(eventType: TrackerItem.EventType) : String {
 
 @Composable
 private fun DialogContentForType(eventType: TrackerItem.EventType) {
-    return when (eventType) {
-        TrackerItem.EventType.FEED -> TrackMeal()
-        TrackerItem.EventType.POTTY -> TrackPotty()
-        TrackerItem.EventType.WALK -> TrackWalk()
+    return Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        when (eventType) {
+            TrackerItem.EventType.FEED -> TrackMeal()
+            TrackerItem.EventType.POTTY -> TrackPotty()
+            TrackerItem.EventType.WALK -> TrackWalk()
+        }
     }
 }
 
@@ -363,11 +367,21 @@ private fun TrackPotty() {
 
 @Composable
 private fun TrackMeal() {
+    var cups by remember { mutableStateOf("") }
+    var showErrorMsg by remember { mutableStateOf(false) }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
-                value = "0",
-                onValueChange = {},
+                value = cups,
+                onValueChange = {
+                                    cups = it
+                                    showErrorMsg = cups.toIntOrNull().let { numCups ->
+                                        numCups == null || numCups <= 0
+                                    }
+                                },
+                placeholder = {Text(text = "0", fontSize = 18.sp)},
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 22.sp),
                 modifier = Modifier.width(56.dp)
             )
@@ -377,10 +391,14 @@ private fun TrackMeal() {
                 modifier = Modifier.padding(start = 8.dp))
         }
 
-        Text(text = "Please enter a number greater than 0",
-            fontSize = 18.sp,
-            color = MaterialTheme.colors.error,
-            modifier = Modifier.padding(top = 16.dp))
+        if (showErrorMsg) {
+            Text(
+                text = "Value must be greater than 0",
+                fontSize = 18.sp,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
     }
 }
 
