@@ -138,7 +138,10 @@ private fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.Eve
             exit = fadeOut(animationSpec = tween(durationMillis = 200))
                     + shrinkOut(shrinkTowards = Alignment.CenterEnd, animationSpec = tween(durationMillis = 200))
         ) {
-            SmallFABs(onClick = showDialog)
+            SmallFABs {
+                showDialog(it)
+                groupOpenState = FabState.CLOSED
+            }
         }
     }
 }
