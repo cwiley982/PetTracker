@@ -89,12 +89,12 @@ class TrackerItem {
     val drawableResId: ImageVector
         get() {
             if (itemType.equals("day", ignoreCase = true)) return Icons.Outlined.Today
-            when (eventType) {
-                EventType.POTTY -> return CustomIcons.DogPoop
-                EventType.FEED -> return CustomIcons.DogBowl
-                EventType.WALK -> return CustomIcons.DogWalk
+            return when (eventType) {
+                EventType.POTTY -> CustomIcons.DogPoop
+                EventType.FEED -> CustomIcons.DogBowl
+                EventType.WALK -> CustomIcons.DogWalk
+                else -> Icons.Outlined.Menu // default for now
             }
-            return Icons.Outlined.Menu // default for now
         }
 
     fun setWalkLength(hours: Int, minutes: Int) {

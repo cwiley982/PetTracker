@@ -69,6 +69,7 @@ android {
         exclude "kotlin/*/*.kotlin_builtins"
         exclude "kotlin/*.kotlin_builtins"
     }
+    buildToolsVersion '31.0.0'
 }
 
 dependencies {

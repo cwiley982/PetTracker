@@ -29,119 +29,132 @@ fun PetInfoEditor(ActionButton: @Composable () -> Unit, editing: Boolean = true,
         PetTrackerRepository(), "-ME-Zsu05LZIpdajQJ-3"
     ))
 
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (nameRow, ageRow, birthdayRow, breedRow, genderSection) = createRefs()
+    Box {
+        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+            val (nameRow, ageRow, birthdayRow, breedRow, genderSection) = createRefs()
 
-        Row(modifier = Modifier
-            .constrainAs(nameRow) {
-                top.linkTo(parent.top)
+            Row(modifier = Modifier
+                .constrainAs(nameRow) {
+                    top.linkTo(parent.top)
+                }
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)) {
+                val name: String by viewModel.name.observeAsState("")
+
+                Text(
+                    text = "Name",
+                    fontSize = 22.sp,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .align(Alignment.Bottom)
+                )
+                Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
+                TextField(
+                    value = name,
+                    onValueChange = { viewModel.setName(it) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = editing,
+                    textStyle = TextStyle(fontSize = 22.sp)
+                )
             }
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)) {
-            val name: String by viewModel.name.observeAsState("")
 
-            Text(text = "Name",
-                fontSize = 22.sp,
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .align(Alignment.Bottom))
-            Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = name,
-                onValueChange = { viewModel.setName(it) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = editing,
-                textStyle = TextStyle(fontSize = 22.sp)
-            )
-        }
+            Row(modifier = Modifier
+                .constrainAs(ageRow) {
+                    top.linkTo(nameRow.bottom, 8.dp)
+                }
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)) {
+                val birthMonth: String by viewModel.birthMonth.observeAsState("")
+                val birthYear: String by viewModel.birthYear.observeAsState("")
 
-        Row(modifier = Modifier
-            .constrainAs(ageRow) {
-                top.linkTo(nameRow.bottom, 8.dp)
+                Text(
+                    text = "DOB",
+                    fontSize = 22.sp,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .align(Alignment.Bottom)
+                )
+
+                Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
+                TextField(
+                    value = birthYear,
+                    onValueChange = { viewModel.setBirthYear(it) },
+                    label = { Text("Year") },
+                    modifier = Modifier.weight(1f),
+                    enabled = editing,
+                    textStyle = TextStyle(fontSize = 22.sp)
+                )
+
+                Divider(modifier = Modifier.width(8.dp), color = Color.Transparent)
+                TextField(
+                    value = birthMonth,
+                    onValueChange = { viewModel.setBirthMonth(it) },
+                    label = { Text("Month") },
+                    modifier = Modifier.weight(1f),
+                    enabled = editing,
+                    textStyle = TextStyle(fontSize = 22.sp)
+                )
             }
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)) {
-            val birthMonth: String by viewModel.birthMonth.observeAsState("")
-            val birthYear: String by viewModel.birthYear.observeAsState("")
 
-            Text(text = "DOB",
-                fontSize = 22.sp,
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .align(Alignment.Bottom)
-            )
+            Row(modifier = Modifier
+                .constrainAs(birthdayRow) {
+                    top.linkTo(ageRow.bottom, 8.dp)
+                }
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)) {
+                val age: String by viewModel.age.observeAsState("")
 
-            Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = birthYear,
-                onValueChange = { viewModel.setBirthYear(it) },
-                label = { Text("Year") },
-                modifier = Modifier.weight(1f),
-                enabled = editing,
-                textStyle = TextStyle(fontSize = 22.sp)
-            )
-
-            Divider(modifier = Modifier.width(8.dp), color = Color.Transparent)
-            TextField(value = birthMonth,
-                onValueChange = { viewModel.setBirthMonth(it) },
-                label = { Text("Month") },
-                modifier = Modifier.weight(1f),
-                enabled = editing,
-                textStyle = TextStyle(fontSize = 22.sp)
-            )
-        }
-
-        Row(modifier = Modifier
-            .constrainAs(birthdayRow) {
-                top.linkTo(ageRow.bottom, 8.dp)
+                Text(
+                    text = "Age", fontSize = 22.sp,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .align(Alignment.Bottom)
+                )
+                Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
+                TextField(
+                    value = age,
+                    onValueChange = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = editing,
+                    textStyle = TextStyle(fontSize = 22.sp)
+                )
             }
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)) {
-            val age: String by viewModel.age.observeAsState("")
 
-            Text(text = "Age", fontSize = 22.sp,
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .align(Alignment.Bottom)
-            )
-            Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = age,
-                onValueChange = {},
-                modifier = Modifier.fillMaxWidth(),
-                enabled = editing,
-                textStyle = TextStyle(fontSize = 22.sp)
-            )
-        }
+            Row(modifier = Modifier
+                .constrainAs(breedRow) {
+                    top.linkTo(birthdayRow.bottom, 8.dp)
+                }
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)) {
+                val breed: String by viewModel.breed.observeAsState("")
 
-        Row(modifier = Modifier
-            .constrainAs(breedRow) {
-                top.linkTo(birthdayRow.bottom, 8.dp)
+                Text(
+                    text = "Breed", fontSize = 22.sp,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .align(Alignment.Bottom)
+                )
+                Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
+                TextField(
+                    value = breed,
+                    onValueChange = { viewModel.setBreed(it) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = editing,
+                    textStyle = TextStyle(fontSize = 22.sp)
+                )
             }
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)) {
-            val breed: String by viewModel.breed.observeAsState("")
 
-            Text(text = "Breed", fontSize = 22.sp,
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .align(Alignment.Bottom))
-            Divider(modifier = Modifier.width(16.dp), color = Color.Transparent)
-            TextField(value = breed,
-                onValueChange = { viewModel.setBreed(it) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = editing,
-                textStyle = TextStyle(fontSize = 22.sp)
-            )
-        }
-
-        val gender: Gender by viewModel.gender.observeAsState(Gender.UNKNOWN)
-        GenderOptions(modifier = Modifier.constrainAs(genderSection) {
+            val gender: Gender by viewModel.gender.observeAsState(Gender.UNKNOWN)
+            GenderOptions(modifier = Modifier.constrainAs(genderSection) {
                 top.linkTo(breedRow.bottom, 16.dp)
-            centerHorizontallyTo(parent)
-        }, gender, editing, viewModel::updateGender)
+                centerHorizontallyTo(parent)
+            }, gender, editing, viewModel::updateGender)
+        } // ConstraintLayout
 
-        Box(modifier = Modifier.wrapContentSize(Alignment.BottomEnd).clickable { onBtnClick() }) {
+        Box(modifier = Modifier.wrapContentSize().align(Alignment.BottomEnd).clickable { onBtnClick() }) {
             ActionButton()
         }
-    }
+    } // Box
 }
 
 @Composable
