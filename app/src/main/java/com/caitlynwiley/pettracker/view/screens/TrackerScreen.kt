@@ -43,7 +43,6 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.util.*
 
-@ExperimentalAnimationApi
 @Composable
 fun TrackerFragment() {
     val viewModel = viewModel<TrackerViewModel>(
@@ -60,7 +59,6 @@ fun TrackerFragment() {
     }
 }
 
-@ExperimentalAnimationApi
 @Composable
 private fun TrackerScreen(items: List<TrackerItem>) {
     var dialogType by remember { mutableStateOf<TrackerItem.EventType?>(null) }
@@ -91,7 +89,6 @@ private fun TrackerScreen(items: List<TrackerItem>) {
     }
 }
 
-@ExperimentalAnimationApi
 @Composable
 private fun FabGroup(modifier: Modifier = Modifier, showDialog: (TrackerItem.EventType) -> Unit) {
     ConstraintLayout(modifier = modifier.wrapContentSize(align = Alignment.BottomEnd)) {

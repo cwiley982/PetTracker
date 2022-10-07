@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -33,7 +32,6 @@ import com.caitlynwiley.pettracker.theme.PetTrackerTheme
 import com.caitlynwiley.pettracker.view.icons.CustomIcons
 import kotlinx.coroutines.launch
 
-@ExperimentalAnimationApi
 @Composable
 fun BaseAppScreen() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)

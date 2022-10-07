@@ -54,8 +54,8 @@ class TrackerViewModel(private val repository: PetTrackerRepository, petId: Stri
         }
     }
 
-    class Factory(val repository: PetTrackerRepository, val petId: String) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    class Factory(private val repository: PetTrackerRepository, private val petId: String) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return TrackerViewModel(repository, petId) as T
         }
     }

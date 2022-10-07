@@ -4,18 +4,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 object CustomIcons {
 
-    val DogWalk: ImageVector
-        get() {
-            return DogWalkIcon
-        }
+    val DogWalk: ImageVector = DogWalkIcon
 
-    val DogBowl: ImageVector
-        get() {
-            return DogBowlIcon
-        }
+    val DogBowl: ImageVector = DogBowlIcon
 
-    val DogPoop: ImageVector
-        get() {
-            return DogPoopIcon
-        }
+    val DogPoop: ImageVector = DogPoopIcon
 }

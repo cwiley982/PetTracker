@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.livedata.observeAsState
 import com.caitlynwiley.pettracker.theme.PetTrackerTheme
 import com.caitlynwiley.pettracker.view.screens.BaseAppScreen
@@ -15,7 +14,6 @@ import com.caitlynwiley.pettracker.viewmodel.AppWideViewModel
 open class BaseActivity : ComponentActivity() {
     private val appViewModel by viewModels<AppWideViewModel>()
 
-    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

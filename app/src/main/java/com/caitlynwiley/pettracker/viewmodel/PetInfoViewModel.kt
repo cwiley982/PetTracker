@@ -73,7 +73,7 @@ class PetInfoViewModel(
     }
 
     class Factory(private val repo: PetTrackerRepository, private val petId: String): ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return PetInfoViewModel(repository = repo, petId = petId) as T
         }
 

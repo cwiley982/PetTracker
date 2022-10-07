@@ -4,11 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider.Factory
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.repository.PetTrackerRepository
 import kotlinx.coroutines.launch
@@ -52,10 +48,10 @@ class PetTrackerViewModel(
             }
         )
     }
-}
 
-class PTViewModelFactory(val repository: PetTrackerRepository) : Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return PetTrackerViewModel(repository) as T
+    class Factory(private val repository: PetTrackerRepository) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return PetTrackerViewModel(repository) as T
+        }
     }
 }

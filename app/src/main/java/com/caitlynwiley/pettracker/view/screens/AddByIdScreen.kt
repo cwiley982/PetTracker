@@ -58,5 +58,5 @@ fun AddByIdScreen(search: (String) -> Unit) {
 @Preview
 @Composable
 fun PreviewAddById() {
-    AddByIdScreen({})
+    AddByIdScreen {}
 }
