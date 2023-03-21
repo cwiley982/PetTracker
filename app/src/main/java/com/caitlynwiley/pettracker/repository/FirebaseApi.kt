@@ -11,7 +11,7 @@ internal interface FirebaseApi {
     }
 
     @POST("/pets/{id}/events.json")
-    suspend fun addItemToTracker(@Path("id") petId: String?, @Body item: TrackerItem?): Void
+    suspend fun addItemToTracker(@Path("id") petId: String?, @Body item: TrackerItem?)
 
     @GET("/users/{uid}/pets.json")
     suspend fun getPets(@Path("uid") uid: String): Map<String, Boolean>?
@@ -20,13 +20,16 @@ internal interface FirebaseApi {
     suspend fun getPet(@Path("id") petId: String?): Pet?
 
     @PUT("/pets/{id}.json")
-    suspend fun addPet(@Path("id") id: String?, @Body p: Pet?): Void
+    suspend fun addPet(@Path("id") id: String?, @Body p: Pet?)
+
+    @POST("/pets/{id}.json")
+    suspend fun updatePet(@Path("id") id: String?, @Body p: Pet?)
 
     @GET("/pets/{id}/events.json")
     suspend fun getEvents(@Path("id") petId: String?): Map<String?, TrackerItem?>?
 
     @PUT("/pets/{petId}/events/{eventId}.json")
-    suspend fun addEvent(@Path("petId") petId: String?, @Path("eventId") dayId: String?, @Body event: TrackerItem?): Void
+    suspend fun addEvent(@Path("petId") petId: String?, @Path("eventId") dayId: String?, @Body event: TrackerItem?)
 
     @GET("/users/{userId}.json")
     suspend fun getUser(@Path("userId") userId: String): Account?
