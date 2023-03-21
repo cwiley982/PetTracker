@@ -2,6 +2,7 @@ package com.caitlynwiley.pettracker.models
 
 import com.caitlynwiley.pettracker.view.screens.PetType
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 class Pet {
     @SerializedName("species")
@@ -48,9 +49,9 @@ class Pet {
     private fun calculateAge(year: String, month: String) {
         val birthYear = year.toInt()
         val birthMonth = month.toInt()
-        // TODO: make this not hard-coded
-        val currentYear = 2021
-        val currentMonth = 7
+        val now = LocalDateTime.now()
+        val currentYear = now.year
+        val currentMonth = now.month.value
         var ageMonths = currentMonth - birthMonth
         var ageYears = currentYear - birthYear
         if (ageMonths < 0) {
