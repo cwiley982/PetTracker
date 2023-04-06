@@ -1,9 +1,11 @@
 package com.caitlynwiley.pettracker.repository
 
+import android.util.Log
 import com.caitlynwiley.pettracker.models.Account
 import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.TrackerItem
-import com.caitlynwiley.pettracker.view.screens.PetType
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
@@ -16,58 +18,57 @@ class PetTrackerRepository @Inject constructor(
     // in an api object made via the code within the init block below
 //    private val api: FirebaseApi
 ) {
-    private var api: FirebaseApi
-    private val defaultPet: Pet = Pet("Nanook", "2016", "9", Pet.Gender.MALE, PetType.DOG, "Husky")
-    private val defaultUser: Account = Account("123", "cwiley982@gmail.com")
-    private val defaultEvent: TrackerItem = TrackerItem.Builder()
-        .setEventType(TrackerItem.EventType.FEED)
-        .setCupsFood(2.0)
-        .setMillis(System.currentTimeMillis())
-        .setItemType("event")
-        .setId("789")
-        .setPetId("456")
-        .build()
-    private val defaultDay: TrackerItem = TrackerItem.Builder()
-        .setMillis(System.currentTimeMillis())
-        .setItemType("day")
-        .setId("000")
-        .setPetId("456")
-        .build()
-    private var defaultTrackerItems: ArrayList<TrackerItem> = ArrayList(listOf(defaultDay, defaultEvent))
+    private var realtimeApi: RealtimeApi // old implementation
+    private var firestoreApi: FirestoreApi // new implementation
 
     init {
         val gson = GsonConverterFactory.create(GsonBuilder().setLenient().create())
-        val retrofit = Retrofit.Builder().baseUrl(FirebaseApi.BASE_URL)
+        var retrofit = Retrofit.Builder()
+            .baseUrl(RealtimeApi.BASE_URL)
             .addConverterFactory(gson)
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .build()
-        api = retrofit.create(FirebaseApi::class.java)
-        defaultPet.id = "456"
-        defaultUser.addPet("456")
+        realtimeApi = retrofit.create(RealtimeApi::class.java)
+
+        val customGson = GsonBuilder()
+            .setLenient()
+            .registerTypeAdapterFactory(DocumentTypeAdapterFactory(GsonBuilder().create()))
+            .create()
+        retrofit = Retrofit.Builder()
+            .baseUrl(FirestoreApi.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(customGson))
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .build()
+        firestoreApi = retrofit.create(FirestoreApi::class.java)
     }
 
     suspend fun getPet(id: String): Pet {
-        return defaultPet
-//        // check cache first
+        // check cache first
 //        val cached: Pet = petCache.getPet(id)
 //        if (cached != null) return cached
-//
-//        if (id.isEmpty()) return Pet()
-//
-//        return try {
-//            // get from api
-//            val pet = api.getPet(id)
+
+        if (id.isEmpty()) return Pet()
+
+        return try {
+            // get from api
+            val pet = realtimeApi.getPet(id)
 //            petCache.put(id, pet)
-//            pet ?: Pet()
-//        } catch (_: KotlinNullPointerException) {
-//            Pet()
-//        }
+            pet ?: Pet()
+        } catch (_: KotlinNullPointerException) {
+            Pet()
+        }
     }
 
     suspend fun getAccount(id: String): Account? {
-        return defaultUser
+        return firestoreApi.getUser(id)
+//        val db = Firebase.firestore
+//        db.collection("users").whereEqualTo("uid", "123").get()
+//            .addOnSuccessListener {
+//                it.documents[0].toObject<Account>()
+//                Log.d("PTRepo", "num matches: " + it.size())
+//            }
 //        return try {
-//            api.getUser(id)
+//            realtimeApi.getUser(id)
 //        } catch (_: KotlinNullPointerException) {
 //            Account()
 //        }
@@ -83,16 +84,23 @@ class PetTrackerRepository @Inject constructor(
     }
 
     suspend fun getNumPets(uid: String): Int {
-        return defaultUser.pets.size
-//        return getPets(uid).size
+        return 1
+//        if (uid.isEmpty()) return 0
+//        val map: Map<String, Boolean> = api.getPets(uid) ?: return 0
+//        return map.keys.size
     }
 
     suspend fun addItemToTracker(petId: String?, item: TrackerItem?) {
-        api.addItemToTracker(petId, item)
+        realtimeApi.addItemToTracker(petId, item)
     }
 
     suspend fun getPets(uid: String): List<Pet> {
-        return listOf(defaultPet)
+        val db = Firebase.firestore
+        db.collection("users").whereEqualTo("uid", "123").get()
+            .addOnSuccessListener {
+                Log.d("PTRepo", "num matches: " + it.size())
+            }
+        return emptyList()
 //        if (uid.isEmpty()) return emptyList()
 //        val map: Map<String, Boolean> = api.getPets(uid) ?: return emptyList()
 //        val ids = map.keys
@@ -102,20 +110,18 @@ class PetTrackerRepository @Inject constructor(
     }
 
     suspend fun addPet(id: String?, p: Pet?) {
-        api.addPet(id, p)
+        realtimeApi.addPet(id, p)
     }
 
-    suspend fun getEvents(petId: String?): ArrayList<TrackerItem> {
-        return defaultTrackerItems
-//        return api.getEvents(petId)
+    suspend fun getEvents(petId: String?): Map<String?, TrackerItem?>? {
+        return realtimeApi.getEvents(petId)
     }
 
-    suspend fun addEvent(petId: String, dayId: String, event: TrackerItem) {
-        defaultTrackerItems.add(event)
-//        api.addEvent(petId, dayId, event)
+    suspend fun addEvent(petId: String?, dayId: String?, event: TrackerItem?) {
+        realtimeApi.addEvent(petId, dayId, event)
     }
 
     suspend fun deleteEventAt(index: Int) {
-        defaultTrackerItems.removeAt(index)
+//        realtimeApi.removeEvent(index)
     }
 }

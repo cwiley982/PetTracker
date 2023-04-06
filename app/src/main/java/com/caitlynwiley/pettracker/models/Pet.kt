@@ -18,10 +18,10 @@ class Pet {
         private set
 
     @SerializedName("birthMonth")
-    var birthMonth: String = ""
+    var birthMonth: Int = -1
 
     @SerializedName("birthYear")
-    var birthYear: String = ""
+    var birthYear: Int = -1
 
     @SerializedName("gender")
     var gender: Gender = Gender.UNKNOWN
@@ -37,8 +37,8 @@ class Pet {
 
     constructor(name: String, birthYear: String, birthMonth: String, gender: Gender, species: PetType, breed: String) {
         this.name = name
-        this.birthMonth = birthMonth
-        this.birthYear = birthYear
+        this.birthMonth = birthMonth.toInt()
+        this.birthYear = birthYear.toInt()
         calculateAge(birthYear, birthMonth)
         this.gender = gender
         this.species = species

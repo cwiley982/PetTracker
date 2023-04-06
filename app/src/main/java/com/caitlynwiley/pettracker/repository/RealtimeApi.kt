@@ -5,7 +5,7 @@ import com.caitlynwiley.pettracker.models.Pet
 import com.caitlynwiley.pettracker.models.TrackerItem
 import retrofit2.http.*
 
-internal interface FirebaseApi {
+internal interface RealtimeApi {
     companion object {
         const val BASE_URL = "https://pet-tracker-1530373031875.firebaseio.com"
     }
